@@ -1,3 +1,13 @@
+Version 3.1c of ProcMeter3 released : Sun Aug 22 13:00:00 1999
+--------------------------------------------------------------
+
+Bug fixes:
+ stat-cpu module SMP problems fixed.
+
+Outputs:
+ Support for hardware sensors (lm78) patch from http://www.netroedge.com/~lm78/
+
+
 Version 3.1b of ProcMeter3 released : Sat Jun 19 17:30:00 1999
 --------------------------------------------------------------
 
