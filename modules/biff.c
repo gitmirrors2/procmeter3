@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/biff.c,v 1.1 1998-09-21 18:38:10 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/biff.c,v 1.2 1998-09-26 09:35:51 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
@@ -171,13 +171,13 @@ int Update(time_t now,ProcMeterOutput *output)
       {
        if(mtime<buf.st_mtime)
          {
-          char *line=NULL;
           FILE *f=fopen(filename,"r");
 
           count=0;
 
           if(f)
             {
+             char *line=NULL;
              while((line=fgets_realloc(line,f)))
                 if(!strncmp("From ",line,5))
                    count++;
