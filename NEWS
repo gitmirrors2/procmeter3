@@ -1,3 +1,11 @@
+Version 3.4c of ProcMeter3 released : Sun Sep 5 14:30:00 2004
+--------------------------------------------------------------
+
+Bug fixes:
+ Make grid-max option work for GTK version.
+ Handle kernel 2.6.x better for hardware sensors.
+
+
 Version 3.4b of ProcMeter3 released : Sun Apr 25 09:10:00 2004
 --------------------------------------------------------------
 
