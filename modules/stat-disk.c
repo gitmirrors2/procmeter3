@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.5 2000-12-13 17:32:49 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.6 2001-02-21 20:02:11 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2b.
+  ProcMeter - A system monitoring program for Linux - Version 3.3a.
 
   Disk statistics source file.
   ******************/ /******************
@@ -21,6 +21,8 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>
+
+#include <linux/major.h>
 
 #include "procmeter.h"
 
@@ -289,33 +291,89 @@ ProcMeterOutput **Initialise(char *options)
 
           if(!strncmp(line,"disk_io: ",9)) /* kernel version > ~2.4.0-test4 */
             {
-             int maj,min,num=8,nm,nr;
+             int maj,min,idx,num=8,nm,nr;
              unsigned long d0,d1,d2,d3,d4;
-             int i;
-             DIR *dir;
+             int i,j;
+             DIR *devdir,*devdiscsdir;
+             char devname[PATH_MAX];
              struct dirent *ent;
              struct stat buf;
-             char here[PATH_MAX+1];
 
              kernel_version_240=1;
              ndisks=0;
 
-             for(i=0;i<N_OUTPUTS;i++)
-                outputs[n++]=&_outputs[i];
-
              current[DISK_READ]=0;
              current[DISK_WRITE]=0;
 
-             getcwd(here,PATH_MAX);
-             chdir("/dev");
-             dir=opendir(".");
+             devdir=opendir("/dev");
+             devdiscsdir=opendir("/dev/discs");
 
-             while((nr=sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu,%lu)%n",&maj,&min,&d0,&d1,&d2,&d3,&d4,&nm))==7 ||
-                   (nr=sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu)%n",&maj,&min,&d0,&d1,&d2,&d3,&nm))==6)
+             while((nr=sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu,%lu)%n",&maj,&idx,&d0,&d1,&d2,&d3,&d4,&nm))==7 ||
+                   (nr=sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu)%n",&maj,&idx,&d0,&d1,&d2,&d3,&nm))==6)
                {
                 char diskname[9];
 
+                num+=nm;
+
                 kernel_version_240=nr;
+
+                /* This switch statement is the inverse of the one in /usr/include/linux/genhd.h */
+
+                switch (maj)
+                  {
+                  case DAC960_MAJOR+0:
+                   min=idx<<3;
+                   break;
+                  case SCSI_DISK0_MAJOR:
+                   min=idx<<4;
+                   break;
+                  case IDE0_MAJOR:      /* same as HD_MAJOR */
+                  case XT_DISK_MAJOR:
+                   min=idx<<6;
+                   break;
+                  case IDE1_MAJOR:
+                   min=(idx-2)<<6;
+                   break;
+                  default:
+                   min=0;
+                  }
+
+                diskname[0]=0;
+                if(devdiscsdir)
+                  {
+                   rewinddir(devdiscsdir);
+                   while((ent=readdir(devdiscsdir)))
+                     {
+                      sprintf(devname,"/dev/discs/%s/disc",ent->d_name);
+                      if(!stat(devname,&buf) && S_ISBLK(buf.st_mode) &&
+                         major(buf.st_rdev)==maj && minor(buf.st_rdev)==min)
+                        {
+                         strncpy(diskname,ent->d_name,8);
+                         diskname[8]=0;
+                         break;
+                        }
+                     }
+                  }
+                if(!*diskname && devdir)
+                  {
+                   rewinddir(devdir);
+                   while((ent=readdir(devdir)))
+                     {
+                      sprintf(devname,"/dev/%s",ent->d_name);
+                      if(!stat(devname,&buf) && S_ISBLK(buf.st_mode) &&
+                         major(buf.st_rdev)==maj && minor(buf.st_rdev)==min)
+                        {
+                         strncpy(diskname,ent->d_name,8);
+                         diskname[8]=0;
+                         break;
+                        }
+                     }
+                  }
+                if(!*diskname)
+                  {
+                   fprintf(stderr,"ProcMeter(%s): Cannot find disk in /dev or /dev/discs for device %d:%d in '/proc/stat'.\n",__FILE__,maj,min);
+                   continue;
+                  }
 
                 current[DISK_READ] +=d1;
                 current[DISK_WRITE]+=d3;
@@ -333,19 +391,6 @@ ProcMeterOutput **Initialise(char *options)
                    previous=values[1];
                   }
 
-                diskname[0]=0;
-                rewinddir(dir);
-                while((ent=readdir(dir)))
-                  {
-                   if(!stat(ent->d_name,&buf) && S_ISBLK(buf.st_mode) &&
-                      major(buf.st_rdev)==maj && minor(buf.st_rdev)==min)
-                     {
-                      strncpy(diskname,ent->d_name,8);
-                      diskname[8]=0;
-                      break;
-                     }
-                  }
-
                 for(i=0;i<N_OUTPUTS;i++)
                   {
                    disk_outputs[i+ndisks*N_OUTPUTS]=_disk_outputs_240[i];
@@ -354,15 +399,20 @@ ProcMeterOutput **Initialise(char *options)
                    sprintf(disk_outputs[i+ndisks*N_OUTPUTS].description,_disk_outputs_240[i].description,diskname);
                   }
 
-                for(i=0;i<N_OUTPUTS;i++)
-                   outputs[n++]=&disk_outputs[i+ndisks*N_OUTPUTS];
-
-                num+=nm;
                 ndisks++;
                }
 
-             closedir(dir);
-             chdir(here);
+             if(devdir)
+                closedir(devdir);
+             if(devdiscsdir)
+                closedir(devdiscsdir);
+
+             for(i=0;i<N_OUTPUTS;i++)
+                outputs[n++]=&_outputs[i];
+             for(j=0;j<ndisks;j++)
+                for(i=0;i<N_OUTPUTS;i++)
+                    outputs[n++]=&disk_outputs[i+j*N_OUTPUTS];
+             outputs[n]=NULL;
 
              current[DISK]=current[DISK_READ]+current[DISK_WRITE];
             }
