@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.2 2002-06-04 10:09:14 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.3 2002-06-04 10:12:26 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
@@ -78,7 +78,8 @@ ProcMeterOutput **outputs=NULL;
 ProcMeterModule module=
 {
  /* char name[16];           */ "Longrun",
- /* char *description;       */ "Transemta Crusoe longrun information"
+ /* char *description;       */ "Transmeta Crusoe longrun information.  "
+                                "Only available if using a Transmeta Crusoe CPU that supports it and the kernel was compiled with CONFIG_X86_CPUID=y."
 };
 
 /*++++++++++++++++++++++++++++++++++++++
