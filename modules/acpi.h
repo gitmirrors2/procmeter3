@@ -20,9 +20,9 @@ int acpi_supported (void);
 int acpi_read (int battery, apm_info *info);
 #endif
 char *get_acpi_file (const char *file);
-int scan_acpi_num (const char *buf, const char *key);
-char *scan_acpi_value (const char *buf, const char *key);
-char *get_acpi_value (const char *file, const char *key);
+int scan_acpi_num (const char *buf, const char *key1, const char *key2);
+char *scan_acpi_value (const char *buf, const char *key1, const char *key2);
+char *get_acpi_value (const char *file, const char *key1, const char *key2);
 int get_acpi_batt_capacity(int battery);
 
 extern int acpi_batt_count;
