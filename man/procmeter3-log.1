@@ -1,0 +1,203 @@
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3-log.1,v 1.1 2002-06-03 16:04:53 amb Exp $
+.\"
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+.\"
+.\"  Manual page for procmeter-no-x program.
+.\"
+.\"  Written by Andrew M. Bishop
+.\"
+.\"  This file Copyright 1998,99,2000,01,02 Andrew M. Bishop
+.\"  It may be distributed under the GNU Public License, version 2, or
+.\"  any higher version.  See section COPYING of the GNU Public license
+.\"  for conditions under which this file may be redistributed.
+.\"
+.TH PROCMETER3-NO-X 1 "June 3, 2002"
+
+.SH NAME
+
+procmeter3-no-x \- A system monitoring / logging program.
+
+.SH SYNOPSIS
+
+.B procmeter3-no-x
+.I [\-h|\-\-help]
+.I [\-\-rc=<filename>] [\-\-...]
+.I [...]
+
+.SH DESCRIPTION
+
+.I ProcMeter
+Displays one or more pieces of information about the operating system and other
+resources.  Most of the information that is displayed comes from the /proc
+filesystem.  The program is modular and very configurable.
+
+.SH OPTIONS
+
+The command line options are described below.
+.TP
+.BR \-h
+Provides a help message listing the available outputs.  This will be different
+for different computers depending on the Linux kernel version that is being used
+and the hardware/software that is configured.
+.TP
+.BR \-\-rc=<filename>
+Load the specified
+.B .procmeterrc
+file in stead of the searching in the usual places.
+.TP
+.BR \-\-...
+A list of configuration file options that will override the values in the
+.B .procmeterrc
+file.  The format of these options is (for example)
+.I \-\-resources.background=grey50
+which is equivalent to the entry in the .procmeterrc file of
+
+ [resources]
+ background = grey50
+
+All spaces around the equal sign must be removed and if spaces are required in
+the value on the right hand side then quotes must be used around the entire
+command line option.
+.TP
+.BR ...
+A list of names of outputs that are to be displayed.  This can include any of
+the outputs that are available (see the -h option).  For the CPU usage is in a
+module named
+.B Statistics
+with an output named
+.B CPU
+and there are graph (-g), text (-t) and bar (-b) options.  Since this version of
+the program does not display anything, but logs the data to a file it does not
+matter which one is chosen.  To store the CPU usage data you would use the
+command line option
+.B Statistics.CPU-t
+
+.SH USAGE
+
+When started the program will log all of the requested information on the
+standard output (stdout).  The outputs that are displayed are those from the
+command line and those from the
+.B .procmeterrc
+configuration file.
+
+.SH MODULES
+
+The modules that are provided with the program are the following:
+.TP
+.BR APM
+Advanced Power Management information.  These outputs are only available if you
+have configured the Linux kernel to have the APM feature and you have the
+appropriate hardware.  The outputs can tell you the amount of time remaining and
+the state of charge of the battery.
+.TP
+.BR Biff
+Monitors the e-mail inbox (in
+.B /var/spool/mail/<username>
+or
+.B /var/mail/<username>
+) and indicates the number of e-mails that are waiting and the size of the
+inbox.  The
+.I options
+parameter in the
+.B .procmeterrc
+file can be used to specify an alternate filename to use for the inbox.
+.TP
+.BR Date_Time
+The current date and time and the amount of time since the system was last
+booted.  Different outputs are available that allow the format of the date and
+time information to be changed.
+.TP
+.BR DiskUsage
+Shows the percentage of the disk that is used and the amount of free space for
+each of the local disks that it finds are mounted or can be mounted when the
+program starts.  Extra disks can be passed as options using the
+.I options
+parameter in the
+.B .procmeterrc
+file to contain a space separated list of mount points.
+.TP
+.BR LogFile
+Monitors the size and number of lines and the rate of increase of the size or
+number of lines in a set of log files.  The
+.I options
+parameter in the
+.B .procmeterrc
+file contains a space separated list of log file names.
+.TP
+.BR Memory
+The amount of memory that is used for programs, buffers, cache and the amount
+that is free.  This is the same information that is available from the
+.B free
+program, but is available here as a graph, bar or as text.
+.TP
+.BR Network
+The network devices and the amount of traffic on each of them.  It will
+automatically pick up available devices when it starts.  To specify others use
+the
+.I options
+parameter in the
+.B .procmeterrc
+configuration file which is a space separated list of device names.
+.TP
+.BR Processes
+The load average and the number of processes running and starting.
+.TP
+.BR ProcMeter
+Information about the procmeter program itself.
+.TP
+.BR Sensors
+Hardware sensors for temperature and fan speed.  (Requires lm78 hardware and
+kernel patch from http://www.netroedge.com/~lm78/).
+.TP
+.BR Statistics
+Low level system statistics.  For example CPU usage, disk usage, swapping and
+paging.
+.TP
+.BR Stat-CPU
+More detailed statistics about individual CPU usage including support for SMP
+machines.
+.TP
+.BR Stat-Disk
+More detailed statistics about individual disk usage including support for up to
+4 disks.  (This limit is set by the kernel and not by procmeter.)
+.TP
+.BR Stat-Intr
+More detailed statistics about individual interrupts including support for up to
+32 interrupts (more interrupts are available from the kernel but not displayed).
+.TP
+.BR Uname
+The system information, hostname and Linux kernel version, the same as the
+output of the
+.B uname
+program.
+.TP
+.BR Wireless
+Information about wireless network devices. It will
+automatically pick up available devices when it starts. To specify others
+use the
+.I options
+parameter in the 
+.B .procmeterrc 
+configuration file which is a space separated list of device names.
+.TP
+.BR Longrun
+For systems with the Transmeta Crueso processor, information about longrun.
+Will not work unless the kernel is compiled with CPUID support, and
+/dev/cpu/0/cpuid must be readable by procmeter. (Allow regular users to
+access the cpuid device at your own risk!)
+.TP
+.BR ACPI
+Advanced Configuration and Power Interface information. These outputs are
+only available if you have enabled ACPI in the Linux kernel and you have
+the appropriate hardware.  ACPI can report various information about a
+system's battery, and may also have thermal outputs available.
+
+.SH SEE ALSO
+
+procmeterrc(5)
+.LP
+biff(1) free(1) uname(1)
+
+.SH AUTHOR
+
+Andrew M. Bishop 1998,99,2000,01,02
