@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.8 2001-12-16 15:16:05 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.9 2002-06-04 13:54:26 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Disk capacity monitoring source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99 Andrew M. Bishop
+  This file Copyright 1998,99,2002 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -115,7 +115,7 @@ ProcMeterOutput **Initialise(char *options)
           char device[32],mount[32];
 
           if(sscanf(line,"%s %s",device,mount)==2)
-             if(strcmp(mount,"none") && *device=='/' && *mount=='/')
+             if(strcmp(mount,"none") && *mount=='/' && (*device=='/' || strstr(device, ":/")))
                 add_disk(device,mount);
          }
        while(fgets(line,128,f));
@@ -141,7 +141,7 @@ ProcMeterOutput **Initialise(char *options)
              continue;
 
           if(sscanf(line,"%32s %32s",device,mount)==2)
-             if(strcmp(mount,"none") && *device=='/' && *mount=='/')
+             if(strcmp(mount,"none") && *mount=='/' && (*device=='/' || strstr(device, ":/")))
                 add_disk(device,mount);
          }
        while(fgets(line,128,f));
@@ -266,7 +266,7 @@ int Update(time_t now,ProcMeterOutput *output)
              char device[32],mount[32];
 
              if(sscanf(line,"%s %s",device,mount)==2)
-                if(strcmp(device,"none") && *mount=='/')
+                if(strcmp(mount,"none") && *mount=='/' && (*device=='/' || strstr(device, ":/")))
                    for(i=0;i<ndisks;i++)
                       if(!strcmp(disk[i],mount))
                          mounted[i]=1;
@@ -292,7 +292,7 @@ int Update(time_t now,ProcMeterOutput *output)
        else if(statfs(disk[i/2],&buf))
          {
           output->graph_value=0;
-          strcpy(output->text_value,"unknown");
+          strcpy(output->text_value,"statfs error");
          }
        else
          {
