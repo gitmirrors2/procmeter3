@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.6 1999-09-29 19:00:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.7 2000-10-22 14:11:27 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2.
+  ProcMeter - A system monitoring program for Linux - Version 3.2a.
 
   Low level system statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99 Andrew M. Bishop
+  This file Copyright 1998,99,2000 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -15,6 +15,7 @@
 
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 
 #include "procmeter.h"
@@ -114,7 +115,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  /*+ The disk blocks read per second +*/
  {
   /* char  name[16];         */ "Disk_Read",
-  /* char *description;      */ "The number of disk blocks that are read per second.",
+  /* char *description;      */ "The total number of disk blocks that are read per second.",
   /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
@@ -125,7 +126,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  /*+ The disk blocks write per second +*/
  {
   /* char  name[16];         */ "Disk_Write",
-  /* char *description;      */ "The number of disk blocks that are written per second.",
+  /* char *description;      */ "The total number of disk blocks that are written per second.",
   /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
@@ -237,6 +238,8 @@ ProcMeterModule module=
 static int available[N_OUTPUTS];
 static unsigned long *current,*previous,values[2][N_OUTPUTS];
 
+static int kernel_version_240=0;
+
 
 /*++++++++++++++++++++++++++++++++++++++
   Load the module.
@@ -283,7 +286,6 @@ ProcMeterOutput **Initialise(char *options)
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
     else
       {
-       unsigned long d0,d1,d2,d3;
        int i;
 
        if(sscanf(line,"cpu %lu %lu %lu %lu",&current[CPU_USER],&current[CPU_NICE],&current[CPU_SYS],&current[CPU_IDLE])==4)
@@ -295,24 +297,25 @@ ProcMeterOutput **Initialise(char *options)
        while(line[0]=='c')      /* kernel version > ~2.1.84 */
           fgets(line,BUFFLEN,f);
 
-       if(sscanf(line,"disk %lu %lu %lu %lu",&d0,&d1,&d2,&d3)==4)
-          {available[DISK]=1;current[DISK]=d0+d1+d2+d3;}
-       else
-          fprintf(stderr,"ProcMeter(%s): Unexpected 'disk' line in '/proc/stat'.\n",__FILE__);
-
-       fgets(line,BUFFLEN,f);
-       if(sscanf(line,"disk_rio %lu %lu %lu %lu",&d0,&d1,&d2,&d3)==4)
+       if(!strncmp(line,"disk ",5)) /* kernel version < ~2.4.0-test4 */
          {
-          available[DISK_READ]=1;current[DISK_READ]=d0+d1+d2+d3;
+          unsigned long d0,d1,d2,d3;
+
+          if(sscanf(line,"disk %lu %lu %lu %lu",&d0,&d1,&d2,&d3)==4)
+            {available[DISK]=1;current[DISK]=d0+d1+d2+d3;}
+          else
+             fprintf(stderr,"ProcMeter(%s): Unexpected 'disk' line in '/proc/stat'.\n",__FILE__);
 
           fgets(line,BUFFLEN,f);
-          if(sscanf(line,"disk_wio %lu %lu %lu %lu",&d0,&d1,&d2,&d3)==4)
-            {available[DISK_WRITE]=1;current[DISK_WRITE]=d0+d1+d2+d3;}
+          while(line[0]=='d')      /* kernel version > ~1.3.0 */
+            {
+             if(sscanf(line,"disk_rblk %lu %lu %lu %lu",&d0,&d1,&d2,&d3)==4)
+               {available[DISK_READ]=1;current[DISK_READ]=d0+d1+d2+d3;}
+             if(sscanf(line,"disk_wblk %lu %lu %lu %lu",&d0,&d1,&d2,&d3)==4)
+               {available[DISK_WRITE]=1;current[DISK_WRITE]=d0+d1+d2+d3;}
+             fgets(line,BUFFLEN,f);
+            }
          }
-
-       fgets(line,BUFFLEN,f);
-       while(line[0]=='d')      /* kernel version > ~1.3.0 */
-          fgets(line,BUFFLEN,f);
 
        if(sscanf(line,"page %lu %lu",&current[PAGE_IN],&current[PAGE_OUT])==2)
           available[PAGE]=available[PAGE_IN]=available[PAGE_OUT]=1;
@@ -332,6 +335,29 @@ ProcMeterOutput **Initialise(char *options)
           fprintf(stderr,"ProcMeter(%s): Unexpected 'intr' line in '/proc/stat'.\n",__FILE__);
 
        fgets(line,BUFFLEN,f);
+       if(!strncmp(line,"disk_io: ",9)) /* kernel version > ~2.4.0-test4 */
+         {
+          int maj,min,num=8,nm;
+          unsigned long d0,d1,d2,d3;
+
+          kernel_version_240=1;
+
+          current[DISK]=0;
+          current[DISK_READ]=0;
+          current[DISK_WRITE]=0;
+
+          while(sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu)%n",&maj,&min,&d0,&d1,&d2,&d3,&nm)==6)
+            {
+             available[DISK]=1;      current[DISK]      +=d1+d3;
+             available[DISK_READ]=1; current[DISK_READ] +=d1;
+             available[DISK_WRITE]=1;current[DISK_WRITE]+=d3;
+
+             num+=nm;
+            }
+
+          fgets(line,BUFFLEN,f);
+         }
+
        if(sscanf(line,"ctxt %lu",&current[CONTEXT])==1)
           available[CONTEXT]=1;
        else
@@ -378,7 +404,6 @@ int Update(time_t now,ProcMeterOutput *output)
    {
     FILE *f;
     char line[BUFFLEN+1];
-    unsigned long d0,d1,d2,d3;
     long *temp;
 
     temp=current;
@@ -395,17 +420,23 @@ int Update(time_t now,ProcMeterOutput *output)
     fgets(line,BUFFLEN,f);
     while(line[0]=='c')      /* kernel version > ~2.1.84 */
        fgets(line,BUFFLEN,f);
-    if(available[DISK])
-      {sscanf(line,"disk %lu %lu %lu %lu",&d0,&d1,&d2,&d3);current[DISK]=d0+d1+d2+d3;}
-    if(available[DISK_READ])
-      {fgets(line,BUFFLEN,f);
-       sscanf(line,"disk_rio %lu %lu %lu %lu",&d0,&d1,&d2,&d3);current[DISK_READ]=d0+d1+d2+d3;}
-    if(available[DISK_WRITE])
-      {fgets(line,BUFFLEN,f);
-       sscanf(line,"disk_wio %lu %lu %lu %lu",&d0,&d1,&d2,&d3);current[DISK_WRITE]=d0+d1+d2+d3;}
-    fgets(line,BUFFLEN,f);
-    while(line[0]=='d')      /* kernel version > ~1.3.x */
+    if(!kernel_version_240) /* kernel version < ~2.4.0-test4 */
+      {
+       unsigned long d0,d1,d2,d3;
+       if(available[DISK])
+         {sscanf(line,"disk %lu %lu %lu %lu",&d0,&d1,&d2,&d3);current[DISK]=d0+d1+d2+d3;}
        fgets(line,BUFFLEN,f);
+       while(line[0]=='d')      /* kernel version > ~1.3.x */
+         {
+          if(available[DISK_READ])
+             if(sscanf(line,"disk_rblk %lu %lu %lu %lu",&d0,&d1,&d2,&d3)==4)
+               {current[DISK_READ]=d0+d1+d2+d3;}
+          if(available[DISK_WRITE])
+             if(sscanf(line,"disk_wblk %lu %lu %lu %lu",&d0,&d1,&d2,&d3)==4)
+               {current[DISK_WRITE]=d0+d1+d2+d3;}
+          fgets(line,BUFFLEN,f);
+         }
+      }
     if(available[PAGE])
        sscanf(line,"page %lu %lu",&current[PAGE_IN],&current[PAGE_OUT]);
     fgets(line,BUFFLEN,f);
@@ -415,6 +446,25 @@ int Update(time_t now,ProcMeterOutput *output)
     if(available[INTR])
        sscanf(line,"intr %lu",&current[INTR]);
     fgets(line,BUFFLEN,f);
+    if(kernel_version_240) /* kernel version > ~2.4.0-test4 */
+      {
+       int num=8,nm;
+       unsigned long d1,d3;
+
+       current[DISK_READ]=0;
+       current[DISK_WRITE]=0;
+
+       if(available[DISK])
+          while(sscanf(line+num," (%*d,%*d):(%*u,%lu,%*u,%lu)%n",&d1,&d3,&nm)==2)
+            {
+             current[DISK_READ] +=d1;
+             current[DISK_WRITE]+=d3;
+
+             num+=nm;
+            }
+
+       fgets(line,BUFFLEN,f);
+      }
     if(available[CONTEXT])
        sscanf(line,"ctxt %lu",&current[CONTEXT]);
 
@@ -426,6 +476,9 @@ int Update(time_t now,ProcMeterOutput *output)
 
     if(available[SWAP])
        current[SWAP]=current[SWAP_IN]+current[SWAP_OUT];
+
+    if(available[DISK_READ] && available[DISK_WRITE])
+       current[DISK]=current[DISK_READ]+current[DISK_WRITE];
 
     fclose(f);
 
