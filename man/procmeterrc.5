@@ -1,0 +1,121 @@
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.1 1998-09-19 15:20:43 amb Exp $
+.\"
+.\"  ProcMeter - A system monitoring program for Linux.
+.\"
+.\"  Manual page for .procmeterrc file
+.\"
+.\"  Written by Andrew M. Bishop
+.\"
+.\"  This file Copyright 1998 Andrew M. Bishop
+.\"  It may be distributed under the GNU Public License, version 2, or
+.\"  any higher version.  See section COPYING of the GNU Public license
+.\"  for conditions under which this file may be redistributed.
+.\"
+.TH PROCMETERRC 5 "September 19, 1998"
+.SH NAME
+The \.procmeterrc configuration file for procmeter3.
+.SH SYNOPSIS
+This file contains the run-time options for the procmeter3 program.
+.SH DESCRIPTION
+The resources for ProcMeter version 3.0 are stored in the .procmeterrc file
+instead of in X resources
+.LP
+When the program starts the the first .procmeterrc file found in the current
+directory, the current users home directory or the installation directory is
+used.
+.LP
+The format of the .procmeterrc file is a number of sections with the section
+names marked in '[]'.  As well as the fixed sections there is a section for each
+module that is named using the name that the module reports itself to be.  There
+are then further sections for each of the possible outputs of each module.
+.LP
+Lines beginning with ';' or '#' are comments and continuation using the '\\'
+character at the end of a line is allowed.
+.LP
+Below is listed the resource values and the sections of the .procmeterrc file
+that they can exist in.
+.LP
+The
+.B library
+section
+.TP
+.BR path=...
+The pathname of the library that contains the compiled ProcMeter modules.
+(defaults to installed location).
+.TP
+.BR others=...
+A list of other modules to be loaded. (separated by spaces).
+.LP
+The
+.B resources
+section
+.TP
+.BR horizontal=...
+A Boolean to indicate that the outputs are stacked horizontally instead of
+the default which is vertically.
+.TP
+.BR background=...
+The colour to use as the default background for all outputs. (An X11 colour name
+or a RGB value in hex as #RRGGBB.)
+.TP
+.BR foreground=...
+The colour to use as the default foreground for all outputs. (An X11 colour name
+or a RGB value in hex as #RRGGBB.)
+.TP
+.BR label-font=...
+The font to use for the label that describes the output.(An X11 font name.)
+.TP
+.BR label-foreground=...
+The colour to use as the foreground for the label. (An X11 colour name or a RGB
+value in hex as #RRGGBB.)
+.TP
+.BR label-position=...
+The position of the label relative to the body of the output.  (Either top,
+bottom or none.)
+.TP
+.BR grid-foreground=...
+The colour to use for the grid lines. (An X11 colour name or a RGB value in hex
+as #RRGGBB.)
+.TP
+.BR graph-solid=...
+A boolean to indicate if the graph should be solid or a single line.  (yes or
+no, true or false, 0 or 1.)
+.TP
+.BR grid-min=...
+The minimum number of grid lines to display on a graph.  (An integer.)
+.TP
+.BR text-font=...
+The font to use for the textual outputs.  (An X11 font name.)
+.TP
+.BR menu-foreground=...
+The colour to use as the foreground for the menus.  (An X11 colour name or a RGB
+value in hex as #RRGGBB.)
+.TP
+.BR menu-background=...
+The colour to use as the background for the menus.  (An X11 colour name or a RGB
+value in hex as #RRGGBB.)  Note: The background of all items on the same menu
+must be the same due to the Xaw Widget set used.
+.TP
+.BR menu-font=...
+The font to use for the menus.  (An X11 font name.)
+.LP
+The module sections e.g.
+.I ProcMeter
+These can contain any of the resource values which will then apply to all output
+of this module.
+.TP
+.BR options=...
+A string containing options that are passed to the module at startup.
+.LP
+The output sections e.g.
+.I ProcMeter.Version
+These can contain any of the resource values which will then apply to the
+specified output.
+.TP
+.BR startup-graph=...
+A boolean to indicate if the graph for this output should be started as default.
+.TP
+.BR startup-text=...
+A boolean to indicate if the text for this output should be started as default.
+.SH SEE ALSO
+procmeter3(1)

@@ -1,0 +1,102 @@
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.1 1998-09-19 15:19:31 amb Exp $
+.\"
+.\"  ProcMeter - A system monitoring program for Linux.
+.\"
+.\"  Manual page for procmeter program
+.\"
+.\"  Written by Andrew M. Bishop
+.\"
+.\"  This file Copyright 1998 Andrew M. Bishop
+.\"  It may be distributed under the GNU Public License, version 2, or
+.\"  any higher version.  See section COPYING of the GNU Public license
+.\"  for conditions under which this file may be redistributed.
+.\"
+.TH PROCMETER3 1 "September 19, 1998"
+.SH NAME
+procmeter3 \- A user friendly system monitoring program.
+.SH SYNOPSIS
+.B procmeter3
+.I [\-h]
+.I ...
+.SH DESCRIPTION
+.I ProcMeter
+displays one or more pieces of information about the operating system and other
+resources.  Most of the information that is displayed comes from the /proc
+filesystem.
+.SH OPTIONS
+The command line options are described below.
+.TP
+.BR \-h
+Provides a help message listing the available outputs.
+.TP
+.BR ...
+A list of names of outputs that are available.
+.TP
+.BR [X \ windows \ options]
+The standard set of X Windows program options, see X(1) for information.
+.SH USAGE
+When started the program will display all of the requested information in a set
+of panels (vertically aligned by default).  Each output can be either a graph or
+text, and can have a label indicating what it represents.
+.LP
+The left mouse button will produce a menu of options that are specific to the
+output that is selected.  The
+.B Properties
+option on this menu will give more detailed information about the origin and
+meaning of the information that is displayed.  When the properties information
+is displayed, clicking on another output will change the displayed information.
+.LP
+The right mouse button will produce a set of menus that list the modules that
+are available and for each of them the set of outputs.  There are two types of
+output, text and graphical, these are indicated in the sub-menus by icons to the
+right of the name in the sub-menu.  Selecting one of the outputs from a sub-menu
+will cause that output to be displayed if it is not already visible.  If it is
+currently displayed then it will be disabled.  Those that are currently
+displayed are indicated by a marker to the left of the name in the sub-menu.
+.LP
+The middle mouse button will display the sub-menu that is associated with the
+output that is selected.  This is a sub-set of the menus that are found with the
+right mouse button.
+.SH MODULES
+The modules that are provided are the following.
+.TP
+.BR Statistics
+Low level system statistics.  For example CPU usage, disk usage, swapping and
+paging.
+.TP
+.BR APM
+Advanced Power Management information.  These outputs are only available if you
+have configured the kernel to have the APM feature.
+.TP
+.BR Uname
+The system information from the uname program, hostname and Linux kernel
+version.
+.TP
+.BR Processes
+The load average and the number of processes running and starting.
+.TP
+.BR Date_Time
+The current date and time and the amount of time since the system was last
+booted.
+.TP
+.BR Memory
+The amount of memory that is used for programs, buffers, cache and the amount
+that is free.
+.TP
+.BR Network
+The network devices and the amount of traffic on each of them.  It will
+automatically pick up available devices when it starts, to specify others use the
+.I options
+parameter in the configuration file.
+.TP
+.BR ProcMeter
+Information about the procmeter program itself.
+.SH X RESOURCES
+As with all X Window programs X resources can be used.  For this version of
+ProcMeter (compared to previous versions) this is not the default method of
+configuring the program.  The file $HOME/.procmeterrc contains the configuration
+information.
+.SH SEE ALSO
+procmeterrc(5)
+.SH AUTHOR
+Andrew M. Bishop 1998

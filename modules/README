@@ -1,0 +1,84 @@
+                                ProcMeter - Version 3.0 - Modules
+                                =================================
+
+In version 3.0 of ProcMeter the different outputs (graphs or text) are
+implemented as loadable modules.
+
+
+Interface
+---------
+
+To be used in ProcMeter they must follow a few simple rules that allows the
+ProcMeter program load them and interact with them.
+
+1) The Load() function.
+
+There must be a function with the following prototype:
+
+ProcMeterModule *Load(void);
+
+This function will be the first one in the module that is called.  It will only
+be called once, if it does not exist then the module will not be loaded.  The
+purpose of the function is to initialise the module and return information to
+the main program so that the initialisation can proceed.
+
+
+2) The Initialise() function
+
+There must be a function with the following prototype:
+
+ProcMeterOutput **Initialise(char *options);
+
+This function will be called once only, following the Load() function.  The
+purpose of the module is to initialise all of the outputs and return the
+information about them to the main program.  The 'options' parameter is a string
+that is taken from the .procmeterrc file for the module.
+
+
+3) The Update() function
+
+There must be a function with the following prototype:
+
+int Update(time_t now,ProcMeterOutput *output);
+
+This function is called each time that one of the outputs needs to be updated.
+The parameter 'now' is the current time and may be the same on different calls
+to the function or it may be higher, it never decreases.  The 'output' parameter
+is a pointer to one of the outputs that were returned in the Initialise()
+function.  This output is to have its information filled in (both text and graph
+if appropriate).  If the Update function is succesful it should return 0, if
+there is an error it should set the output values to a suitable value and return
+-1.
+
+
+4) The Unload() function
+
+There can be a function with the following prototype:
+
+void Unload(void);
+
+If it exists then it is called after all of the other functions, before the
+module is unloaded.  It is only ever called once.
+
+
+Compilation
+-----------
+
+The module must be compiled to be a loadable object.  If the source file name is
+template.c then the following commands will do that.
+
+        gcc -c -O template.c -o template.o -I.. -fPIC
+        ld template.o -o template.so -shared
+
+
+Example
+-------
+
+As an example the file template.c is a very simple example of a module.  It can
+be used as the basis for other modules since the basic file structure is
+present.
+
+
+
+Andrew M. Bishop
+19th Sept 1998

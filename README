@@ -1,0 +1,37 @@
+                      PROCMETER V3.0
+                      ==============
+
+A system monitoring program for Linux.
+
+
+Usage: procmeter3 [-h] ...
+
+-h              Print out a help message.
+...             Options, use 'procmeter3 -h' to list them.
+
+
+
+Installation
+------------
+
+Edit the Makefile to set the paths for installation (INSTDIR), the X Windows
+directory (XINCLUDE,XLIBRARY) and the compiler options (CC,LD,CFLAGS).
+
+make all
+make install
+
+The manual pages procmeter(3) and procmeterrc(5) gives more details on how to
+use the program.
+
+
+Author & Copyright
+------------------
+
+Andrew M. Bishop
+
+Procmeter Version 3.0 Written August-September 1998
+
+email: amb@gedanken.demon.co.uk [Please put procmeter in the subject line]
+
+This program is Copyright Andrew M. Bishop 1994,95,96,97,98
+and distributed under GPL.
