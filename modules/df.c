@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.5 1999-12-03 19:50:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.6 1999-12-12 14:08:02 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -37,7 +37,7 @@ ProcMeterOutput _outputs[2]=
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 10,
-  /* char  graph_units[8];   */ "(%d%)"
+  /* char  graph_units[8];   */ "(%d%%)"
  },
  /*+ The amount of free space +*/
  {
@@ -115,7 +115,7 @@ ProcMeterOutput **Initialise(char *options)
           char device[32],mount[32];
 
           if(sscanf(line,"%s %s",device,mount)==2)
-             if(strcmp(device,"none") && !strchr(device,':') && *mount=='/')
+             if(!strchr(device,':') && strcmp(mount,"none") && *device=='/' && *mount=='/')
                 add_disk(device,mount);
          }
        while(fgets(line,128,f));
@@ -135,10 +135,13 @@ ProcMeterOutput **Initialise(char *options)
     else
        do
          {
-          char device[32],mount[32];
+          char device[33],mount[33];
 
-          if(sscanf(line,"%s %s",device,mount)==2)
-             if(strcmp(device,"none") && !strchr(device,':') && *mount=='/')
+          if(*line=='#')
+             continue;
+
+          if(sscanf(line,"%32s %32s",device,mount)==2)
+             if(!strchr(device,':') && strcmp(mount,"none") && *device=='/' && *mount=='/')
                 add_disk(device,mount);
          }
        while(fgets(line,128,f));
