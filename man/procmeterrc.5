@@ -1,4 +1,4 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.4 1999-02-13 11:38:56 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.5 1999-03-03 19:42:56 amb Exp $
 .\"
 .\"  ProcMeter - A system monitoring program for Linux - Version 3.1.
 .\"
@@ -11,7 +11,7 @@
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETERRC 5 "Februaru 9, 1999"
+.TH PROCMETERRC 5 "March 3, 1999"
 .SH NAME
 The \.procmeterrc configuration file for procmeter3.
 .SH SYNOPSIS
@@ -47,6 +47,15 @@ The pathname of the library that contains the compiled ProcMeter modules.
 A list of other modules to be loaded. (separated by spaces).
 .LP
 The
+.B startup
+section
+.TP
+.BR order=...
+A list of the outputs that are to be started up in the order that they are to be
+displayed (separated by spaces).  If command line options are also specified
+then they appear after those specified here.
+.LP
+The
 .B resources
 section
 .TP
@@ -56,17 +65,17 @@ the default which is vertically.
 .TP
 .BR background=...
 The colour to use as the default background for all outputs. (An X11 colour name
-or a RGB value in hex as #RRGGBB.)
+or an RGB value in hex as #RRGGBB.)
 .TP
 .BR foreground=...
 The colour to use as the default foreground for all outputs. (An X11 colour name
-or a RGB value in hex as #RRGGBB.)
+or an RGB value in hex as #RRGGBB.)
 .TP
 .BR label-font=...
 The font to use for the label that describes the output.(An X11 font name.)
 .TP
 .BR label-foreground=...
-The colour to use as the foreground for the label. (An X11 colour name or a RGB
+The colour to use as the foreground for the label. (An X11 colour name or an RGB
 value in hex as #RRGGBB.)
 .TP
 .BR label-position=...
@@ -74,7 +83,7 @@ The position of the label relative to the body of the output.  (Either top,
 bottom or none.)
 .TP
 .BR grid-foreground=...
-The colour to use for the grid lines. (An X11 colour name or a RGB value in hex
+The colour to use for the grid lines. (An X11 colour name or an RGB value in hex
 as #RRGGBB.)
 .TP
 .BR graph-solid=...
@@ -91,11 +100,11 @@ The maximum number of grid lines to display on a graph.  (An integer.)
 The font to use for the textual outputs.  (An X11 font name.)
 .TP
 .BR menu-foreground=...
-The colour to use as the foreground for the menus.  (An X11 colour name or a RGB
+The colour to use as the foreground for the menus.  (An X11 colour name or an RGB
 value in hex as #RRGGBB.)
 .TP
 .BR menu-background=...
-The colour to use as the background for the menus.  (An X11 colour name or a RGB
+The colour to use as the background for the menus.  (An X11 colour name or an RGB
 value in hex as #RRGGBB.)  Note: The background of all items on the same menu
 must be the same due to the Xaw Widget set used.
 .TP
@@ -125,11 +134,5 @@ The output sections e.g.
 .I ProcMeter.Version
 These can contain any of the resource or module options which will then apply to
 the specified output.
-.TP
-.BR startup-graph=...
-A boolean to indicate if the graph for this output should be started as default.
-.TP
-.BR startup-text=...
-A boolean to indicate if the text for this output should be started as default.
 .SH SEE ALSO
 procmeter3(1)

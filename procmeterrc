@@ -8,6 +8,14 @@
 path=modules
 
 ##
+## The outputs to start
+##
+
+[startup]
+
+order=ProcMeter.Version Date_Time.Time_HM Date_Time.Date_DM
+
+##
 ## The global default resources, mainly X-Windows resources
 ##
 
@@ -44,7 +52,6 @@ menu-font = 7x13
 # A smaller font than normal with no label.
 text-font = 6x10
 label-position = none
-startup-text = true
 
 # More information about procmeter3
 run = xterm -e sh -c 'procmeter3 -h | less'
