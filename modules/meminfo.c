@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.2 1998-09-22 16:39:03 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.3 1998-10-24 09:01:59 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux (v3.0a).
 
   Memory status module source file.
   ******************/ /******************
@@ -225,7 +225,7 @@ ProcMeterOutput **Initialise(char *options)
              while(mem_tot)
                {mem_tot>>=1; mem_scale<<=1; mem_shift++;}
 
-             sprintf(str,"%ld MB",mem_scale);
+             sprintf(str,"(%ld MB)",mem_scale);
 
              for(i=0;i<N_OUTPUTS;i++)
                {
