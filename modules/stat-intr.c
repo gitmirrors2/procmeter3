@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.7 2002-12-07 19:38:59 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.8 2003-02-23 14:09:17 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4a.
 
   Interrupt statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002 Andrew M. Bishop
+  This file Copyright 1998,99,2002,2003 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -219,7 +219,7 @@ int Update(time_t now,ProcMeterOutput *output)
        return(-1);
 
     while((l=fgets(line,BUFFLEN,f))) /* cpu or disk or page or swap or intr */
-       if(line[0]=='d' && line[1]=='i' && line[2]=='s' && line[3]=='k')
+       if(line[0]=='i' && line[1]=='n' && line[2]=='t' && line[3]=='r')
           break;
 
     sscanf(line,"intr %lu%n",&current[0],&p);
