@@ -38,7 +38,7 @@ label-font = 5x7
 label-foreground = black
 label-position = bottom
 
-# The menu items, black on white in a small-medium size font.
+# The menu items, black on white in a small-medium size font (These are not used for GTK version).
 menu-foreground = black
 menu-background = grey80
 menu-font = 7x13
