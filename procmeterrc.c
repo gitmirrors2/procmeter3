@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.3 1999-12-06 20:13:47 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.4 1999-12-16 19:09:05 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2.
+  ProcMeter - A system monitoring program for Linux - Version 3.2a.
 
   Handle the .procmeterrc file.
   ******************/ /******************
@@ -59,7 +59,6 @@ static char *fgets_realloc(char *buffer,FILE *file);
 void LoadProcMeterRC(int *argc,char **argv)
 {
  char *rcpath=NULL;
- FILE *rc;
  struct stat buf;
  char *home,*line=NULL;
  Section *next_section=&FirstSection;
@@ -96,7 +95,7 @@ void LoadProcMeterRC(int *argc,char **argv)
 
  if(rcpath)
    {
-    rc=fopen(rcpath,"r");
+    FILE *rc=fopen(rcpath,"r");
 
     while((line=fgets_realloc(line,rc)))
       {
@@ -170,6 +169,8 @@ void LoadProcMeterRC(int *argc,char **argv)
           next_parameter=&(*next_parameter)->next;
          }
       }
+
+    fclose(rc);
    }
 
  /* Add in extra command line options. */
