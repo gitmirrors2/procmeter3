@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.2 2002-04-20 12:53:42 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.3 2002-06-02 09:54:57 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
@@ -100,6 +100,7 @@ inline char *scan_acpi_value (const char *buf, const char *key) {
  * from a file, slow if called many times. */
 char *get_acpi_value (const char *file, const char *key) {
 	char *buf = get_acpi_file(file);
+	if (! buf) return NULL;
 	return scan_acpi_value(buf, key);
 }
 
