@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.7 2004-03-19 19:00:53 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.8 2004-05-17 18:37:24 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4c.
 
   Temperature indicators for Mainboard and CPU
   Based on loadavg.c, stat-cpu.c by Andrew M. Bishop
@@ -168,18 +168,30 @@ ProcMeterOutput **Initialise(char *options)
                 if(stat(filename,&buf)!=0 || !S_ISREG(buf.st_mode))
                    continue;
 
-                if(!strcmp(ent2->d_name,"temp"))
-                   add_temperature(filename);
+                if(!strncmp(ent2->d_name,"temp",4))
+                  {
+                   if(!ent2->d_name[4])
+                      add_temperature(filename);
+                   else if(isdigit(ent2->d_name[4]) && !ent2->d_name[5]) /* kernel < 2.6.0 */
+                      add_temperature(filename);
+                   else if(isdigit(ent2->d_name[4]) && !strcmp(ent2->d_name+5,"_input")) /* kernel >= 2.6.0 */
+                      add_temperature(filename);
+                   else if(!strncmp(ent2->d_name+5,"_input",6) && isdigit(ent2->d_name[10]) && !ent2->d_name[11]) /* kernel >= 2.6.0 */
+                      add_temperature(filename);
+                  }
                 else if(!strcmp(ent2->d_name,"remote_temp"))
                    add_temperature(filename);
-                else if(!strncmp(ent2->d_name,"temp",4) && isdigit(ent2->d_name[4]) && !ent2->d_name[5]) /* kernel < 2.6.0 */
-                   add_temperature(filename);
-                else if(!strncmp(ent2->d_name,"temp_input",10) && isdigit(ent2->d_name[10]) && !ent2->d_name[11]) /* kernel >= 2.6.0 */
-                   add_temperature(filename);
-                else if(!strncmp(ent2->d_name,"fan",3) && isdigit(ent2->d_name[3]) && !ent2->d_name[4]) /* kernel < 2.6.0 */
-                   add_fan(filename);
-                else if(!strncmp(ent2->d_name,"fan_input",9) && isdigit(ent2->d_name[9]) && !ent2->d_name[10]) /* kernel >= 2.6.0 */
-                   add_fan(filename);
+                else if(!strncmp(ent2->d_name,"fan",3))
+                  {
+                   if(!ent2->d_name[3])
+                      add_fan(filename);
+                   else if(isdigit(ent2->d_name[3]) && !ent2->d_name[4]) /* kernel < 2.6.0 */
+                      add_fan(filename);
+                   else if(isdigit(ent2->d_name[3]) && !strcmp(ent2->d_name+4,"_input")) /* kernel >= 2.6.0 */
+                      add_fan(filename);
+                   else if(!strncmp(ent2->d_name+4,"_input",6) && isdigit(ent2->d_name[9]) && !ent2->d_name[10]) /* kernel >= 2.6.0 */
+                      add_fan(filename);
+                  }
                }
 
              closedir(d2);
