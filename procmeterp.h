@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.10 2000-12-16 16:28:16 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.11 2002-06-04 12:56:03 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Global private header file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99 Andrew M. Bishop
+  This file Copyright 1998,99,2002 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -80,7 +80,7 @@ struct _Output
 {
  ProcMeterOutput *output;       /*+ The output that this represents. +*/
 
- char  label[16];               /*+ The label of the output. +*/
+ char label[16];                /*+ The label of the output. +*/
 
  RunOption menu_run;            /*+ The function that can be run for this output. +*/
 
@@ -96,6 +96,10 @@ struct _Output
 /*+ The complete list of modules. +*/
 extern Module* Modules;
 
+/* In procmeter.c */
+
+void UpdateOutputs(time_t now);
+void AddDefaultOutputs(int argc,char **argv);
 
 /* In module.c */
 
@@ -108,28 +112,35 @@ void UnloadModule(Module module);
 /* In procmeterrc.c */
 
 void LoadProcMeterRC(int *argc,char **argv);
+
 char *GetProcMeterRC(char *section,char *parameter);
 char *GetProcMeterRC2(char *module,char *output,char *parameter);
+
 void FreeProcMeterRC(void);
 
-/* In xaw/window.c or gtk/window.c */
+/* In xaw/window.c or gtk/window.c or no-x/window.c */
 
-void StartX(int *argc,char **argv);
-void StopX(void);
-void SleepX(time_t until);
-void UpdateX(time_t now);
-void AddDefaultOutputs(int argc,char **argv);
-void AddRemoveOutput(Output);
-void MoveOutput(Output output1,Output output2,int direction);
+void Start(int *argc,char **argv);
+void Stop(void);
 
-/* In xaw/menus.c or gtk/menus.c */
+void Sleep(time_t until);
+
+void AddRemoveOutput(Output output);
+
+void UpdateGraph(Output output,short value);
+void UpdateText(Output output,char *value);
+void UpdateBar(Output output,short value);
+
+/* In xaw/menus.c or gtk/menus.c or no-x/menus.c */
 
 void AddModuleToMenu(Module module);
 void RemoveModuleFromMenu(Module module);
 
-/* In xaw/run.c or gtk/run.c */
+/* In xaw/run.c or gtk/run.c or no-x/run.c */
 
 void ParseRunCommand(char *string,RunOption *run);
+
 void RunProgram(RunOption *run);
+
 
 #endif /* PROCMETERP_H */
