@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.4 1999-02-13 11:37:24 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.5 1999-02-16 15:15:07 amb Exp $
 
   ProcMeter Graph Widget Source file (for ProcMeter3 3.1).
   ******************/ /******************
@@ -131,7 +131,7 @@ static void Initialize(ProcMeterGraphWidget request,ProcMeterGraphWidget new)
  if(request->procmeter_graph.grid_max<0)
     new->procmeter_graph.grid_max=0;
 
- if(new->procmeter_graph.grid_max<new->procmeter_graph.grid_min)
+ if(new->procmeter_graph.grid_max && new->procmeter_graph.grid_max<new->procmeter_graph.grid_min)
     new->procmeter_graph.grid_max=new->procmeter_graph.grid_min;
 
  new->procmeter_graph.grid_num=new->procmeter_graph.grid_min;
@@ -217,7 +217,7 @@ static Boolean SetValues(ProcMeterGraphWidget current,ProcMeterGraphWidget reque
     if(request->procmeter_graph.grid_min==0)
        new->procmeter_graph.grid_min=1;
 
-    if(request->procmeter_graph.grid_min>request->procmeter_graph.grid_max)
+    if(request->procmeter_graph.grid_min>request->procmeter_graph.grid_max && request->procmeter_graph.grid_max)
        new->procmeter_graph.grid_min=request->procmeter_graph.grid_max;
 
     if(new->procmeter_graph.grid_min>=new->procmeter_graph.grid_num)
@@ -231,7 +231,7 @@ static Boolean SetValues(ProcMeterGraphWidget current,ProcMeterGraphWidget reque
     if(request->procmeter_graph.grid_max<0)
        new->procmeter_graph.grid_max=0;
 
-    if(request->procmeter_graph.grid_max<new->procmeter_graph.grid_min)
+    if(request->procmeter_graph.grid_max && request->procmeter_graph.grid_max<new->procmeter_graph.grid_min)
        new->procmeter_graph.grid_max=new->procmeter_graph.grid_min;
 
     redraw=True;
