@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.11 2002-12-07 19:32:00 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.12 2003-06-21 18:39:49 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4a.
 
   Main program.
   ******************/ /******************
@@ -367,7 +367,7 @@ void AddDefaultOutputs(int argc,char **argv)
 
 static char *get_substring(char **start,int length)
 {
- static char string[80];
+ static char string[81];
 
  if(strlen(*start)>length)
    {
