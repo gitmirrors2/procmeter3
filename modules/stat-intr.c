@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.5 2002-06-04 13:54:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.6 2002-11-09 19:44:11 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.3c.
 
   Interrupt statistics source file.
   ******************/ /******************
@@ -95,7 +95,7 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[BUFFLEN+1];
+ char line[BUFFLEN+1],*l;
  int n=0;
 
  outputs[0]=NULL;
@@ -110,23 +110,21 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/stat'.\n",__FILE__);
  else
    {
-    if(!fgets(line,BUFFLEN,f)) /* cpu */
+    l=fgets(line,256,f); /* cpu */
+    if(!l)
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
     else
       {
        int i,p,pp;
 
-       while(line[0]=='c') /* kernel version > ~2.1.84 */
-          fgets(line,BUFFLEN,f); /* cpu or disk or page */
+       while(l && !(line[0]=='i' && line[1]=='n' && line[2]=='t' && line[3]=='r'))
+          l=fgets(line,BUFFLEN,f); /* cpu or disk or page or swap or intr */
 
-       while(line[0]=='d') /* kernel version < ~2.4.0-test4 */
-          fgets(line,BUFFLEN,f); /* disk_* or page */
-
-       fgets(line,BUFFLEN,f); /* swap */
-
-       fgets(line,BUFFLEN,f); /* intr */
-
-       if(sscanf(line,"intr %lu%n",&current[0],&p)==1)
+       if(!l)
+          fprintf(stderr,"ProcMeter(%s): Unexpected 'intr' line in '/proc/stat'.\n"
+                         "    expected: 'intr ...'\n"
+                         "    found:    EOF",__FILE__);
+       else if(sscanf(line,"intr %lu%n",&current[0],&p)==1)
          {
           for(i=0;i<N_INTR;i++)
              if(sscanf(line+p,"%lu%n",&current[i+1],&pp)==1)
@@ -176,7 +174,9 @@ ProcMeterOutput **Initialise(char *options)
           outputs[n]=NULL;
          }
        else
-          fprintf(stderr,"ProcMeter(%s): Unexpected 'intr' line in '/proc/stat'.\n",__FILE__);
+          fprintf(stderr,"ProcMeter(%s): Unexpected 'intr' line in '/proc/stat'.\n"
+                         "    expected: 'intr %%lu ...'\n"
+                         "    found:    %s",__FILE__,line);
       }
 
     fclose(f);
@@ -206,7 +206,7 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[BUFFLEN+1];
+    char line[BUFFLEN+1],*l;
     long *temp;
     int p,pp;
 
@@ -218,17 +218,9 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    fgets(line,BUFFLEN,f); /* cpu */
-
-    while(line[0]=='c') /* kernel version > ~2.1.84 */
-       fgets(line,BUFFLEN,f); /* cpu or disk or page */
-
-    while(line[0]=='d') /* kernel version < ~2.4.0-test4 */
-       fgets(line,BUFFLEN,f); /* disk_* or page */
-
-    fgets(line,BUFFLEN,f); /* swap */
-
-    fgets(line,BUFFLEN,f); /* intr */
+    while((l=fgets(line,BUFFLEN,f))) /* cpu or disk or page or swap or intr */
+       if(line[0]=='d' && line[1]=='i' && line[2]=='s' && line[3]=='k')
+          break;
 
     sscanf(line,"intr %lu%n",&current[0],&p);
     for(i=0;i<nintr;i++)

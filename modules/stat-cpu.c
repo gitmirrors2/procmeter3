@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.6 2002-06-04 13:54:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.7 2002-11-09 19:44:11 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.3c.
 
   Low level system statistics for CPU usage.
   ******************/ /******************
@@ -26,6 +26,9 @@
 #define CPU_SYS     3
 #define CPU_IDLE    4
 #define N_OUTPUTS   5
+
+/*+ The length of the buffer for reading in lines. +*/
+#define BUFFLEN 2048
 
 /* The interface information.  */
 
@@ -194,7 +197,7 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[256];
+ char line[BUFFLEN],*l;
  int n=0;
 
  outputs=(ProcMeterOutput**)malloc(sizeof(ProcMeterOutput*));
@@ -210,7 +213,7 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/stat'.\n",__FILE__);
  else
    {
-    if(!fgets(line,256,f)) /* cpu */
+    if(!fgets(line,BUFFLEN,f)) /* cpu */
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
     else
       {
@@ -220,8 +223,8 @@ ProcMeterOutput **Initialise(char *options)
 
           current[CPU]=current[CPU_USER]+current[CPU_NICE]+current[CPU_SYS];
 
-          fgets(line,256,f); /* cpu or disk or page */
-          while(line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
+          l=fgets(line,BUFFLEN,f); /* cpu or disk or page */
+          while(l && line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
             {
              int ncpu;
              long cpu_user,cpu_nice,cpu_sys,cpu_idle;
@@ -252,9 +255,11 @@ ProcMeterOutput **Initialise(char *options)
                   }
                }
              else
-                fprintf(stderr,"ProcMeter(%s): Unexpected 'cpu%d' line in '/proc/stat'.\n",__FILE__,ncpu);
+                fprintf(stderr,"ProcMeter(%s): Unexpected 'cpu%d' line in '/proc/stat'.\n"
+                               "    expected: 'cpu%d %%lu %%lu %%lu %%lu'\n"
+                               "    found:    %s",__FILE__,ncpu,ncpu,line);
 
-             fgets(line,256,f); /* cpu or disk or page */
+             l=fgets(line,BUFFLEN,f); /* cpu or disk or page */
             }
 
           outputs=(ProcMeterOutput**)realloc((void*)outputs,(1+N_OUTPUTS+ncpus*N_OUTPUTS)*sizeof(ProcMeterOutput*));
@@ -268,7 +273,9 @@ ProcMeterOutput **Initialise(char *options)
           outputs[n]=NULL;
          }
        else
-          fprintf(stderr,"ProcMeter(%s): Unexpected 'cpu' line in '/proc/stat'.\n",__FILE__);
+          fprintf(stderr,"ProcMeter(%s): Unexpected 'cpu' line in '/proc/stat'.\n"
+                         "    expected: 'cpu %%lu %%lu %%lu %%lu'\n"
+                         "    found:    %s",__FILE__,line);
       }
 
     fclose(f);
@@ -298,7 +305,7 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[256];
+    char line[BUFFLEN],*l;
     long *temp;
 
     temp=current;
@@ -313,12 +320,12 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    fgets(line,256,f); /* cpu */
+    l=fgets(line,BUFFLEN,f); /* cpu */
     sscanf(line,"cpu %lu %lu %lu %lu",&current[CPU_USER],&current[CPU_NICE],&current[CPU_SYS],&current[CPU_IDLE]);
     current[CPU]=current[CPU_USER]+current[CPU_NICE]+current[CPU_SYS];
 
-    fgets(line,256,f); /* cpu or disk or page */
-    while(line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
+    l=fgets(line,BUFFLEN,f); /* cpu or disk or page */
+    while(l && line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
       {
        int ncpu;
        long cpu_user,cpu_nice,cpu_sys,cpu_idle;
@@ -332,7 +339,7 @@ int Update(time_t now,ProcMeterOutput *output)
 
        smp_current[CPU+ncpu*N_OUTPUTS]=smp_current[CPU_USER+ncpu*N_OUTPUTS]+smp_current[CPU_NICE+ncpu*N_OUTPUTS]+smp_current[CPU_SYS+ncpu*N_OUTPUTS];
 
-       fgets(line,256,f); /* cpu or disk or page */
+       l=fgets(line,BUFFLEN,f); /* cpu or disk or page */
       }
 
     fclose(f);
