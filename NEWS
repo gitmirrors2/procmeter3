@@ -1,3 +1,11 @@
+Version 3.2a of ProcMeter3 released : Sun Oct 22 16:30:00 2000
+--------------------------------------------------------------
+
+Bug fixes:
+ Use a default font if the user specified one fails.  Handle kernel version
+ 2.4.0 with new format for /proc/stat.
+
+
 Version 3.2 of ProcMeter3 released : Sun Dec 12 14:15:00 1999
 -------------------------------------------------------------
 
