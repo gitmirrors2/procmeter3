@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.9 2002-12-07 19:40:25 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.10 2003-06-21 18:41:05 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.4.
 
@@ -119,7 +119,7 @@ ProcMeterOutput _disk_outputs_240[N_OUTPUTS]=
  /*+ The disk blocks accessed per second +*/
  {
   /* char  name[];          */ "Disk_%s",
-  /* char *description;     */ "The total number of disk blocks that are accessed per second on disk /dev/%s.",
+  /* char *description;     */ "The total number of disk blocks that are accessed per second on disk %s.",
   /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;        */ 1,
   /* char  text_value[];    */ "0 /s",
@@ -130,7 +130,7 @@ ProcMeterOutput _disk_outputs_240[N_OUTPUTS]=
  /*+ The disk blocks read per second +*/
  {
   /* char  name[];          */ "Disk_%s_R",
-  /* char *description;     */ "The number of disk blocks that are read per second on disk /dev/%s.",
+  /* char *description;     */ "The number of disk blocks that are read per second on disk %s.",
   /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;        */ 1,
   /* char  text_value[];    */ "0 /s",
@@ -141,7 +141,7 @@ ProcMeterOutput _disk_outputs_240[N_OUTPUTS]=
  /*+ The disk blocks write per second +*/
  {
   /* char  name[];          */ "Disk_%s_W",
-  /* char *description;     */ "The number of disk blocks that are written per second on disk /dev/%s.",
+  /* char *description;     */ "The number of disk blocks that are written per second on disk %s.",
   /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;        */ 1,
   /* char  text_value[];    */ "0 /s",
@@ -165,7 +165,11 @@ ProcMeterModule module=
 };
 
 
+static int add_disk_240(char *devname);
+
 static unsigned long *current,*previous,*values[2];
+
+static unsigned *majors=NULL,*indexes=NULL;
 
 static int ndisks=4;
 
@@ -293,17 +297,17 @@ ProcMeterOutput **Initialise(char *options)
          {
           int maj,min,idx,num=8,nm,nr;
           unsigned long d0,d1,d2,d3,d4;
-          int i,j;
           DIR *devdir,*devdiscsdir;
           char devname[PATH_MAX];
           struct dirent *ent;
           struct stat buf;
 
           kernel_version_240=1;
-          ndisks=0;
 
-          current[DISK_READ]=0;
-          current[DISK_WRITE]=0;
+          majors =(unsigned*)malloc((ndisks+1)*sizeof(unsigned));
+          indexes=(unsigned*)malloc((ndisks+1)*sizeof(unsigned));
+
+          ndisks=0;
 
           devdir=opendir("/dev");
           devdiscsdir=opendir("/dev/discs");
@@ -311,7 +315,7 @@ ProcMeterOutput **Initialise(char *options)
           while((nr=sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu,%lu)%n",&maj,&idx,&d0,&d1,&d2,&d3,&d4,&nm))==7 ||
                 (nr=sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu)%n",&maj,&idx,&d0,&d1,&d2,&d3,&nm))==6)
             {
-             char diskname[9];
+             int done=0;
 
              num+=nm;
 
@@ -338,83 +342,39 @@ ProcMeterOutput **Initialise(char *options)
                 min=0;
                }
 
-             diskname[0]=0;
              if(devdiscsdir)
                {
                 rewinddir(devdiscsdir);
                 while((ent=readdir(devdiscsdir)))
                   {
                    sprintf(devname,"/dev/discs/%s/disc",ent->d_name);
-                   if(!stat(devname,&buf) && S_ISBLK(buf.st_mode) &&
+                   if(!lstat(devname,&buf) && S_ISBLK(buf.st_mode) && !S_ISLNK(buf.st_mode) &&
                       major(buf.st_rdev)==maj && minor(buf.st_rdev)==min)
-                     {
-                      strncpy(diskname,ent->d_name,8);
-                      diskname[8]=0;
-                      break;
-                     }
+                      done=add_disk_240(devname);
                   }
                }
-             if(!*diskname && devdir)
+             if(!done && devdir)
                {
                 rewinddir(devdir);
                 while((ent=readdir(devdir)))
                   {
                    sprintf(devname,"/dev/%s",ent->d_name);
-                   if(!stat(devname,&buf) && S_ISBLK(buf.st_mode) &&
+                   if(!lstat(devname,&buf) && S_ISBLK(buf.st_mode) && !S_ISLNK(buf.st_mode) &&
                       major(buf.st_rdev)==maj && minor(buf.st_rdev)==min)
-                     {
-                      strncpy(diskname,ent->d_name,8);
-                      diskname[8]=0;
-                      break;
-                     }
+                      done=add_disk_240(devname);
                   }
                }
-             if(!*diskname)
+             if(!done)
                {
                 fprintf(stderr,"ProcMeter(%s): Cannot find disk in /dev or /dev/discs for device %d:%d in '/proc/stat'.\n",__FILE__,maj,min);
                 continue;
                }
-
-             current[DISK_READ] +=d1;
-             current[DISK_WRITE]+=d3;
-
-             if(ndisks>=4)
-               {
-                disk_outputs=(ProcMeterOutput*)realloc((void*)disk_outputs,(N_OUTPUTS*(ndisks+1))*sizeof(ProcMeterOutput));
-
-                outputs=(ProcMeterOutput**)realloc((void*)outputs,(N_OUTPUTS*(ndisks+1+1)+1)*sizeof(ProcMeterOutput*));
-
-                values[0]=(unsigned long*)realloc((void*)values[0],(N_OUTPUTS*(ndisks+1+1))*sizeof(unsigned long));
-                values[1]=(unsigned long*)realloc((void*)values[1],(N_OUTPUTS*(ndisks+1+1))*sizeof(unsigned long));
-
-                current=values[0];
-                previous=values[1];
-               }
-
-             for(i=0;i<N_OUTPUTS;i++)
-               {
-                disk_outputs[i+ndisks*N_OUTPUTS]=_disk_outputs_240[i];
-                snprintf(disk_outputs[i+ndisks*N_OUTPUTS].name, PROCMETER_NAME_LEN, _disk_outputs_240[i].name, diskname);
-                disk_outputs[i+ndisks*N_OUTPUTS].description=(char*)malloc(strlen(_disk_outputs_240[i].description)+8);
-                sprintf(disk_outputs[i+ndisks*N_OUTPUTS].description,_disk_outputs_240[i].description,diskname);
-               }
-
-             ndisks++;
             }
 
           if(devdir)
              closedir(devdir);
           if(devdiscsdir)
              closedir(devdiscsdir);
-
-          for(i=0;i<N_OUTPUTS;i++)
-             outputs[n++]=&_outputs[i];
-          for(j=0;j<ndisks;j++)
-             for(i=0;i<N_OUTPUTS;i++)
-                outputs[n++]=&disk_outputs[i+j*N_OUTPUTS];
-          outputs[n]=NULL;
-
-          current[DISK]=current[DISK_READ]+current[DISK_WRITE];
          }
        else
           fprintf(stderr,"ProcMeter(%s): Unexpected 'disk' line in '/proc/stat'.\n"
@@ -425,7 +385,140 @@ ProcMeterOutput **Initialise(char *options)
     fclose(f);
    }
 
+ /* Add in the options from the config file. */
+
+ if(options && kernel_version_240)
+   {
+    char *l=options;
+
+    while(*l && *l==' ')
+       l++;
+
+    while(*l)
+      {
+       char *r=l,pr;
+
+       while(*r && *r!=' ')
+          r++;
+
+       pr=*r;
+       *r=0;
+
+       if(!add_disk_240(l))
+          fprintf(stderr,"ProcMeter(%s): Cannot find device for disk %s.\n",__FILE__,l);
+
+       *r=pr;
+       while(*r && *r==' ')
+          r++;
+
+       if(!*r)
+          break;
+
+       l=r;
+      }
+   }
+
+ if(kernel_version_240)
+   {
+    int i,j;
+
+    for(i=0;i<N_OUTPUTS;i++)
+       outputs[n++]=&_outputs[i];
+
+    for(j=0;j<ndisks;j++)
+       for(i=0;i<N_OUTPUTS;i++)
+          outputs[n++]=&disk_outputs[i+j*N_OUTPUTS];
+
+    outputs[n]=NULL;
+
+    current[DISK]=current[DISK_READ]=current[DISK_WRITE]=0;
+    for(j=0;j<ndisks;j++)
+       current[DISK+(j+1)*N_OUTPUTS]=current[DISK_READ+(j+1)*N_OUTPUTS]=current[DISK_WRITE+(j+1)*N_OUTPUTS]=0;
+   }
+
  return(outputs);
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Add a disk (kernel version > ~2.4.0-test4).
+
+  int add_disk_240 Returns 1 if a disk was added.
+
+  char *devname The name of the device to add.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+static int add_disk_240(char *devname)
+{
+ struct stat buf;
+ char *diskname=devname+strlen(devname);
+ int maj,min,idx,i;
+
+ if(stat(devname,&buf) || !S_ISBLK(buf.st_mode))
+    return(0);
+
+ maj=major(buf.st_rdev);
+ min=minor(buf.st_rdev);
+
+ /* This switch statement is the one in /usr/include/linux/genhd.h */
+
+ switch (maj)
+   {
+   case DAC960_MAJOR+0:
+    idx = (min & 0x00f8) >> 3;
+    break;
+   case SCSI_DISK0_MAJOR:
+    idx = (min & 0x00f0) >> 4;
+    break;
+   case IDE0_MAJOR:	/* same as HD_MAJOR */
+   case XT_DISK_MAJOR:
+    idx = (min & 0x0040) >> 6;
+    break;
+   case IDE1_MAJOR:
+    idx = ((min & 0x0040) >> 6) + 2;
+    break;
+   default:
+    idx=0;
+   }
+
+ while(diskname>devname && *diskname!='/')
+    diskname--;
+
+ if(diskname==devname)
+    return(0);
+
+ diskname++;
+
+ if(ndisks>=3)
+   {
+    disk_outputs=(ProcMeterOutput*)realloc((void*)disk_outputs,(N_OUTPUTS*(ndisks+1))*sizeof(ProcMeterOutput));
+
+    outputs=(ProcMeterOutput**)realloc((void*)outputs,(N_OUTPUTS*(ndisks+1+1)+1)*sizeof(ProcMeterOutput*));
+
+    values[0]=(unsigned long*)realloc((void*)values[0],(N_OUTPUTS*(ndisks+1+1))*sizeof(unsigned long));
+    values[1]=(unsigned long*)realloc((void*)values[1],(N_OUTPUTS*(ndisks+1+1))*sizeof(unsigned long));
+
+    current=values[0];
+    previous=values[1];
+
+    majors =(unsigned*)realloc((void*)majors ,(ndisks+1)*sizeof(unsigned));
+    indexes=(unsigned*)realloc((void*)indexes,(ndisks+1)*sizeof(unsigned));
+   }
+
+ for(i=0;i<N_OUTPUTS;i++)
+   {
+    disk_outputs[i+ndisks*N_OUTPUTS]=_disk_outputs_240[i];
+    snprintf(disk_outputs[i+ndisks*N_OUTPUTS].name, PROCMETER_NAME_LEN, _disk_outputs_240[i].name, diskname);
+    disk_outputs[i+ndisks*N_OUTPUTS].description=(char*)malloc(strlen(_disk_outputs_240[i].description)+strlen(devname));
+    sprintf(disk_outputs[i+ndisks*N_OUTPUTS].description,_disk_outputs_240[i].description,devname);
+   }
+
+ majors[ndisks] =maj;
+ indexes[ndisks]=idx;
+
+ ndisks++;
+
+ return(1);
 }
 
 
@@ -500,27 +593,32 @@ int Update(time_t now,ProcMeterOutput *output)
     else /* kernel version > ~2.4.0-test4 */
       {
        int num=8,nm,nr=0;
-       int j=1;
+       int j;
 
        current[DISK_READ]=0;
        current[DISK_WRITE]=0;
 
        while(1)
          {
+          unsigned maj,idx;
           unsigned long d1,d3;
 
           if(kernel_version_240==6)
-             nr=sscanf(line+num," (%*d,%*d):(%*u,%lu,%*u,%lu)%n",&d1,&d3,&nm);
+             nr=sscanf(line+num," (%d,%d):(%*u,%lu,%*u,%lu)%n",&maj,&idx,&d1,&d3,&nm);
           else if(kernel_version_240==7)
-             nr=sscanf(line+num," (%*d,%*d):(%*u,%lu,%*u,%lu,%*u)%n",&d1,&d3,&nm);
+             nr=sscanf(line+num," (%d,%d):(%*u,%lu,%*u,%lu,%*u)%n",&maj,&idx,&d1,&d3,&nm);
 
-          if(nr!=2)
+          if(nr!=4)
              break;
 
-          current[N_OUTPUTS*j+DISK_READ]=d1;
-          current[N_OUTPUTS*j+DISK_WRITE]=d3;
+          for(j=0;j<ndisks;j++)
+             if(majors[j]==maj && indexes[j]==idx)
+               {
+                current[N_OUTPUTS*(j+1)+DISK_READ]=d1;
+                current[N_OUTPUTS*(j+1)+DISK_WRITE]=d3;
 
-          current[N_OUTPUTS*j+DISK]=d1+d3;
+                current[N_OUTPUTS*(j+1)+DISK]=d1+d3;
+               }
 
           current[DISK_READ] +=d1;
           current[DISK_WRITE]+=d3;
