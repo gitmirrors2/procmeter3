@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.9 1999-09-29 19:00:09 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.10 1999-10-05 17:54:10 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -385,7 +385,7 @@ void AddRemoveOutput(Output output)
    }
  else
    {
-    Widget w;
+    Widget w=NULL;
     char *string,str[16];
     Arg args[16];
     int nargs=0;
@@ -501,6 +501,8 @@ void AddRemoveOutput(Output output)
            (string=GetProcMeterRC(module->module->name,"grid-max")) ||
            (string=GetProcMeterRC("resources","grid-max"))))
          {XtSetArg(args[nargs],XtNgridMax,StringToInt(string));nargs++;}
+
+       XtSetArg(args[nargs],XtNmin,MINHEIGHT);nargs++;
 
        XtSetArg(args[nargs],XtNlabel,output->label);nargs++;
        sprintf(str,output->output->graph_units,output->output->graph_scale);
@@ -672,7 +674,7 @@ static void ResizePane(void)
     else if(displayed[i]->type==PROCMETER_TEXT)
        gsize-=min_size;
     else if(displayed[i]->type==PROCMETER_BAR)
-       gsize-=min_size;
+       ngraphs++;
 
     rsize-=min_size;
 
@@ -691,7 +693,7 @@ static void ResizePane(void)
     size=gsize/ngraphs;
 
     for(i=0;i<ndisplayed;i++)
-       if(displayed[i]->type==PROCMETER_GRAPH)
+       if(displayed[i]->type==PROCMETER_GRAPH || displayed[i]->type==PROCMETER_BAR)
           XtVaSetValues(displayed[i]->output_widget,vertical?XtNheight:XtNwidth,size,NULL);
    }
  else
