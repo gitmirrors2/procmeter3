@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/run.c,v 1.3 1999-12-05 17:16:52 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/run.c,v 1.4 2000-12-16 16:50:29 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2.
+  ProcMeter - A system monitoring program for Linux - Version 3.3.
 
   Run external programs.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1999 Andrew M. Bishop
+  This file Copyright 1999,2000 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -16,19 +16,19 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <ctype.h>
 #include <unistd.h>
 #include <errno.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
-#include <X11/Intrinsic.h>
 
 #include "procmeterp.h"
 
 
-/*+ The pane that contains all of the outputs. +*/
-extern Widget pane;
+/*+ The display that we are using. +*/
+extern Display *display;
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -111,7 +111,7 @@ void RunProgram(RunOption *run)
     return;
 
  if(run->flag==RUN_XBELL)
-    XBell(XtDisplay(pane),0);
+    XBell(display,0);
  else
    {
     pid_t pid=fork();
@@ -120,17 +120,16 @@ void RunProgram(RunOption *run)
        fprintf(stderr,"ProcMeter3: Cannot fork child process %s\n",strerror(errno));
     else if(pid==0)
       {
-       char *string,*display;
+       char *string,*displayname,*displayenv;
 
-       display=XDisplayString(XtDisplay(pane));
-       display=(char*)malloc(strlen(display)+10);
-
-       sprintf(display,"DISPLAY=%s",XDisplayString(XtDisplay(pane)));
-       putenv(display);
+       displayname=XDisplayString(display);
+       displayenv=(char*)malloc(strlen(displayname)+10);
+       sprintf(displayenv,"DISPLAY=%s",displayname);
+       putenv(displayenv);
 
        /* close the X connection */
 
-       close(ConnectionNumber(XtDisplay(pane)));
+       close(ConnectionNumber(display));
 
        switch(run->flag)
          {
