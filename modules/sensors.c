@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.2 1999-09-29 19:00:02 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.3 1999-12-04 16:19:43 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -342,13 +342,21 @@ void Unload(void)
 
  for(i=0;i<ntemps;i++)
     free(temp_filename[i]);
- free(temp_filename);
- free(temp_outputs);
+ if(temp_filename)
+    free(temp_filename);
+ for(i=0;i<ntemps;i++)
+    free(temp_outputs[i].description);
+ if(temp_outputs)
+    free(temp_outputs);
 
  for(i=0;i<nfans;i++)
     free(fan_filename[i]);
- free(fan_filename);
- free(fan_outputs);
+ if(fan_filename)
+    free(fan_filename);
+ for(i=0;i<nfans;i++)
+    free(fan_outputs[i].description);
+ if(fan_outputs)
+    free(fan_outputs);
 
  free(outputs);
 }
