@@ -1,17 +1,17 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.14 2002-11-30 19:11:38 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.15 2004-09-07 17:49:52 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.4.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.4d.
 .\"
 .\"  Manual page for .procmeterrc file
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998,99,2000,01,02 Andrew M. Bishop
+.\"  This file Copyright 1998,99,2000,01,02,04 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETERRC 5 "November 30, 2002"
+.TH PROCMETERRC 5 "September 7, 2004"
 
 .SH NAME
 
@@ -64,9 +64,10 @@ The pathname of the library that contains the compiled ProcMeter modules.
 .BR others=...
 A list of other modules to be loaded (full pathnames separated by spaces).
 .LP
-The
-.B startup
-section controls how the procmeter window ahould look when the program is
+
+.SH startup SECTION
+
+This section controls how the procmeter window ahould look when the program is
 started.
 .TP
 .BR order=...
