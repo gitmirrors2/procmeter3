@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.4 2002-06-04 13:54:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.5 2002-10-27 09:35:08 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.3c.
 
   Transmeta longrun support.
   ******************/ /******************
@@ -14,13 +14,15 @@
   for conditions under which this file may be redistributed.
   ***************************************/
 
+#define _XOPEN_SOURCE 500
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#define __USE_UNIX98    /* for pread/pwrite */
+#define __USE_FILE_OFFSET64 /* we should use 64 bit offset for pread */
 #include <unistd.h>
 
 #include "procmeter.h"
@@ -35,7 +37,7 @@
 
 static int cpuid_fd = 0;
 
-static void read_cpuid(long address, int *eax, int *ebx, int *ecx, int *edx) {
+static void read_cpuid(loff_t address, int *eax, int *ebx, int *ecx, int *edx) {
         uint32_t data[4];
 
         if (pread(cpuid_fd, &data, 16, address) != 16) {
