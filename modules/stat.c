@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.8 2000-12-13 17:32:49 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.9 2001-02-14 19:06:21 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2b.
+  ProcMeter - A system monitoring program for Linux - Version 3.3a.
 
   Low level system statistics source file.
   ******************/ /******************
@@ -337,7 +337,7 @@ ProcMeterOutput **Initialise(char *options)
        fgets(line,BUFFLEN,f); /* disk or ctxt */
        if(!strncmp(line,"disk_io: ",9)) /* kernel version > ~2.4.0-test4 */
          {
-          int maj,min,num=8,nm;
+          int maj,idx,num=8,nm;
           unsigned long d0,d1,d2,d3,d4;
 
           kernel_version_240=1;
@@ -346,14 +346,14 @@ ProcMeterOutput **Initialise(char *options)
           current[DISK_READ]=0;
           current[DISK_WRITE]=0;
 
-          while(sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu,%lu)%n",&maj,&min,&d0,&d1,&d2,&d3,&d4,&nm)==7 ||
-                sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu)%n",&maj,&min,&d0,&d1,&d2,&d3,&nm)==6)
+          while(sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu,%lu)%n",&maj,&idx,&d0,&d1,&d2,&d3,&d4,&nm)==7 ||
+                sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu)%n",&maj,&idx,&d0,&d1,&d2,&d3,&nm)==6)
             {
+             num+=nm;
+
              available[DISK]=1;      current[DISK]      +=d1+d3;
              available[DISK_READ]=1; current[DISK_READ] +=d1;
              available[DISK_WRITE]=1;current[DISK_WRITE]+=d3;
-
-             num+=nm;
             }
 
           fgets(line,BUFFLEN,f); /* ctxt */
