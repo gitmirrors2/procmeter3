@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.11 2002-06-04 13:53:39 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/module.c,v 1.12 2002-07-06 11:07:51 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
@@ -375,8 +375,8 @@ void UnloadModule(Module module)
           *modules=*(modules+1);
           modules++;
          }
-
-    modules++;
+    else
+       modules++;
    }
 
  if(module->outputs)
