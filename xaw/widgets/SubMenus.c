@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/SubMenus.c,v 1.1 1999-09-27 19:02:46 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/SubMenus.c,v 1.2 1999-09-28 18:41:08 amb Exp $
 
   ProcMeter Extensions for Athena SubMenus (for ProcMeter 3.2).
   ******************/ /******************
@@ -109,7 +109,7 @@ void AddSubMenu(Widget item,Widget submenu)
 static void SubMenuEvent(Widget w,XEvent *event,String *params,Cardinal *num_params)
 {
  static Widget lastitem=NULL;
- int i,menu,depth=0;
+ int i,depth=0;
  Widget item,submenu=NULL;
  Position root_x,root_y;
  Position item_y;
@@ -117,26 +117,30 @@ static void SubMenuEvent(Widget w,XEvent *event,String *params,Cardinal *num_par
 
  item=XawSimpleMenuGetActiveEntry(w);
 
- if(item==lastitem)
-    return;
-
- for(menu=0;menu<nsubmenus;menu++)
-    if(item==submenus[menu].item)
-      {
-       submenu=submenus[menu].submenu;
-       depth=submenus[menu].depth;
-      }
+ for(i=0;i<nsubmenus;i++)
+    if(item==submenus[i].item)
+       submenu=submenus[i].submenu;
 
  for(i=0;i<nsubmenus;i++)
-    if(submenus[i].depth>=depth)
-       XtPopdown(submenus[i].submenu);
+    if(w==submenus[i].submenu)
+       depth=submenus[i].depth;
+
+ if(!item || item!=lastitem)
+    for(i=0;i<nsubmenus;i++)
+       if(submenus[i].depth>depth)
+         {
+          submenus[i].depth=0;
+          XtPopdown(submenus[i].submenu);
+         }
+
+ if(!item || item==lastitem)
+    return;
 
  lastitem=item;
 
- if(!item || !submenu)
-    return;
-
- submenus[menu].depth=depth+1;
+ for(i=0;i<nsubmenus;i++)
+    if(item==submenus[i].item)
+       submenus[i].depth=++depth;
 
  XtRealizeWidget(submenu);
 
