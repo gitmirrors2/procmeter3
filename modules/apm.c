@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/apm.c,v 1.1 1998-09-19 15:24:50 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/apm.c,v 1.2 1998-10-09 15:04:31 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
@@ -114,11 +114,10 @@ ProcMeterOutput **Initialise(char *options)
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/apm'.\n",__FILE__);
     else
       {
-       float ver=0;
        long status,life,remain;
        char remainunits[8];
 
-       if(sscanf(line,"%*f %*f %*x %*x %*x %lx %ld%% %ld %s",&status,&life,&remain,remainunits)==5 && ver>1.199999 && ver<1.20001)
+       if(sscanf(line,"%*f %*f %*x %*x %*x %lx %ld%% %ld %7s",&status,&life,&remain,remainunits)==4)
          {
           outputs[0]=&batt_status_output;
           outputs[1]=&batt_life_output;
@@ -161,7 +160,7 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    fscanf(f,"%*f %*f %*x %*x %*x %lx %ld%% %ld %s",&status,&life,&remain,remainunits);
+    fscanf(f,"%*f %*f %*x %*x %*x %lx %ld%% %ld %7s",&status,&life,&remain,remainunits);
 
     fclose(f);
 
