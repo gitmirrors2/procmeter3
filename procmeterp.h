@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.1 1998-09-19 15:20:22 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.2 1998-09-19 15:44:00 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
@@ -20,10 +20,10 @@
 /* The file locations. */
 
 #ifndef INSTDIR
-#define INSTDIR "/usr/X11"
+#define INSTDIR "/usr/local"
 #endif
 
-#define LIB_PATH  INSTDIR  "/lib/ProcMeter"
+#define LIB_PATH  INSTDIR  "/lib/X11/ProcMeter3"
 #define MOD_PATH  LIB_PATH "/modules"
 #define RC_PATH   LIB_PATH "/.procmeterrc"
 

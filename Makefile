@@ -1,4 +1,4 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.1 1998-09-19 15:19:00 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.2 1998-09-19 15:43:51 amb Exp $
 #
 # ProcMeter - A system monitoring program for Linux.
 #
@@ -74,17 +74,17 @@ clean :
 
 ########
 
-install :
-	install -d $(INSTDIR)/lib/X11/procmeter3
+install : all
+	install -d $(INSTDIR)/lib/X11/ProcMeter3
 	$(MAKE) -C modules install INSTDIR=$(INSTDIR)
 	$(MAKE) -C widgets install INSTDIR=$(INSTDIR)
-	sed -e "s%path=modules%path=$(INSTDIR)/lib/X11/procmeter3/modules%" < .procmeterrc > .procmeterrc.install
+	sed -e "s%path=modules%path=$(INSTDIR)/lib/X11/ProcMeter3/modules%" < .procmeterrc > .procmeterrc.install
 	install -d $(INSTDIR)/bin
 	install -m 755 procmeter3 $(INSTDIR)/bin
 	install -d $(INSTDIR)/man/man1
 	install -d $(INSTDIR)/man/man5
 	install -m 644 procmeter.1 $(INSTDIR)/man/man1/procmeter3.1
 	install -m 644 procmeterrc.5 $(INSTDIR)/man/man5/procmeterrc.1
-	install -m 644 .procmeterrc.install $(INSTDIR)/lib/X11/procmeter3/.procmeterrc
-	install -d $(INSTDIR)/lib/X11/procmeter3/include
-	install -m 644 procmeter.h $(INSTDIR)/lib/X11/procmeter3/include
+	install -m 644 .procmeterrc.install $(INSTDIR)/lib/X11/ProcMeter3/.procmeterrc
+	install -d $(INSTDIR)/lib/X11/ProcMeter3/include
+	install -m 644 procmeter.h $(INSTDIR)/lib/X11/ProcMeter3/include

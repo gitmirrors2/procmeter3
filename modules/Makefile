@@ -1,4 +1,4 @@
-# $Header: /home/amb/CVS/procmeter3/modules/Makefile,v 1.1 1998-09-19 15:24:31 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/modules/Makefile,v 1.2 1998-09-19 15:43:56 amb Exp $
 #
 # ProcMeter - A system monitoring program for Linux.
 #
@@ -43,10 +43,10 @@ clean :
 ########
 
 install :
-	install -d $(INSTDIR)/lib/X11/procmeter3/modules
-	install -d $(INSTDIR)/lib/X11/procmeter3/example
+	install -d $(INSTDIR)/lib/X11/ProcMeter3/modules
+	install -d $(INSTDIR)/lib/X11/ProcMeter3/example
 	for module in *.so ; do \
-	   [ $$module = template.so ] || install -m 755 $$module $(INSTDIR)/lib/X11/procmeter3/modules ;\
+	   [ $$module = template.so ] || install -m 755 $$module $(INSTDIR)/lib/X11/ProcMeter3/modules ;\
 	done
-	install -m 644 README $(INSTDIR)/lib/X11/procmeter3/example
-	install -m 644 template.c $(INSTDIR)/lib/X11/procmeter3/example
+	install -m 644 README $(INSTDIR)/lib/X11/ProcMeter3/example
+	install -m 644 template.c $(INSTDIR)/lib/X11/ProcMeter3/example
