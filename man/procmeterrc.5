@@ -1,35 +1,35 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.12 1999-12-06 20:13:47 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.13 2001-01-05 19:48:45 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.2.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.3.
 .\"
 .\"  Manual page for .procmeterrc file
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998,99 Andrew M. Bishop
+.\"  This file Copyright 1998,99,2000,01 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETERRC 5 "December 6, 1999"
+.TH PROCMETERRC 5 "January 5, 2001"
 
 .SH NAME
 
-The \.procmeterrc configuration file for procmeter3.
+The \.procmeterrc configuration file for procmeter3 and gprocmeter3.
 
 .SH SYNOPSIS
 
-This file contains the run-time options for the procmeter3 program.  These
-include the outputs that are displayed, the colours and fonts that are used and
-other options.
+This file contains the run-time options for the procmeter3 and gprocmeter3
+programs.  These include the outputs that are displayed, the colours and fonts
+that are used and other options.
 
 .SH DESCRIPTION
 
-The resources for ProcMeter version 3.0 are stored in the .procmeterrc file
+The resources for ProcMeter version 3.x are stored in the .procmeterrc file
 instead of using X resources.  This gives more flexibility and allows for much
 simpler customisation.
 .LP
-When the procmeter3 program starts the
+When the procmeter3 or gprocmeter3 programs start the
 .B .procmeterrc
 file is searched for in the current directory, the current users home directory
 or the system default installation directory (named procmeterrc).  The file is
@@ -122,15 +122,15 @@ The font to use for the textual outputs.  (An X11 font name.)
 .TP
 .BR menu-foreground=...
 The colour to use as the foreground for the menus.  (An X11 colour name or an RGB
-value in hex as #RRGGBB.)
+value in hex as #RRGGBB.)  (Does not work for gprocmeter3.)
 .TP
 .BR menu-background=...
-The colour to use as the background for the menus.  (An X11 colour name or an RGB
-value in hex as #RRGGBB.)  Note: The background of all items on the same menu
-must be the same due to the Xaw Widget set used.
+The colour to use as the background for the menus.  (An X11 colour name or an
+RGB value in hex as #RRGGBB.)  (Does not work for gprocmeter3.)  (The background
+of all items on the same menu must be the same due to the Xaw Widget set used.)
 .TP
 .BR menu-font=...
-The font to use for the menus.  (An X11 font name.)
+The font to use for the menus.  (An X11 font name.)  (Does not work for gprocmeter3.)
 .TP
 .BR update=...
 The update interval for the output in seconds (an integer).
@@ -257,4 +257,4 @@ or
 
 .SH SEE ALSO
 
-procmeter3(1)
+procmeter3(1), gprocmeter3(1)
