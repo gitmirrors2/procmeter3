@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.7 2001-07-22 08:58:01 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.8 2001-12-16 15:16:05 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -115,7 +115,7 @@ ProcMeterOutput **Initialise(char *options)
           char device[32],mount[32];
 
           if(sscanf(line,"%s %s",device,mount)==2)
-             if(!strchr(device,':') && strcmp(mount,"none") && *device=='/' && *mount=='/')
+             if(strcmp(mount,"none") && *device=='/' && *mount=='/')
                 add_disk(device,mount);
          }
        while(fgets(line,128,f));
@@ -141,7 +141,7 @@ ProcMeterOutput **Initialise(char *options)
              continue;
 
           if(sscanf(line,"%32s %32s",device,mount)==2)
-             if(!strchr(device,':') && strcmp(mount,"none") && *device=='/' && *mount=='/')
+             if(strcmp(mount,"none") && *device=='/' && *mount=='/')
                 add_disk(device,mount);
          }
        while(fgets(line,128,f));
@@ -266,7 +266,7 @@ int Update(time_t now,ProcMeterOutput *output)
              char device[32],mount[32];
 
              if(sscanf(line,"%s %s",device,mount)==2)
-                if(strcmp(device,"none") && !strchr(device,':') && *mount=='/')
+                if(strcmp(device,"none") && *mount=='/')
                    for(i=0;i<ndisks;i++)
                       if(!strcmp(disk[i],mount))
                          mounted[i]=1;
@@ -284,7 +284,12 @@ int Update(time_t now,ProcMeterOutput *output)
       {
        struct statfs buf;
 
-       if(!mounted[i/2] || statfs(disk[i/2],&buf))
+       if(!mounted[i/2])
+         {
+          output->graph_value=0;
+          strcpy(output->text_value,"not found");
+         }
+       else if(statfs(disk[i/2],&buf))
          {
           output->graph_value=0;
           strcpy(output->text_value,"unknown");
@@ -294,7 +299,6 @@ int Update(time_t now,ProcMeterOutput *output)
           if(i%2)
             {
              long avail=(buf.f_bavail>>5)*(buf.f_bsize>>5);
-
              sprintf(output->text_value,"%.1f MB",avail/1024.0);
             }
           else
