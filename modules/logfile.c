@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/logfile.c,v 1.1 1998-09-26 09:38:05 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/logfile.c,v 1.2 1998-10-24 09:01:39 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux (v3.0a).
 
   A log file monitoring source file.
   ******************/ /******************
@@ -122,6 +122,9 @@ ProcMeterModule *Load(void)
 
 ProcMeterOutput **Initialise(char *options)
 {
+ outputs=(ProcMeterOutput**)malloc(sizeof(ProcMeterOutput*));
+ outputs[0]=NULL;
+
  /* Get the options */
 
  if(options)

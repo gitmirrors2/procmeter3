@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.4 1998-09-26 09:35:41 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.5 1998-10-24 09:01:41 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux (v3.0a).
 
   Network devices traffic source file.
   ******************/ /******************
@@ -105,6 +105,9 @@ ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
  char line[128];
+
+ outputs=(ProcMeterOutput**)malloc(sizeof(ProcMeterOutput*));
+ outputs[0]=NULL;
 
  /* Verify the statistics from /proc/net/dev */
 
