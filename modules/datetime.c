@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.6 2002-06-04 13:54:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.7 2002-12-07 19:38:59 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Date and Time Information module source file.
   ******************/ /******************
@@ -27,66 +27,66 @@
 /*+ The current date output with year. +*/
 ProcMeterOutput date_dmy_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Date_DMY",
- /* char *description;              */ "The current date in the local timezone; day of week, day of month, month, year.",
- /* char  type;                     */ PROCMETER_TEXT,
- /* short interval;                 */ 3600,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ -1,
- /* short graph_scale;              */ 0,
- /* char  graph_units[8];           */ "n/a"
+ /* char  name[];          */ "Date_DMY",
+ /* char *description;     */ "The current date in the local timezone; day of week, day of month, month, year.",
+ /* char  type;            */ PROCMETER_TEXT,
+ /* short interval;        */ 3600,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ -1,
+ /* short graph_scale;     */ 0,
+ /* char  graph_units[];   */ "n/a"
 };
 
 /*+ The current date output. +*/
 ProcMeterOutput date_dm_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Date_DM",
- /* char *description;              */ "The current date in the local timezone; day of week, day of month, month.",
- /* char  type;                     */ PROCMETER_TEXT,
- /* short interval;                 */ 3600,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ -1,
- /* short graph_scale;              */ 0,
- /* char  graph_units[8];           */ "n/a"
+ /* char  name[];          */ "Date_DM",
+ /* char *description;     */ "The current date in the local timezone; day of week, day of month, month.",
+ /* char  type;            */ PROCMETER_TEXT,
+ /* short interval;        */ 3600,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ -1,
+ /* short graph_scale;     */ 0,
+ /* char  graph_units[];   */ "n/a"
 };
 
 /*+ The current time output with seconds. +*/
 ProcMeterOutput time_hms_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Time_HMS",
- /* char *description;              */ "The current time in the local timezone; hours, minutes, seconds and timezone.",
- /* char  type;                     */ PROCMETER_TEXT,
- /* short interval;                 */ 1,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ -1,
- /* short graph_scale;              */ 0,
- /* char  graph_units[8];           */ "n/a"
+ /* char  name[];          */ "Time_HMS",
+ /* char *description;     */ "The current time in the local timezone; hours, minutes, seconds and timezone.",
+ /* char  type;            */ PROCMETER_TEXT,
+ /* short interval;        */ 1,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ -1,
+ /* short graph_scale;     */ 0,
+ /* char  graph_units[];   */ "n/a"
 };
 
 /*+ The current time output. +*/
 ProcMeterOutput time_hm_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Time_HM",
- /* char *description;              */ "The current time in the local timezone; hours, minutes and timezone.",
- /* char  type;                     */ PROCMETER_TEXT,
- /* short interval;                 */ 60,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ -1,
- /* short graph_scale;              */ 0,
- /* char  graph_units[8];           */ "n/a"
+ /* char  name[];          */ "Time_HM",
+ /* char *description;     */ "The current time in the local timezone; hours, minutes and timezone.",
+ /* char  type;            */ PROCMETER_TEXT,
+ /* short interval;        */ 60,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ -1,
+ /* short graph_scale;     */ 0,
+ /* char  graph_units[];   */ "n/a"
 };
 
 /*+ The current uptime output +*/
 ProcMeterOutput uptime_dhm_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Uptime_DHM",
- /* char *description;              */ "The amount of time that the system has been booted for; days, hours and minutes.",
- /* char  type;                     */ PROCMETER_TEXT,
- /* short interval;                 */ 60,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ -1,
- /* short graph_scale;              */ 0,
- /* char  graph_units[8];           */ "n/a"
+ /* char  name[];          */ "Uptime_DHM",
+ /* char *description;     */ "The amount of time that the system has been booted for; days, hours and minutes.",
+ /* char  type;            */ PROCMETER_TEXT,
+ /* short interval;        */ 60,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ -1,
+ /* short graph_scale;     */ 0,
+ /* char  graph_units[];   */ "n/a"
 };
 
 /*+ The outputs. +*/
@@ -103,8 +103,8 @@ ProcMeterOutput *outputs[]=
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "Date_Time",
- /* char *description;             */ "The current date and time and the amount of time since the system was last booted.",
+ /* char name[];           */ "Date_Time",
+ /* char *description;     */ "The current date and time and the amount of time since the system was last booted.",
 };
 
 

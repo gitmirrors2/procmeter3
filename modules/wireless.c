@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.6 2002-06-04 13:54:07 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.7 2002-12-07 19:39:00 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Wireless network devices info source file.
   ******************/ /******************
@@ -26,36 +26,36 @@ ProcMeterOutput _outputs[3]=
 {
  /*+ Link quality +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Link_%s",
-  /* char *description;              */ "The link quality on the %s network interface.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 10,
-  /* char  graph_units[8];           */ "(%d dBm)"
+  /* char  name[];          */ "Link_%s",
+  /* char *description;     */ "The link quality on the %s network interface.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 10,
+  /* char  graph_units[];   */ "(%d dBm)"
  },
  /*+ Signal level +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Signal_%s",
-  /* char *description;              */ "The signal level on the %s network interface.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 10,
-  /* char  graph_units[8];           */ "(%d dBm)"
+  /* char  name[];          */ "Signal_%s",
+  /* char *description;     */ "The signal level on the %s network interface.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 10,
+  /* char  graph_units[];   */ "(%d dBm)"
  },
  /*+ Noise level +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Noise_%s",
-  /* char *description;              */ "The noise level on the %s network interface.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 10,
-  /* char  graph_units[8];           */ "(%d dBm)"
+  /* char  name[];          */ "Noise_%s",
+  /* char *description;     */ "The noise level on the %s network interface.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 10,
+  /* char  graph_units[];   */ "(%d dBm)"
  }
 };
 
@@ -66,9 +66,9 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "Wireless",
- /* char *description;             */ "The wireless network devices and link quality data on each of them. [From /proc/net/wireless]  "
-                                      "(Use 'options=eth0' in the configuration file to specify extra wireless devices."
+ /* char name[];            */ "Wireless",
+ /* char *description;      */ "The wireless network devices and link quality data on each of them. [From /proc/net/wireless]  "
+                               "(Use 'options=eth0' in the configuration file to specify extra wireless devices."
 };
 
 /* Whether there is a dot after each status int depends on whether the value

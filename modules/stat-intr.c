@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.6 2002-11-09 19:44:11 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.7 2002-12-07 19:38:59 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3c.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Interrupt statistics source file.
   ******************/ /******************
@@ -30,27 +30,27 @@
 /*+ The total statistics +*/
 ProcMeterOutput _output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Interrupts",
- /* char *description;              */ "The total number of hardware interrupts per second.",
- /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
- /* short interval;                 */ 1,
- /* char  text_value[16];           */ "0 /s",
- /* long  graph_value;              */ 0,
- /* short graph_scale;              */ 100,
- /* char  graph_units[8];           */ "(%d/s)"
+ /* char  name[];          */ "Interrupts",
+ /* char *description;     */ "The total number of hardware interrupts per second.",
+ /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+ /* short interval;        */ 1,
+ /* char  text_value[];    */ "0 /s",
+ /* long  graph_value;     */ 0,
+ /* short graph_scale;     */ 100,
+ /* char  graph_units[];   */ "(%d/s)"
 };
 
 /*+ The per interrupt statistics +*/
 ProcMeterOutput _intr_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Interrupt%d",
- /* char *description;              */ "The number of hardware interrupts number %d (%s) per second.",
- /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
- /* short interval;                 */ 1,
- /* char  text_value[16];           */ "0 /s",
- /* long  graph_value;              */ 0,
- /* short graph_scale;              */ 100,
- /* char  graph_units[8];           */ "(%d/s)"
+ /* char  name[];          */ "Interrupt%d",
+ /* char *description;     */ "The number of hardware interrupts number %d (%s) per second.",
+ /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+ /* short interval;        */ 1,
+ /* char  text_value[];    */ "0 /s",
+ /* long  graph_value;     */ 0,
+ /* short graph_scale;     */ 100,
+ /* char  graph_units[];   */ "(%d/s)"
 };
 
 /*+ The extra outputs with multiple interrupts +*/
@@ -62,8 +62,8 @@ ProcMeterOutput *outputs[N_INTR+1+1];
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "Stat-Intr",
- /* char *description;             */ "Interrupt statistics. [From /proc/stat]",
+ /* char name[];           */ "Stat-Intr",
+ /* char *description;     */ "Interrupt statistics. [From /proc/stat]",
 };
 
 /*+ The number of interrupts. +*/

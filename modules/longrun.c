@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.5 2002-10-27 09:35:08 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.6 2002-12-07 19:38:59 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3c.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Transmeta longrun support.
   ******************/ /******************
@@ -56,14 +56,14 @@ static void read_cpuid(loff_t address, int *eax, int *ebx, int *ecx, int *edx) {
 ProcMeterOutput _outputs[1]=
 {
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Longrun",
-  /* char *description;              */ "current longrun performance level",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 %",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 20,
-  /* char  graph_units[8];           */ "(%d%%)"
+  /* char  name[];          */ "Longrun",
+  /* char *description;     */ "current longrun performance level",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 %",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 20,
+  /* char  graph_units[];   */ "(%d%%)"
  },
 };
 
@@ -79,9 +79,9 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "Longrun",
- /* char *description;             */ "Transmeta Crusoe longrun information.  "
-                                      "Only available if using a Transmeta Crusoe CPU that supports it and the kernel was compiled with CONFIG_X86_CPUID=y."
+ /* char name[];            */ "Longrun",
+ /* char *description;      */ "Transmeta Crusoe longrun information.  "
+                               "Only available if using a Transmeta Crusoe CPU that supports it and the kernel was compiled with CONFIG_X86_CPUID=y."
 };
 
 /*++++++++++++++++++++++++++++++++++++++

@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/vmstat.c,v 1.1 2002-11-09 19:44:43 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/vmstat.c,v 1.2 2002-12-07 19:39:00 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3c.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Low level system VM statistics source file.
   ******************/ /******************
@@ -38,69 +38,69 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
 {
  /*+ The page blocks accessed per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Page",
-  /* char *description;              */ "The number of paged blocks accessed per second.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 50,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Page",
+  /* char *description;     */ "The number of paged blocks accessed per second.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 50,
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The page blocks in per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Page_In",
-  /* char *description;              */ "The number of paged blocks that are read in per second.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 50,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Page_In",
+  /* char *description;     */ "The number of paged blocks that are read in per second.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 50,
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The page blocks out per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Page_Out",
-  /* char *description;              */ "The number of paged blocks that are dumped out per second.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 50,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Page_Out",
+  /* char *description;     */ "The number of paged blocks that are dumped out per second.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 50,
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The swap blocks accessed per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Swap",
-  /* char *description;              */ "The total number of swap space blocks accessed per second.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 50,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Swap",
+  /* char *description;     */ "The total number of swap space blocks accessed per second.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 50,
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The swap blocks in per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Swap_In",
-  /* char *description;              */ "The number of swap space blocks that are read in per second.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 50,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Swap_In",
+  /* char *description;     */ "The number of swap space blocks that are read in per second.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 50,
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The swap blocks out per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Swap_Out",
-  /* char *description;              */ "The number of swap space blocks that are written out per second.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 50,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Swap_Out",
+  /* char *description;     */ "The number of swap space blocks that are written out per second.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 50,
+  /* char  graph_units[];   */ "(%d/s)"
  }
 };
 
@@ -110,8 +110,8 @@ ProcMeterOutput *outputs[N_OUTPUTS+1];
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "VM_Statistics",
- /* char *description;             */ "Low level system virtual memory statistics. [From /proc/vmstat]",
+ /* char name[];            */ "VM_Statistics",
+ /* char *description;      */ "Low level system virtual memory statistics. [From /proc/vmstat]",
 };
 
 

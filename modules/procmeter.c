@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/procmeter.c,v 1.4 2002-06-04 13:54:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/procmeter.c,v 1.5 2002-12-07 19:38:59 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Information about the ProcMeter program source file.
   ******************/ /******************
@@ -24,14 +24,14 @@
 /*+ The version output +*/
 ProcMeterOutput version_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Version",
- /* char *description;              */ "The version of procmeter that is running.",
- /* char  type;                     */ PROCMETER_TEXT,
- /* short interval;                 */ 0,
- /* char  text_value[16];           */ "ProcMeter V" PROCMETER_VERSION,
- /* long  graph_value;              */ -1,
- /* short graph_scale;              */ 0,
- /* char  graph_units[8];           */ "n/a"
+ /* char  name[];          */ "Version",
+ /* char *description;     */ "The version of procmeter that is running.",
+ /* char  type;            */ PROCMETER_TEXT,
+ /* short interval;        */ 0,
+ /* char  text_value[];    */ "ProcMeter V" PROCMETER_VERSION,
+ /* long  graph_value;     */ -1,
+ /* short graph_scale;     */ 0,
+ /* char  graph_units[];   */ "n/a"
 };
 
 /*+ The outputs. +*/
@@ -44,8 +44,8 @@ ProcMeterOutput *outputs[]=
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "ProcMeter",
- /* char *description;             */ "Information about the procmeter program itself.",
+ /* char name[];           */ "ProcMeter",
+ /* char *description;     */ "Information about the procmeter program itself.",
 };
 
 

@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/loadavg.c,v 1.5 2002-06-04 13:54:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/loadavg.c,v 1.6 2002-12-07 19:38:59 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Load average and number of processes module source file.
   ******************/ /******************
@@ -24,40 +24,40 @@
 /*+ The load average output +*/
 ProcMeterOutput loadavg_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Load",
- /* char *description;              */ "The system load, a rolling average of the number of processes running.",
- /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
- /* short interval;                 */ 1,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ 0,
- /* short graph_scale;              */ 1,
- /* char  graph_units[8];           */ "(%d)"
+ /* char  name[];          */ "Load",
+ /* char *description;     */ "The system load, a rolling average of the number of processes running.",
+ /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+ /* short interval;        */ 1,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ 0,
+ /* short graph_scale;     */ 1,
+ /* char  graph_units[];   */ "(%d)"
 };
 
 /*+ The number of processes output. +*/
 ProcMeterOutput processes_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Processes",
- /* char *description;              */ "The number of processes that exist in the system.",
- /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
- /* short interval;                 */ 1,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ 0,
- /* short graph_scale;              */ 10,
- /* char  graph_units[8];           */ "(%d)"
+ /* char  name[];          */ "Processes",
+ /* char *description;     */ "The number of processes that exist in the system.",
+ /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+ /* short interval;        */ 1,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ 0,
+ /* short graph_scale;     */ 10,
+ /* char  graph_units[];   */ "(%d)"
 };
 
 /*+ The number of forks per second output. +*/
 ProcMeterOutput forks_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Forks",
- /* char *description;              */ "The number of new processes that start per second.",
- /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
- /* short interval;                 */ 1,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ 0,
- /* short graph_scale;              */ 5,
- /* char  graph_units[8];           */ "(%d/s)"
+ /* char  name[];          */ "Forks",
+ /* char *description;     */ "The number of new processes that start per second.",
+ /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+ /* short interval;        */ 1,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ 0,
+ /* short graph_scale;     */ 5,
+ /* char  graph_units[];   */ "(%d/s)"
 };
 
 /*+ The outputs. +*/
@@ -66,8 +66,8 @@ ProcMeterOutput *outputs[4];
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "Processes",
- /* char *description;             */ "The load average and the number of processes running and starting. [From /proc/loadavg]",
+ /* char name[];           */ "Processes",
+ /* char *description;     */ "The load average and the number of processes running and starting. [From /proc/loadavg]",
 };
 
 

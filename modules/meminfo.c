@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.7 2002-06-04 13:54:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.8 2002-12-07 19:38:59 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Memory status module source file.
   ******************/ /******************
@@ -35,80 +35,80 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
 {
  /*+ The mem free output +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Mem_Free",
-  /* char *description;              */ "The amount of memory that is free, completely unused, wasted.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "unknown",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%dMB)"
+  /* char  name[];          */ "Mem_Free",
+  /* char *description;     */ "The amount of memory that is free, completely unused, wasted.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "unknown",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%dMB)"
  },
  /*+ The mem used output +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Mem_Used",
-  /* char *description;              */ "The amount of memory that is used, excluding cache and buffers.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "unknown",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%dMB)"
+  /* char  name[];          */ "Mem_Used",
+  /* char *description;     */ "The amount of memory that is used, excluding cache and buffers.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "unknown",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%dMB)"
  },
  /*+ The mem buff output +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Mem_Buff",
-  /* char *description;              */ "The amount of memory that is used in buffers.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "unknown",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%dMB)"
+  /* char  name[];          */ "Mem_Buff",
+  /* char *description;     */ "The amount of memory that is used in buffers.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "unknown",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%dMB)"
  },
  /*+ The mem cache output +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Mem_Cache",
-  /* char *description;              */ "The amount of memory that is used for disk cache.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "unknown",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%dMB)"
+  /* char  name[];          */ "Mem_Cache",
+  /* char *description;     */ "The amount of memory that is used for disk cache.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "unknown",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%dMB)"
  },
  /*+ The mem avail output +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Mem_Avail",
-  /* char *description;              */ "The amount of memory that is available for programs, free plus cache.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "unknown",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%dMB)"
+  /* char  name[];          */ "Mem_Avail",
+  /* char *description;     */ "The amount of memory that is available for programs, free plus cache.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "unknown",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%dMB)"
  },
  /*+ The mem swap free output +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Swap_Free",
-  /* char *description;              */ "The amount of memory that is free in the swap space.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "unknown",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%dMB)"
+  /* char  name[];          */ "Swap_Free",
+  /* char *description;     */ "The amount of memory that is free in the swap space.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "unknown",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%dMB)"
  },
  /*+ The mem swap used output +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Swap_Used",
-  /* char *description;              */ "The amount of memory that is used in the swap space.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "unknown",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%dMB)"
+  /* char  name[];          */ "Swap_Used",
+  /* char *description;     */ "The amount of memory that is used in the swap space.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "unknown",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%dMB)"
  }
 };
 
@@ -118,9 +118,9 @@ ProcMeterOutput *outputs[N_OUTPUTS+1];
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "Memory",
- /* char *description;             */ "The amount of memory that is used for programs, buffers, cache and the amount that is free. "
-                                      "[From /proc/meminfo]",
+ /* char name[];            */ "Memory",
+ /* char *description;      */ "The amount of memory that is used for programs, buffers, cache and the amount that is free. "
+                               "[From /proc/meminfo]",
 };
 
 

@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/apm.c,v 1.4 2002-11-03 09:18:32 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/apm.c,v 1.5 2002-12-07 19:38:59 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3c.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Advanced Power Management module source file.
   ******************/ /******************
@@ -25,41 +25,41 @@
 /*+ The battery status output +*/
 ProcMeterOutput batt_status_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Battery_Status",
- /* char *description;              */ "The estimated status of the battery, one of the states unknown, critical, low or high "
-                                       "and whether it is currently being charged or not.",
- /* char  type;                     */ PROCMETER_TEXT,
- /* short interval;                 */ 60,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ -1,
- /* short graph_scale;              */ 0,
- /* char  graph_units[8];           */ "n/a"
+ /* char  name[];          */ "Battery_Status",
+ /* char *description;     */ "The estimated status of the battery, one of the states unknown, critical, low or high "
+                              "and whether it is currently being charged or not.",
+ /* char  type;            */ PROCMETER_TEXT,
+ /* short interval;        */ 60,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ -1,
+ /* short graph_scale;     */ 0,
+ /* char  graph_units[];   */ "n/a"
 };
 
 /*+ The battery life output. +*/
 ProcMeterOutput batt_life_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Battery_Life",
- /* char *description;              */ "The current estimated fraction of the battery life that remains.",
- /* char  type;                     */ PROCMETER_TEXT,
- /* short interval;                 */ 60,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ -1,
- /* short graph_scale;              */ 0,
- /* char  graph_units[8];           */ "n/a"
+ /* char  name[];          */ "Battery_Life",
+ /* char *description;     */ "The current estimated fraction of the battery life that remains.",
+ /* char  type;            */ PROCMETER_TEXT,
+ /* short interval;        */ 60,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ -1,
+ /* short graph_scale;     */ 0,
+ /* char  graph_units[];   */ "n/a"
 };
 
 /*+ The battery remaining time output. +*/
 ProcMeterOutput batt_remain_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Battery_Time",
- /* char *description;              */ "The current estimated battery lifetime remaining in minutes or seconds.",
- /* char  type;                     */ PROCMETER_TEXT,
- /* short interval;                 */ 60,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ -1,
- /* short graph_scale;              */ 0,
- /* char  graph_units[8];           */ "n/a"
+ /* char  name[];          */ "Battery_Time",
+ /* char *description;     */ "The current estimated battery lifetime remaining in minutes or seconds.",
+ /* char  type;            */ PROCMETER_TEXT,
+ /* short interval;        */ 60,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ -1,
+ /* short graph_scale;     */ 0,
+ /* char  graph_units[];   */ "n/a"
 };
 
 /*+ The outputs. +*/
@@ -68,9 +68,9 @@ ProcMeterOutput *outputs[4];
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "APM",
- /* char *description;             */ "Advanced Power Management information.  These outputs are only available if you have "
-                                      "configured the kernel to have the APM feature. [From /proc/apm]",
+ /* char name[];           */ "APM",
+ /* char *description;     */ "Advanced Power Management information.  These outputs are only available if you have "
+                              "configured the kernel to have the APM feature. [From /proc/apm]",
 };
 
 
