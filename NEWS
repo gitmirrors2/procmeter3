@@ -1,0 +1,12 @@
+Version 3.0a of ProcMeter3 released : Sat Oct 24 13:15:00 1998
+--------------------------------------------------------------
+
+Bug fixes:
+ Logfile module starts without error message.  Fix graph units for meminfo
+ module.  Truncate hostnames to the host part or 15 characters.  Move the graph
+ labels to be left aligned to allow more room for units label.  Use command line
+ and .procmeterrc startup options with inclusive OR and not exclusive OR.
+
+
+Version 3.0 of ProcMeter3 released : Fri Oct 09 15:10:00 1998
+-------------------------------------------------------------
