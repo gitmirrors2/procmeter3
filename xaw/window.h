@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.h,v 1.4 2000-12-16 16:47:55 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.h,v 1.5 2002-06-04 12:52:32 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Global X windows header file.
   ******************/ /******************
@@ -23,6 +23,9 @@
 
 extern Display *display;
 extern XtAppContext app_context;
+
+void MoveOutput(Output output1,Output output2,int direction);
+void Resize(void);
 
 /* In menus.c */
 

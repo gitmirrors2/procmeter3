@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/window.h,v 1.1 2000-12-16 16:36:48 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/window.h,v 1.2 2002-06-04 12:52:27 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Global X windows header file.
   ******************/ /******************
@@ -20,6 +20,9 @@
 #include "procmeterp.h"
 
 /* In window.c */
+
+void MoveOutput(Output output1,Output output2,int direction);
+void Resize(void);
 
 /* In menus.c */
 
