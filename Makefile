@@ -1,4 +1,4 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.15 2002-06-04 12:57:16 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.16 2002-06-04 13:56:44 amb Exp $
 #
 # ProcMeter - A system monitoring program for Linux - Version 3.3b.
 #
@@ -47,6 +47,7 @@ OBJ=$(foreach f,$(SRC),$(addsuffix .o,$(basename $f)))
 ########
 
 all : procmeter3 gprocmeter3 procmeter3-no-x
+
 ########
 
 procmeter3      : obj procmeter.xaw  procmeter.modules procmeterrc.install
@@ -104,7 +105,7 @@ clean :
 	$(MAKE) -C gtk clean
 
 distclean : clean
-	-rm -f procmeter3 gprocmeter3 procmeterrc.install
+	-rm -f procmeter3 gprocmeter3 procmeter3-no-x
 	$(MAKE) -C modules distclean
 
 ########
