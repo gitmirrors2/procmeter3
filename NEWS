@@ -1,3 +1,11 @@
+Version 3.1a of ProcMeter3 released : Sun Apr 18 10:15:00 1999
+--------------------------------------------------------------
+
+Bug fixes:
+ Stopped core dump when window is resized.  Network stats work properly with
+ newer kernels.  Makefile fixes.
+
+
 Version 3.1 of ProcMeter3 released : Sat Mar 6 15:00:00 1999
 ------------------------------------------------------------
 
