@@ -31,8 +31,9 @@ ProcMeterOutput **Initialise(char *options);
 
 This function will be called once only, following the Load() function.  The
 purpose of the module is to initialise all of the outputs and return the
-information about them to the main program.  The 'options' parameter is a string
-that is taken from the .procmeterrc file for the module.
+information about them to the main program as a NULL terminated array.  The
+'options' parameter is a string that is taken from the .procmeterrc file for the
+module.
 
 
 3) The Update() function
@@ -81,4 +82,4 @@ present.
 
 
 Andrew M. Bishop
-19th Sept 1998
+21th Sept 1998
