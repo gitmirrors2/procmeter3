@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.1 1999-03-03 19:00:36 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.2 1999-06-19 14:50:37 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.1b.
 
   Disk statistics source file.
   ******************/ /******************
@@ -119,7 +119,7 @@ ProcMeterModule module=
 };
 
 
-static long *current,*previous,values[2][N_OUTPUTS*(NDISKS+1)];
+static unsigned long *current,*previous,values[2][N_OUTPUTS*(NDISKS+1)];
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -279,7 +279,10 @@ int Update(time_t now,ProcMeterOutput *output)
       {
        double value;
 
-       value=(double)(current[i]-previous[i])/output->interval;
+       if(previous[i]>current[i])
+          value=0.0;
+       else
+          value=(double)(current[i]-previous[i])/output->interval;
 
        output->graph_value=PROCMETER_GRAPH_FLOATING(value/output->graph_scale);
        sprintf(output->text_value,"%.0f /s",value);

@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.9 1999-04-18 08:18:21 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.10 1999-06-19 14:50:37 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1a.
+  ProcMeter - A system monitoring program for Linux - Version 3.1b.
 
   Network devices traffic source file.
   ******************/ /******************
@@ -378,7 +378,10 @@ int Update(time_t now,ProcMeterOutput *output)
       {
        double value;
 
-       value=(double)(current[j]-previous[j])/output->interval;
+       if(previous[j]>current[j])
+          value=0.0;
+       else
+          value=(double)(current[j]-previous[j])/output->interval;
 
        if(proc_net_dev_format!=proc_net_dev_format1 && j%2)
           value/=1024.0;
