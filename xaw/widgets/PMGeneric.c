@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGeneric.c,v 1.2 2000-01-23 13:47:16 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGeneric.c,v 1.3 2000-12-16 17:02:24 amb Exp $
 
-  ProcMeter Generic Widget Source file (for ProcMeter 3.2a).
+  ProcMeter Generic Widget Source file (for ProcMeter 3.3).
   ******************/ /******************
   Written by Andrew M. Bishop
 
@@ -273,9 +273,9 @@ void ProcMeterGenericResize(ProcMeterGenericWidget w)
     w->procmeter_generic.label_height=w->procmeter_generic.label_font->ascent+w->procmeter_generic.label_font->descent+2;
     w->procmeter_generic.label_x=(w->core.width-XTextWidth(w->procmeter_generic.label_font,w->procmeter_generic.label_string,(int)strlen(w->procmeter_generic.label_string)))/2;
     if(w->procmeter_generic.label_pos==ProcMeterLabelTop)
-       w->procmeter_generic.label_y=w->procmeter_generic.label_height-2;
+       w->procmeter_generic.label_y=w->procmeter_generic.label_height-1-w->procmeter_generic.label_font->descent;
     else
-       w->procmeter_generic.label_y=w->core.height-1;
+       w->procmeter_generic.label_y=w->core.height-w->procmeter_generic.label_font->descent;
    }
  else
    {

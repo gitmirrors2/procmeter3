@@ -1,11 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMBar.c,v 1.2 1999-10-05 17:53:44 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMBar.c,v 1.3 2000-12-16 17:02:03 amb Exp $
 
-  ProcMeter Bar Widget Source file (for ProcMeter3 3.2).
+  ProcMeter Bar Widget Source file (for ProcMeter3 3.3).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,99 Andrew M. Bishop
+  This file Copyright 1996,98,99,2000 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -30,7 +30,7 @@ static Boolean SetValues(ProcMeterBarWidget current,ProcMeterBarWidget request,P
 static void Resize(ProcMeterBarWidget w);
 static void Redisplay(ProcMeterBarWidget w,XEvent *event,Region region);
 static void BarResize(ProcMeterBarWidget w);
-static void BarUpdate(ProcMeterBarWidget w);
+static void BarUpdate(ProcMeterBarWidget w,Boolean all);
 
 static XtResource resources[]=
 {
@@ -117,8 +117,10 @@ static void Initialize(ProcMeterBarWidget request,ProcMeterBarWidget new)
  new->procmeter_bar.grid_gc=XtGetGC((Widget)new,GCForeground|GCBackground,&values);
 
  if(request->procmeter_bar.grid_min<0)
-    new->procmeter_bar.grid_min=-request->procmeter_bar.grid_min,
+   {
+    new->procmeter_bar.grid_min=-request->procmeter_bar.grid_min;
     new->procmeter_bar.grid_drawn=0;
+   }
  else
     new->procmeter_bar.grid_drawn=1;
  if(request->procmeter_bar.grid_min==0)
@@ -202,8 +204,10 @@ static Boolean SetValues(ProcMeterBarWidget current,ProcMeterBarWidget request,P
  if(request->procmeter_bar.grid_min!=current->procmeter_bar.grid_min)
    {
     if(request->procmeter_bar.grid_min<0)
-       new->procmeter_bar.grid_min=-request->procmeter_bar.grid_min,
+      {
+       new->procmeter_bar.grid_min=-request->procmeter_bar.grid_min;
        new->procmeter_bar.grid_drawn=0;
+      }
     else
        new->procmeter_bar.grid_drawn=1;
     if(request->procmeter_bar.grid_min==0)
@@ -261,7 +265,7 @@ static void Resize(ProcMeterBarWidget w)
 static void Redisplay(ProcMeterBarWidget w,XEvent *event,Region region)
 {
  if(w->core.visible)
-    BarUpdate(w);
+    BarUpdate(w,True);
 }
 
 
@@ -299,9 +303,11 @@ static void BarResize(ProcMeterBarWidget w)
   Update the display.
 
   ProcMeterBarWidget w The Widget to update.
+
+  Boolean all Indicates if it all is to be updated including the generic parts.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void BarUpdate(ProcMeterBarWidget w)
+static void BarUpdate(ProcMeterBarWidget w,Boolean all)
 {
  if(w->core.visible)
    {
@@ -310,12 +316,20 @@ static void BarUpdate(ProcMeterBarWidget w)
     Position pos;
     Position top_average_bottom,bottom_average_top,average_size;
 
-    ProcMeterGenericUpdate((ProcMeterGenericWidget)w);
+    if(all)
+      {
+       ProcMeterGenericUpdate((ProcMeterGenericWidget)w);
 
-    if(w->procmeter_generic.label_pos!=ProcMeterLabelNone)
-       XDrawString(XtDisplay(w),XtWindow(w),w->procmeter_generic.label_gc,
-                   w->procmeter_bar.grid_units_x,w->procmeter_generic.label_y,
-                   w->procmeter_bar.grid_units,(int)strlen(w->procmeter_bar.grid_units));
+       if(w->procmeter_generic.label_pos!=ProcMeterLabelNone)
+          XDrawString(XtDisplay(w),XtWindow(w),w->procmeter_generic.label_gc,
+                      w->procmeter_bar.grid_units_x,w->procmeter_generic.label_y,
+                      w->procmeter_bar.grid_units,(int)strlen(w->procmeter_bar.grid_units));
+
+      }
+    else
+       XClearArea(XtDisplay(w),XtWindow(w),
+                  0,w->procmeter_generic.body_start,
+                  w->core.width,w->procmeter_generic.body_height,False);
 
     pos=w->procmeter_bar.data_sum*w->core.width/(scale*2);
 
@@ -365,7 +379,7 @@ static void BarUpdate(ProcMeterBarWidget w)
   unsigned short datum The data point to add.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void ProcMeterBarWidgetAddDatum(Widget pmw,unsigned short datum)
+void ProcMeterBarAddDatum(Widget pmw,unsigned short datum)
 {
  ProcMeterBarWidget w=(ProcMeterBarWidget)pmw;
  int new_grid_num;
@@ -400,5 +414,5 @@ void ProcMeterBarWidgetAddDatum(Widget pmw,unsigned short datum)
        w->procmeter_bar.grid_drawn=1;
    }
 
- BarUpdate(w);
+ BarUpdate(w,False);
 }

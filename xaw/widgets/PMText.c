@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMText.c,v 1.2 2000-01-23 13:47:11 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMText.c,v 1.3 2000-12-16 17:03:04 amb Exp $
 
-  ProcMeter Text Widget Source file (for ProcMeter 3.2a).
+  ProcMeter Text Widget Source file (for ProcMeter 3.3).
   ******************/ /******************
   Written by Andrew M. Bishop
 
@@ -29,7 +29,7 @@ static Boolean SetValues(ProcMeterTextWidget current,ProcMeterTextWidget request
 static void Resize(ProcMeterTextWidget w);
 static void Redisplay(ProcMeterTextWidget w,XEvent *event,Region region);
 static void TextResize(ProcMeterTextWidget w);
-static void TextUpdate(ProcMeterTextWidget w);
+static void TextUpdate(ProcMeterTextWidget w,Boolean all);
 
 static XtResource resources[]=
 {
@@ -191,7 +191,7 @@ static void Resize(ProcMeterTextWidget w)
 static void Redisplay(ProcMeterTextWidget w,XEvent *event,Region region)
 {
  if(w->core.visible)
-    TextUpdate(w);
+    TextUpdate(w,True);
 }
 
 
@@ -213,7 +213,7 @@ static void TextResize(ProcMeterTextWidget w)
  text_height=w->procmeter_text.text_font->ascent+w->procmeter_text.text_font->descent+2;
 
  w->procmeter_text.text_x=(w->core.width-text_width)/2;
- w->procmeter_text.text_y=w->procmeter_generic.body_start+text_height-2;
+ w->procmeter_text.text_y=w->procmeter_generic.body_start+1+w->procmeter_text.text_font->ascent;
 
  if(XtIsSubclass(XtParent(w),panedWidgetClass))
    {
@@ -237,13 +237,20 @@ static void TextResize(ProcMeterTextWidget w)
   Update the display.
 
   ProcMeterTextWidget w The Widget to update.
+
+  Boolean all Indicates if the whole widget is to be updated.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void TextUpdate(ProcMeterTextWidget w)
+static void TextUpdate(ProcMeterTextWidget w,Boolean all)
 {
  if(w->core.visible)
    {
-    ProcMeterGenericUpdate((ProcMeterGenericWidget)w);
+    if(all)
+       ProcMeterGenericUpdate((ProcMeterGenericWidget)w);
+    else
+       XClearArea(XtDisplay(w),XtWindow(w),
+                  0,w->procmeter_generic.body_start,
+                  w->core.width,w->procmeter_generic.body_height,False);
 
     XDrawString(XtDisplay(w),XtWindow(w),w->procmeter_generic.body_gc,
                 w->procmeter_text.text_x,w->procmeter_text.text_y,
@@ -260,7 +267,7 @@ static void TextUpdate(ProcMeterTextWidget w)
   char *data The new string to display.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void ProcMeterTextWidgetChangeData(Widget pmw,char *data)
+void ProcMeterTextChangeData(Widget pmw,char *data)
 {
  ProcMeterTextWidget w=(ProcMeterTextWidget)pmw;
 
@@ -269,9 +276,5 @@ void ProcMeterTextWidgetChangeData(Widget pmw,char *data)
 
  w->procmeter_text.text_x=(w->core.width-XTextWidth(w->procmeter_text.text_font,w->procmeter_text.text_string,(int)strlen(w->procmeter_text.text_string)))/2;
 
- XClearArea(XtDisplay(w),XtWindow(w),0,0,w->core.width,w->procmeter_generic.body_height,False);
-
- XDrawString(XtDisplay(w),XtWindow(w),w->procmeter_generic.body_gc,
-             w->procmeter_text.text_x,w->procmeter_text.text_y,
-             w->procmeter_text.text_string,(int)strlen(w->procmeter_text.text_string));
+ TextUpdate(w,False);
 }

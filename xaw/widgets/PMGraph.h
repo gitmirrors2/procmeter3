@@ -1,11 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.h,v 1.2 1999-02-13 11:37:24 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.h,v 1.3 2000-12-16 17:02:52 amb Exp $
 
-  ProcMeter Graph Widget Public include file (for ProcMeter3 3.1).
+  ProcMeter Graph Widget Public include file (for ProcMeter3 3.3).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,99 Andrew M. Bishop
+  This file Copyright 1996,98,99,2000 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -38,6 +38,6 @@ typedef struct _ProcMeterGraphRec      *ProcMeterGraphWidget;
 
 /* Public functions */
 
-void ProcMeterGraphWidgetAddDatum(Widget pmw,unsigned short datum);
+void ProcMeterGraphAddDatum(Widget pmw,unsigned short datum);
 
 #endif /* PMGRAPH_H */

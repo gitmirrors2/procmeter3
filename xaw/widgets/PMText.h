@@ -1,11 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMText.h,v 1.1 1998-09-19 15:29:29 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMText.h,v 1.2 2000-12-16 17:03:10 amb Exp $
 
-  ProcMeter Text Widget Public include file (for ProcMeter 3.0).
+  ProcMeter Text Widget Public include file (for ProcMeter 3.3).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98 Andrew M. Bishop
+  This file Copyright 1996,98,2000 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -31,6 +31,6 @@ typedef struct _ProcMeterTextRec      *ProcMeterTextWidget;
 
 /* Public functions */
 
-void ProcMeterTextWidgetChangeData(Widget pmw,char *data);
+void ProcMeterTextChangeData(Widget pmw,char *data);
 
-#endif /* PMGRAPH_H */
+#endif /* PMTEXT_H */
