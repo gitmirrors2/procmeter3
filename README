@@ -1,16 +1,18 @@
-                              PROCMETER V3.3
+                              PROCMETER V3.4
                               ==============
 
 A system monitoring program for Linux.
 
 
-Usage: procmeter3 [-h] [--rc=<filename>] [--...] ...
-       gprocmeter3 [-h] [--rc=<filename>] [--...] ...
+Usage: procmeter3     [-h] [--rc=<filename>] [--...] ...
+       gprocmeter3    [-h] [--rc=<filename>] [--...] ...
+       procmeter3-log [-h] [--rc=<filename>] [--...] ...
+       procmeter3-lcd [-h] [--rc=<filename>] [--...] ...
 
 -h                Print out a help message.
 --rc=<filename>   Specify an alternative .procemterrc file.
 --...             Command line options to set .procmeterrc options.
-...               Options, use 'procmeter3 -h' or 'gprocmeter3 -h' to list them.
+...               Options, use the '-h' option to list the possibilities.
 
 
 
@@ -27,8 +29,14 @@ make install
 To compile just the Athena widgets version use 'make procmeter3', for just the
 GTK version use 'make gprocmeter3' instead of 'make all'.
 
-The manual pages procmeter3(1), gprocmeter3(1) and procmeterrc(5) give more
-details on how to use the program.
+There are also two versions that don't have an X window display output, they are
+a '-log' version that logs the data to a file and a '-lcd' version that will
+display on an LCD device by using the LCDproc server (see
+http://lcdproc.omnipotent.net).
+
+The manual pages procmeter3(1), gprocmeter3(1), procmeter3-no-x(1),
+procmeter3-lcd(1), procmeter3_modules(1) and procmeterrc(5) give more details on
+how to use the programs.
 
 
 More Information
@@ -51,7 +59,8 @@ Andrew M. Bishop
 Procmeter Version 3.0 Written August - September 1998
 Procmeter Version 3.1 Written February - March   1999
 Procmeter Version 3.2 Written August - December  1999
-Procmeter Version 3.3 Written August 2000 - January 2001
+Procmeter Version 3.3 Written August 2000 - November 2002
+Procmeter Version 3.4 Written November 2002 - December 2002
 
 email: amb@gedanken.demon.co.uk [Please put procmeter in the subject line]
 
