@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.11 2004-04-03 16:08:24 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.12 2005-02-07 18:59:59 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4d.
 
   Disk statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000,02,04 Andrew M. Bishop
+  This file Copyright 1998,99,2000,02,04,05 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -285,7 +285,7 @@ ProcMeterOutput **Initialise(char *options)
             {
              int maj,min,idx,num=8,nm,nr;
              unsigned long d1,d2,d3,d4,d5;
-             DIR *devdir,*devdiscsdir;
+             DIR *devdir,*devdiscsdir,*devmapperdir;
              char devname[PATH_MAX];
              struct dirent *ent;
              struct stat buf;
@@ -296,6 +296,7 @@ ProcMeterOutput **Initialise(char *options)
 
              devdir=opendir("/dev");
              devdiscsdir=opendir("/dev/discs");
+             devmapperdir=opendir("/dev/mapper");
 
              while((nr=sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu,%lu)%n",&maj,&idx,&d1,&d2,&d3,&d4,&d5,&nm))==7 ||
                    (nr=sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu)%n",&maj,&idx,&d1,&d2,&d3,&d4,&nm))==6)
@@ -327,7 +328,18 @@ ProcMeterOutput **Initialise(char *options)
                    min=0;
                   }
 
-                if(devdiscsdir)
+                if(devmapperdir)
+                  {
+                   rewinddir(devmapperdir);
+                   while((ent=readdir(devmapperdir)))
+                     {
+                      sprintf(devname,"/dev/mapper/%s",ent->d_name);
+                      if(!lstat(devname,&buf) && S_ISBLK(buf.st_mode) && !S_ISLNK(buf.st_mode) &&
+                         major(buf.st_rdev)==maj && minor(buf.st_rdev)==min)
+                         done=add_disk(devname);
+                     }
+                  }
+                if(!done && devdiscsdir)
                   {
                    rewinddir(devdiscsdir);
                    while((ent=readdir(devdiscsdir)))
@@ -351,7 +363,7 @@ ProcMeterOutput **Initialise(char *options)
                   }
                 if(!done)
                   {
-                   fprintf(stderr,"ProcMeter(%s): Cannot find disk in /dev or /dev/discs for device %d:%d in '/proc/stat'.\n",__FILE__,maj,min);
+                   fprintf(stderr,"ProcMeter(%s): Cannot find disk in /dev, /dev/mapper, or /dev/discs for device %d:%d in '/proc/stat'.\n",__FILE__,maj,min);
                    continue;
                   }
                }
@@ -379,7 +391,7 @@ ProcMeterOutput **Initialise(char *options)
       {
        int maj,min,nr;
        unsigned long d1,d2,d3,d4,d5;
-       DIR *devdir,*devdiscsdir;
+       DIR *devdir,*devdiscsdir,*devmapperdir;
        char devname[PATH_MAX];
        struct dirent *ent;
        struct stat buf;
@@ -390,6 +402,7 @@ ProcMeterOutput **Initialise(char *options)
 
        devdir=opendir("/dev");
        devdiscsdir=opendir("/dev/discs");
+       devmapperdir=opendir("/dev/mapper");
 
        do
          {
@@ -400,16 +413,27 @@ ProcMeterOutput **Initialise(char *options)
           if(nr<6)
              break;
 
-          if(devdiscsdir)
+          if(devmapperdir)
             {
-             rewinddir(devdiscsdir);
-             while((ent=readdir(devdiscsdir)))
-               {
-                sprintf(devname,"/dev/discs/%s/disc",ent->d_name);
-                if(!lstat(devname,&buf) && S_ISBLK(buf.st_mode) && !S_ISLNK(buf.st_mode) &&
-                   major(buf.st_rdev)==maj && minor(buf.st_rdev)==min)
-                   done=add_disk(devname);
-               }
+              rewinddir(devmapperdir);
+              while((ent=readdir(devmapperdir)))
+                {
+                  sprintf(devname,"/dev/mapper/%s",ent->d_name);
+                  if(!lstat(devname,&buf) && S_ISBLK(buf.st_mode) && !S_ISLNK(buf.st_mode) &&
+                     major(buf.st_rdev)==maj && minor(buf.st_rdev)==min)
+                    done=add_disk(devname);
+                }
+            }
+          if(!done && devdiscsdir)
+            {
+              rewinddir(devdiscsdir);
+              while((ent=readdir(devdiscsdir)))
+                {
+                  sprintf(devname,"/dev/discs/%s/disc",ent->d_name);
+                  if(!lstat(devname,&buf) && S_ISBLK(buf.st_mode) && !S_ISLNK(buf.st_mode) &&
+                     major(buf.st_rdev)==maj && minor(buf.st_rdev)==min)
+                    done=add_disk(devname);
+                }
             }
           if(!done && devdir)
             {
@@ -424,7 +448,7 @@ ProcMeterOutput **Initialise(char *options)
             }
           if(!done)
             {
-             fprintf(stderr,"ProcMeter(%s): Cannot find disk in /dev or /dev/discs for device %d:%d in '/proc/diskstats'.\n",__FILE__,maj,min);
+             fprintf(stderr,"ProcMeter(%s): Cannot find disk in /dev, /dev/mapper, or /dev/discs for device %d:%d in '/proc/diskstats'.\n",__FILE__,maj,min);
              continue;
             }
          }
