@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/window.c,v 1.2 2002-06-04 12:53:12 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/window.c,v 1.3 2002-06-04 13:53:39 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
@@ -244,7 +244,7 @@ void AddRemoveOutput(Output output)
  else
    {
     GtkWidget *w=NULL;
-    char *string,str[16];
+    char *string,str[PROCMETER_NAME_LEN];
     Output *outputp=NULL;
     Module *modulep,module=NULL;
 

@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.11 2002-06-04 12:56:03 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.12 2002-06-04 13:53:39 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
@@ -80,7 +80,7 @@ struct _Output
 {
  ProcMeterOutput *output;       /*+ The output that this represents. +*/
 
- char label[16];                /*+ The label of the output. +*/
+ char label[PROCMETER_NAME_LEN];/*+ The label for the output. +*/
 
  RunOption menu_run;            /*+ The function that can be run for this output. +*/
 

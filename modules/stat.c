@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.10 2001-07-08 07:56:38 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.11 2002-06-04 13:54:06 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3a.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Low level system statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000 Andrew M. Bishop
+  This file Copyright 1998,99,2000,2002 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -48,179 +48,179 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
 {
  /*+ The total cpu output +*/
  {
-  /* char  name[16];         */ "CPU",
-  /* char *description;      */ "The total fraction of the time that the CPU is busy.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU",
+  /* char *description;              */ "The total fraction of the time that the CPU is busy.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The user cpu output +*/
  {
-  /* char  name[16];         */ "CPU_User",
-  /* char *description;      */ "The fraction of the time that the CPU is processing user level code (applications).",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU_User",
+  /* char *description;              */ "The fraction of the time that the CPU is processing user level code (applications).",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The nice cpu output +*/
  {
-  /* char  name[16];         */ "CPU_Nice",
-  /* char *description;      */ "The fraction of the time that the CPU is running processes that run at a lowered priority.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU_Nice",
+  /* char *description;              */ "The fraction of the time that the CPU is running processes that run at a lowered priority.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The system cpu output +*/
  {
-  /* char  name[16];         */ "CPU_System",
-  /* char *description;      */ "The fraction of the time that the CPU is processing system level code (kernel).",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU_System",
+  /* char *description;              */ "The fraction of the time that the CPU is processing system level code (kernel).",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The idle cpu output +*/
  {
-  /* char  name[16];         */ "CPU_Idle",
-  /* char *description;      */ "The fraction of the time that the CPU is idle.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU_Idle",
+  /* char *description;              */ "The fraction of the time that the CPU is idle.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The disk blocks accessed per second +*/
  {
-  /* char  name[16];         */ "Disk",
-  /* char *description;      */ "The total number of disk blocks accessed per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 /s",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 25,
-  /* char  graph_units[8];   */ "(%d/s)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Disk",
+  /* char *description;              */ "The total number of disk blocks accessed per second.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 /s",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 25,
+  /* char  graph_units[8];           */ "(%d/s)"
  },
  /*+ The disk blocks read per second +*/
  {
-  /* char  name[16];         */ "Disk_Read",
-  /* char *description;      */ "The total number of disk blocks that are read per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 /s",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 25,
-  /* char  graph_units[8];   */ "(%d/s)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Disk_Read",
+  /* char *description;              */ "The total number of disk blocks that are read per second.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 /s",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 25,
+  /* char  graph_units[8];           */ "(%d/s)"
  },
  /*+ The disk blocks write per second +*/
  {
-  /* char  name[16];         */ "Disk_Write",
-  /* char *description;      */ "The total number of disk blocks that are written per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 /s",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 25,
-  /* char  graph_units[8];   */ "(%d/s)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Disk_Write",
+  /* char *description;              */ "The total number of disk blocks that are written per second.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 /s",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 25,
+  /* char  graph_units[8];           */ "(%d/s)"
  },
  /*+ The swap blocks accessed per second +*/
  {
-  /* char  name[16];         */ "Swap",
-  /* char *description;      */ "The total number of swap space blocks accessed per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 /s",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 50,
-  /* char  graph_units[8];   */ "(%d/s)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Swap",
+  /* char *description;              */ "The total number of swap space blocks accessed per second.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 /s",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 50,
+  /* char  graph_units[8];           */ "(%d/s)"
  },
  /*+ The swap blocks in per second +*/
  {
-  /* char  name[16];         */ "Swap_In",
-  /* char *description;      */ "The number of swap space blocks that are read in per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 /s",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 50,
-  /* char  graph_units[8];   */ "(%d/s)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Swap_In",
+  /* char *description;              */ "The number of swap space blocks that are read in per second.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 /s",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 50,
+  /* char  graph_units[8];           */ "(%d/s)"
  },
  /*+ The swap blocks out per second +*/
  {
-  /* char  name[16];         */ "Swap_Out",
-  /* char *description;      */ "The number of swap space blocks that are written out per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 /s",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 50,
-  /* char  graph_units[8];   */ "(%d/s)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Swap_Out",
+  /* char *description;              */ "The number of swap space blocks that are written out per second.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 /s",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 50,
+  /* char  graph_units[8];           */ "(%d/s)"
  },
  /*+ The page blocks accessed per second +*/
  {
-  /* char  name[16];         */ "Page",
-  /* char *description;      */ "The number of paged blocks accessed per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 /s",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 50,
-  /* char  graph_units[8];   */ "(%d/s)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Page",
+  /* char *description;              */ "The number of paged blocks accessed per second.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 /s",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 50,
+  /* char  graph_units[8];           */ "(%d/s)"
  },
  /*+ The page blocks in per second +*/
  {
-  /* char  name[16];         */ "Page_In",
-  /* char *description;      */ "The number of paged blocks that are read in per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 /s",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 50,
-  /* char  graph_units[8];   */ "(%d/s)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Page_In",
+  /* char *description;              */ "The number of paged blocks that are read in per second.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 /s",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 50,
+  /* char  graph_units[8];           */ "(%d/s)"
  },
  /*+ The page blocks out per second +*/
  {
-  /* char  name[16];         */ "Page_Out",
-  /* char *description;      */ "The number of paged blocks that are dumped out per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 /s",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 50,
-  /* char  graph_units[8];   */ "(%d/s)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Page_Out",
+  /* char *description;              */ "The number of paged blocks that are dumped out per second.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 /s",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 50,
+  /* char  graph_units[8];           */ "(%d/s)"
  },
  /*+ The number of context switches per second +*/
  {
-  /* char  name[16];         */ "Context",
-  /* char *description;      */ "The number of context switches between running processes per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 /s",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 100,
-  /* char  graph_units[8];   */ "(%d/s)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Context",
+  /* char *description;              */ "The number of context switches between running processes per second.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 /s",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 100,
+  /* char  graph_units[8];           */ "(%d/s)"
  },
  /*+ The number of interrupts per second +*/
  {
-  /* char  name[16];         */ "Interrupts",
-  /* char *description;      */ "The number of hardware interrupts per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 /s",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 100,
-  /* char  graph_units[8];   */ "(%d/s)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Interrupts",
+  /* char *description;              */ "The number of hardware interrupts per second.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 /s",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 100,
+  /* char  graph_units[8];           */ "(%d/s)"
  }
 };
 
@@ -230,8 +230,8 @@ ProcMeterOutput *outputs[N_OUTPUTS+1];
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];           */ "Statistics",
- /* char *description;       */ "Low level system statistics. [From /proc/stat]",
+ /* char name[PROCMETER_NAME_LEN]; */ "Statistics",
+ /* char *description;             */ "Low level system statistics. [From /proc/stat]",
 };
 
 

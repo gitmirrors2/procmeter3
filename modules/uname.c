@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/uname.c,v 1.3 1998-10-24 13:09:54 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/uname.c,v 1.4 2002-06-04 13:54:07 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux (v3.0a).
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Uname system information module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,2002 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -27,27 +27,27 @@
 /*+ The hostname output. +*/
 ProcMeterOutput hostname_output=
 {
- /* char  name[16];         */ "Hostname",
- /* char *description;      */ "The canonical name of the computer.",
- /* char  type;             */ PROCMETER_TEXT,
- /* short interval;         */ 0,
- /* char  text_value[16];   */ "unknown",
- /* long  graph_value;      */ -1,
- /* short graph_scale;      */ 0,
- /* char  graph_units[8];   */ "n/a"
+ /* char  name[PROCMETER_NAME_LEN]; */ "Hostname",
+ /* char *description;              */ "The canonical name of the computer.",
+ /* char  type;                     */ PROCMETER_TEXT,
+ /* short interval;                 */ 0,
+ /* char  text_value[16];           */ "unknown",
+ /* long  graph_value;              */ -1,
+ /* short graph_scale;              */ 0,
+ /* char  graph_units[8];           */ "n/a"
 };
 
 /*+ The kernel version output. +*/
 ProcMeterOutput kernelversion_output=
 {
- /* char  name[16];         */ "Kernel_Version",
- /* char *description;      */ "The kernel version that is running (%s).",
- /* char  type;             */ PROCMETER_TEXT,
- /* short interval;         */ 0,
- /* char  text_value[16];   */ "unknown",
- /* long  graph_value;      */ -1,
- /* short graph_scale;      */ 0,
- /* char  graph_units[8];   */ "n/a"
+ /* char  name[PROCMETER_NAME_LEN]; */ "Kernel_Version",
+ /* char *description;              */ "The kernel version that is running (%s).",
+ /* char  type;                     */ PROCMETER_TEXT,
+ /* short interval;                 */ 0,
+ /* char  text_value[16];           */ "unknown",
+ /* long  graph_value;              */ -1,
+ /* short graph_scale;              */ 0,
+ /* char  graph_units[8];           */ "n/a"
 };
 
 /*+ The outputs. +*/
@@ -61,8 +61,8 @@ ProcMeterOutput *outputs[]=
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];             */ "Uname",
- /* char *description;         */ "The system information from the uname program.",
+ /* char name[PROCMETER_NAME_LEN]; */ "Uname",
+ /* char *description;             */ "The system information from the uname program.",
 };
 
 
@@ -116,9 +116,9 @@ ProcMeterOutput **Initialise(char *options)
    {
     char *p;
 
-    strncpy(hostname_output.text_value,buf.nodename,16);     hostname_output.text_value[15]=0;
-    strncpy(kernelversion_output.text_value,buf.release,16); kernelversion_output.text_value[15]=0;
-
+    snprintf(hostname_output.text_value, PROCMETER_NAME_LEN, "%s", buf.nodename);
+    snprintf(kernelversion_output.text_value, PROCMETER_NAME_LEN, "%s", buf.release);
+    
     p=hostname_output.text_value;
     while(*p && *p!='.')
        p++;

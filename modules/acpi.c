@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.3 2002-06-02 09:54:57 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.4 2002-06-04 13:53:39 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
@@ -331,25 +331,25 @@ ProcMeterOutput _thermal_outputs[N_THERMAL_OUTPUTS]=
 {
  /*+ Temp. +*/
  {
-  /* char  name[16];         */ "Thermal%i",
-  /* char *description;      */ "Temperature output %i.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "unknown",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 10,
-  /* char  graph_units[8];   */ "unknown", /* filled out later */
+  /* char  name[PROCMETER_NAME_LEN]; */ "Thermal%i",
+  /* char *description;              */ "Temperature output %i.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "unknown",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 10,
+  /* char  graph_units[8];           */ "unknown", /* filled out later */
  },
  /*+ Status +*/
  {
-  /* char  name[16];         */ "Thermal%i_Stat",
-  /* char *description;      */ "State of thermal outputs %i.",
-  /* char  type;             */ PROCMETER_TEXT,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "unknown",
-  /* long  graph_value;      */ -1,
-  /* short graph_scale;      */ 0,
-  /* char  graph_units[8];   */ "n/a",
+  /* char  name[PROCMETER_NAME_LEN]; */ "Thermal%i_Stat",
+  /* char *description;              */ "State of thermal outputs %i.",
+  /* char  type;                     */ PROCMETER_TEXT,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "unknown",
+  /* long  graph_value;              */ -1,
+  /* short graph_scale;              */ 0,
+  /* char  graph_units[8];           */ "n/a",
  }
 };
 
@@ -359,58 +359,58 @@ ProcMeterOutput _batt_outputs[N_BATT_OUTPUTS]=
 {
  /*+ Battery charge percent. +*/
  {
-  /* char  name[16];         */ "Batt%i_Charge",
-  /* char *description;      */ "The percent that battery %i is charged.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0%",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 10,
-  /* char  graph_Units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Batt%i_Charge",
+  /* char *description;              */ "The percent that battery %i is charged.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0%",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 10,
+  /* char  graph_Units[8];           */ "(%d%%)"
  },
  /*+ Rate of charge/discharge. +*/
  {
-  /* char  name[16];         */ "Batt%i_Rate",
-  /* char *description;      */ "The present rate of battery %i discharge or charge, in mW.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 mW",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 1000,
-  /* char  graph_Units[8];   */ "(%d mW)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Batt%i_Rate",
+  /* char *description;              */ "The present rate of battery %i discharge or charge, in mW.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 mW",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 1000,
+  /* char  graph_Units[8];           */ "(%d mW)"
  },
  /*+ The battery status output +*/
  {
-   /* char  name[16];         */ "Batt%i_Status",
-   /* char *description;      */ "The estimated status of the battery, one of the states unknown, critical, low or high",
-   /* char  type;             */ PROCMETER_TEXT,
-   /* short interval;         */ 1,
-   /* char  text_value[16];   */ "unknown",
-   /* long  graph_value;      */ -1,
-   /* short graph_scale;      */ 0,
-   /* char  graph_units[8];   */ "n/a",
+  /* char  name[PROCMETER_NAME_LEN]; */ "Batt%i_Status",
+  /* char *description;              */ "The estimated status of the battery, one of the states unknown, critical, low or high",
+  /* char  type;                     */ PROCMETER_TEXT,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "unknown",
+  /* long  graph_value;              */ -1,
+  /* short graph_scale;              */ 0,
+  /* char  graph_units[8];           */ "n/a",
  },
  /*+ The battery remaining time output. +*/
  {
- /* char  name[16];         */ "Batt%i_Time",
- /* char *description;      */ "The current estimated lifetime remaining for battery %i.",
- /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
- /* short interval;         */ 1,
- /* char  text_value[16];   */ "unknown",
- /* long  graph_value;      */ 0,
- /* short graph_scale;      */ 30,
- /* char  graph_units[8];   */ "(%d min)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Batt%i_Time",
+  /* char *description;              */ "The current estimated lifetime remaining for battery %i.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "unknown",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 30,
+  /* char  graph_units[8];           */ "(%d min)"
  },
  /*+ The time till charge. +*/
  {
- /* char  name[16];         */ "Batt%i_ChrgTm",
- /* char *description;      */ "The current estimated time until battery %i is fully charged.",
- /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
- /* short interval;         */ 1,
- /* char  text_value[16];   */ "unknown",
- /* long  graph_value;      */ 0,
- /* short graph_scale;      */ 30,
- /* char  graph_units[8];   */ "(%d min)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Batt%i_ChrgTm",
+  /* char *description;              */ "The current estimated time until battery %i is fully charged.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "unknown",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 30,
+  /* char  graph_units[8];           */ "(%d min)"
  }
 };
 
@@ -428,10 +428,10 @@ int use_celcius = 1;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];           */ "ACPI",
- /* char *description;       */ "ACPI information [From /proc/acpi]. These outputs are only available if you have configured the kernel "
-                                "with ACPI support. "
-                                "(Use 'options=C' or 'options=F' in the configuration file to specify preferred units of temperature."
+ /* char name[PROCMETER_NAME_LEN]; */ "ACPI",
+ /* char *description;             */ "ACPI information [From /proc/acpi]. These outputs are only available if you have configured the kernel "
+                                      "with ACPI support. "
+                                      "(Use 'options=C' or 'options=F' in the configuration file to specify preferred units of temperature."
 };
 
 static int last_batt_update[ACPI_MAXITEM];

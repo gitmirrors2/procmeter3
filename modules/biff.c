@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/biff.c,v 1.2 1998-09-26 09:35:51 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/biff.c,v 1.3 2002-06-04 13:54:06 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Mail inbox monitor.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,2002 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -30,27 +30,27 @@
 /*+ The number of e-mails output. +*/
 ProcMeterOutput count_output=
 {
- /* char  name[16];         */ "Inbox_Count",
- /* char *description;      */ "The number of mail messages that are in the inbox.",
- /* char  type;             */ PROCMETER_TEXT,
- /* short interval;         */ 15,
- /* char  text_value[16];   */ "unknown",
- /* long  graph_value;      */ -1,
- /* short graph_scale;      */ 0,
- /* char  graph_units[8];   */ "n/a"
+ /* char  name[PROCMETER_NAME_LEN]; */ "Inbox_Count",
+ /* char *description;              */ "The number of mail messages that are in the inbox.",
+ /* char  type;                     */ PROCMETER_TEXT,
+ /* short interval;                 */ 15,
+ /* char  text_value[16];           */ "unknown",
+ /* long  graph_value;              */ -1,
+ /* short graph_scale;              */ 0,
+ /* char  graph_units[8];           */ "n/a"
 };
 
 /*+ The size of the mailbox output. +*/
 ProcMeterOutput size_output=
 {
- /* char  name[16];         */ "Inbox_Size",
- /* char *description;      */ "The size of the mail inbox.",
- /* char  type;             */ PROCMETER_TEXT,
- /* short interval;         */ 15,
- /* char  text_value[16];   */ "unknown",
- /* long  graph_value;      */ -1,
- /* short graph_scale;      */ 0,
- /* char  graph_units[8];   */ "n/a"
+ /* char  name[PROCMETER_NAME_LEN]; */ "Inbox_Size",
+ /* char *description;              */ "The size of the mail inbox.",
+ /* char  type;                     */ PROCMETER_TEXT,
+ /* short interval;                 */ 15,
+ /* char  text_value[16];           */ "unknown",
+ /* long  graph_value;              */ -1,
+ /* short graph_scale;              */ 0,
+ /* char  graph_units[8];           */ "n/a"
 };
 
 /*+ The outputs. +*/
@@ -70,8 +70,8 @@ ProcMeterOutput *null_outputs[]=
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];             */ "Biff",
- /* char *description;         */ "Monitors the size and number of e-mails that are waiting in the UNIX email inbox '%s'.",
+ /* char name[PROCMETER_NAME_LEN]; */ "Biff",
+ /* char *description;             */ "Monitors the size and number of e-mails that are waiting in the UNIX email inbox '%s'.",
 };
 
 

@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/procmeter.c,v 1.3 1999-02-13 11:38:02 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/procmeter.c,v 1.4 2002-06-04 13:54:06 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Information about the ProcMeter program source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99 Andrew M. Bishop
+  This file Copyright 1998,99,2002 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -24,14 +24,14 @@
 /*+ The version output +*/
 ProcMeterOutput version_output=
 {
- /* char  name[16];         */ "Version",
- /* char *description;      */ "The version of procmeter that is running.",
- /* char  type;             */ PROCMETER_TEXT,
- /* short interval;         */ 0,
- /* char  text_value[16];   */ "ProcMeter V" PROCMETER_VERSION,
- /* long  graph_value;      */ -1,
- /* short graph_scale;      */ 0,
- /* char  graph_units[8];   */ "n/a"
+ /* char  name[PROCMETER_NAME_LEN]; */ "Version",
+ /* char *description;              */ "The version of procmeter that is running.",
+ /* char  type;                     */ PROCMETER_TEXT,
+ /* short interval;                 */ 0,
+ /* char  text_value[16];           */ "ProcMeter V" PROCMETER_VERSION,
+ /* long  graph_value;              */ -1,
+ /* short graph_scale;              */ 0,
+ /* char  graph_units[8];           */ "n/a"
 };
 
 /*+ The outputs. +*/
@@ -44,8 +44,8 @@ ProcMeterOutput *outputs[]=
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];             */ "ProcMeter",
- /* char *description;         */ "Information about the procmeter program itself.",
+ /* char name[PROCMETER_NAME_LEN]; */ "ProcMeter",
+ /* char *description;             */ "Information about the procmeter program itself.",
 };
 
 

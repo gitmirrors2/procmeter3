@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.11 2001-05-27 07:38:44 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.12 2002-06-04 13:53:39 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3a.
 
@@ -20,7 +20,7 @@
 #include <time.h>
 
 
-#define PROCMETER_VERSION "3.3a"
+#define PROCMETER_VERSION "3.3b"
 
 
 #define PROCMETER_MAJOR_VERSION 3
@@ -42,10 +42,13 @@
 #define PROCMETER_GRAPH_INTEGER(xx)  ((long)((xx)<<10))
 
 
+#define PROCMETER_NAME_LEN 25
+
+
 /*+ The information about one of the outputs. +*/
 typedef struct _ProcMeterOutput
 {
- char  name[16];                /*+ The name of the output. +*/
+ char  name[PROCMETER_NAME_LEN];/*+ The name of the output. +*/
  char *description;             /*+ A long description of the output. +*/
  char  type;                    /*+ The type of output. +*/
  short interval;                /*+ The interval between updates. +*/
@@ -60,7 +63,7 @@ ProcMeterOutput;
 /*+ The information about one of the modules. +*/
 typedef struct _ProcMeterModule
 {
- char name[16];                 /*+ The module's name. +*/
+ char name[PROCMETER_NAME_LEN]; /*+ The module's name. +*/
  char *description;             /*+ A long description of the module. +*/
 }
 ProcMeterModule;

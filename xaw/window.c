@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.12 2002-06-04 12:53:08 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.13 2002-06-04 13:55:50 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   X Windows interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997,98,99,2000 Andrew M. Bishop
+  This file Copyright 1997,98,99,2000,02 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -229,7 +229,7 @@ void AddRemoveOutput(Output output)
  else
    {
     Widget w=NULL;
-    char *string,str[16];
+    char *string,str[PROCMETER_NAME_LEN];
     Arg args[16];
     int nargs=0;
     Output *outputp=NULL;

@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.3 2002-06-04 10:12:26 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.4 2002-06-04 13:54:06 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
@@ -54,14 +54,14 @@ static void read_cpuid(long address, int *eax, int *ebx, int *ecx, int *edx) {
 ProcMeterOutput _outputs[1]=
 {
  {
-  /* char  name[16];         */ "Longrun",
-  /* char *description;      */ "current longrun performance level",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "Longrun",
+  /* char *description;              */ "current longrun performance level",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
 };
 
@@ -77,9 +77,9 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];           */ "Longrun",
- /* char *description;       */ "Transmeta Crusoe longrun information.  "
-                                "Only available if using a Transmeta Crusoe CPU that supports it and the kernel was compiled with CONFIG_X86_CPUID=y."
+ /* char name[PROCMETER_NAME_LEN]; */ "Longrun",
+ /* char *description;             */ "Transmeta Crusoe longrun information.  "
+                                      "Only available if using a Transmeta Crusoe CPU that supports it and the kernel was compiled with CONFIG_X86_CPUID=y."
 };
 
 /*++++++++++++++++++++++++++++++++++++++

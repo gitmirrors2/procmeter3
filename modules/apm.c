@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/apm.c,v 1.2 1998-10-09 15:04:31 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/apm.c,v 1.3 2002-06-04 13:53:39 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Advanced Power Management module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,2002 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -25,41 +25,41 @@
 /*+ The battery status output +*/
 ProcMeterOutput batt_status_output=
 {
- /* char  name[16];         */ "Battery_Status",
- /* char *description;      */ "The estimated status of the battery, one of the states unknown, critical, low or high "
-                               "and whether it is currently being charged or not.",
- /* char  type;             */ PROCMETER_TEXT,
- /* short interval;         */ 60,
- /* char  text_value[16];   */ "unknown",
- /* long  graph_value;      */ -1,
- /* short graph_scale;      */ 0,
- /* char  graph_units[8];   */ "n/a"
+ /* char  name[PROCMETER_NAME_LEN]; */ "Battery_Status",
+ /* char *description;              */ "The estimated status of the battery, one of the states unknown, critical, low or high "
+                                       "and whether it is currently being charged or not.",
+ /* char  type;                     */ PROCMETER_TEXT,
+ /* short interval;                 */ 60,
+ /* char  text_value[16];           */ "unknown",
+ /* long  graph_value;              */ -1,
+ /* short graph_scale;              */ 0,
+ /* char  graph_units[8];           */ "n/a"
 };
 
 /*+ The battery life output. +*/
 ProcMeterOutput batt_life_output=
 {
- /* char  name[16];         */ "Battery_Life",
- /* char *description;      */ "The current estimated fraction of the battery life that remains.",
- /* char  type;             */ PROCMETER_TEXT,
- /* short interval;         */ 60,
- /* char  text_value[16];   */ "unknown",
- /* long  graph_value;      */ -1,
- /* short graph_scale;      */ 0,
- /* char  graph_units[8];   */ "n/a"
+ /* char  name[PROCMETER_NAME_LEN]; */ "Battery_Life",
+ /* char *description;              */ "The current estimated fraction of the battery life that remains.",
+ /* char  type;                     */ PROCMETER_TEXT,
+ /* short interval;                 */ 60,
+ /* char  text_value[16];           */ "unknown",
+ /* long  graph_value;              */ -1,
+ /* short graph_scale;              */ 0,
+ /* char  graph_units[8];           */ "n/a"
 };
 
 /*+ The battery remaining time output. +*/
 ProcMeterOutput batt_remain_output=
 {
- /* char  name[16];         */ "Battery_Time",
- /* char *description;      */ "The current estimated battery lifetime remaining in minutes or seconds.",
- /* char  type;             */ PROCMETER_TEXT,
- /* short interval;         */ 60,
- /* char  text_value[16];   */ "unknown",
- /* long  graph_value;      */ -1,
- /* short graph_scale;      */ 0,
- /* char  graph_units[8];   */ "n/a"
+ /* char  name[PROCMETER_NAME_LEN]; */ "Battery_Time",
+ /* char *description;              */ "The current estimated battery lifetime remaining in minutes or seconds.",
+ /* char  type;                     */ PROCMETER_TEXT,
+ /* short interval;                 */ 60,
+ /* char  text_value[16];           */ "unknown",
+ /* long  graph_value;              */ -1,
+ /* short graph_scale;              */ 0,
+ /* char  graph_units[8];           */ "n/a"
 };
 
 /*+ The outputs. +*/
@@ -68,9 +68,9 @@ ProcMeterOutput *outputs[4];
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];             */ "APM",
- /* char *description;         */ "Advanced Power Management information.  These outputs are only available if you have "
-                                  "configured the kernel to have the APM feature. [From /proc/apm]",
+ /* char name[PROCMETER_NAME_LEN]; */ "APM",
+ /* char *description;             */ "Advanced Power Management information.  These outputs are only available if you have "
+                                      "configured the kernel to have the APM feature. [From /proc/apm]",
 };
 
 

@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.4 1999-12-05 13:45:22 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.5 2002-06-04 13:54:06 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Temperature indicators for Mainboard and CPU
   Based on loadavg.c, stat-cpu.c by Andrew M. Bishop
@@ -9,7 +9,7 @@
   Written by Matt Kemner, Andrew M. Bishop
 
   This file Copyright 1999 Matt Kemner, Andrew M. Bishop
-  parts of it are Copyright 1998-99 Andrew M. Bishop
+  parts of it are Copyright 1998,99,2002 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -35,27 +35,27 @@
 /*+ The mainboard temperature output. +*/
 ProcMeterOutput _temp_output=
 {
- /* char  name[16];         */ "Temp%d",
- /* char *description;      */ "Temperature sensor number %d [from %s].",
- /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
- /* short interval;         */ 1,
- /* char  text_value[16];   */ "unknown",
- /* long  graph_value;      */ 0,
- /* short graph_scale;      */ 10,
- /* char  graph_units[8];   */ "(%d C)"
+ /* char  name[PROCMETER_NAME_LEN]; */ "Temp%d",
+ /* char *description;              */ "Temperature sensor number %d [from %s].",
+ /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+ /* short interval;                 */ 1,
+ /* char  text_value[16];           */ "unknown",
+ /* long  graph_value;              */ 0,
+ /* short graph_scale;              */ 10,
+ /* char  graph_units[8];           */ "(%d C)"
 };
 
 /*+ The mainboard fan output. +*/
 ProcMeterOutput _fan_output=
 {
- /* char  name[16];         */ "Fan%d",
- /* char *description;      */ "Fan speed sensor number %d [from %s].",
- /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
- /* short interval;         */ 1,
- /* char  text_value[16];   */ "unknown",
- /* long  graph_value;      */ 0,
- /* short graph_scale;      */ 1000,
- /* char  graph_units[8];   */ "(%d rpm)"
+ /* char  name[PROCMETER_NAME_LEN]; */ "Fan%d",
+ /* char *description;              */ "Fan speed sensor number %d [from %s].",
+ /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+ /* short interval;                 */ 1,
+ /* char  text_value[16];           */ "unknown",
+ /* long  graph_value;              */ 0,
+ /* short graph_scale;              */ 1000,
+ /* char  graph_units[8];           */ "(%d rpm)"
 };
 
 /*+ The outputs. +*/
@@ -64,9 +64,9 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];          */ "Sensors",
- /* char *description;      */ "Hardware status information, temperature, fan speed etc. [From /proc/sys/dev/sensors/*/*]"
-                               " (Requires version 2.x.x of lm78 sensors from http://www.netroedge.com/~lm78/).",
+ /* char name[PROCMETER_NAME_LEN]; */ "Sensors",
+ /* char *description;             */ "Hardware status information, temperature, fan speed etc. [From /proc/sys/dev/sensors/*/*]"
+                                      " (Requires version 2.x.x of lm78 sensors from http://www.netroedge.com/~lm78/).",
 };
 
 /*+ The temperature outputs. +*/
@@ -216,7 +216,7 @@ static void add_temperature(char *filename)
 
           temp_outputs=(ProcMeterOutput*)realloc((void*)temp_outputs,(ntemps+1)*sizeof(ProcMeterOutput));
           temp_outputs[ntemps]=_temp_output;
-          sprintf(temp_outputs[ntemps].name,_temp_output.name,ntemps);
+          snprintf(temp_outputs[ntemps].name, PROCMETER_NAME_LEN, _temp_output.name, ntemps);
           temp_outputs[ntemps].description=(char*)malloc(strlen(_temp_output.description)+8+strlen(filename));
           sprintf(temp_outputs[ntemps].description,_temp_output.description,ntemps,filename);
           ntemps++;
@@ -259,7 +259,7 @@ static void add_fan(char *filename)
 
           fan_outputs=(ProcMeterOutput*)realloc((void*)fan_outputs,(nfans+1)*sizeof(ProcMeterOutput));
           fan_outputs[nfans]=_fan_output;
-          sprintf(fan_outputs[nfans].name,_fan_output.name,nfans);
+          snprintf(fan_outputs[nfans].name, PROCMETER_NAME_LEN, _fan_output.name, nfans);
           fan_outputs[nfans].description=(char*)malloc(strlen(_fan_output.description)+8+strlen(filename));
           sprintf(fan_outputs[nfans].description,_fan_output.description,nfans,filename);
           nfans++;

@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.5 2000-12-13 17:32:49 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.6 2002-06-04 13:54:06 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2b.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Low level system statistics for CPU usage.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99 Andrew M. Bishop
+  This file Copyright 1998,99,2002 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "procmeter.h"
 
@@ -33,58 +34,58 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
 {
  /*+ The total cpu output +*/
  {
-  /* char  name[16];         */ "CPU",
-  /* char *description;      */ "The total fraction of the time that the CPU is busy.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU",
+  /* char *description;              */ "The total fraction of the time that the CPU is busy.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The user cpu output +*/
  {
-  /* char  name[16];         */ "CPU_User",
-  /* char *description;      */ "The fraction of the time that the CPU is processing user level code (applications).",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU_User",
+  /* char *description;              */ "The fraction of the time that the CPU is processing user level code (applications).",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The nice cpu output +*/
  {
-  /* char  name[16];         */ "CPU_Nice",
-  /* char *description;      */ "The fraction of the time that the CPU is running processes that run at a lowered priority.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU_Nice",
+  /* char *description;              */ "The fraction of the time that the CPU is running processes that run at a lowered priority.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The system cpu output +*/
  {
-  /* char  name[16];         */ "CPU_System",
-  /* char *description;      */ "The fraction of the time that the CPU is processing system level code (kernel).",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU_System",
+  /* char *description;              */ "The fraction of the time that the CPU is processing system level code (kernel).",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The idle cpu output +*/
  {
-  /* char  name[16];         */ "CPU_Idle",
-  /* char *description;      */ "The fraction of the time that the CPU is idle.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU_Idle",
+  /* char *description;              */ "The fraction of the time that the CPU is idle.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  }
 };
 
@@ -93,58 +94,58 @@ ProcMeterOutput _smp_outputs[]=
 {
  /*+ The total cpu output +*/
  {
-  /* char  name[16];         */ "CPU%d",
-  /* char *description;      */ "The total fraction of the time that the CPU number %d is busy.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU%d",
+  /* char *description;              */ "The total fraction of the time that the CPU number %d is busy.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The user cpu output +*/
  {
-  /* char  name[16];         */ "CPU%d_User",
-  /* char *description;      */ "The fraction of the time that the CPU number %d is processing user level code (applications).",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU%d_User",
+  /* char *description;              */ "The fraction of the time that the CPU number %d is processing user level code (applications).",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The nice cpu output +*/
  {
-  /* char  name[16];         */ "CPU%d_Nice",
-  /* char *description;      */ "The fraction of the time that the CPU number %d is running processes that run at a lowered priority.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU%d_Nice",
+  /* char *description;              */ "The fraction of the time that the CPU number %d is running processes that run at a lowered priority.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The system cpu output +*/
  {
-  /* char  name[16];         */ "CPU%d_System",
-  /* char *description;      */ "The fraction of the time that the CPU number %d is processing system level code (kernel).",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU%d_System",
+  /* char *description;              */ "The fraction of the time that the CPU number %d is processing system level code (kernel).",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  },
  /*+ The idle cpu output +*/
  {
-  /* char  name[16];         */ "CPU%d_Idle",
-  /* char *description;      */ "The fraction of the time that the CPU number %d is idle.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 1,
-  /* char  text_value[16];   */ "0 %",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[PROCMETER_NAME_LEN]; */ "CPU%d_Idle",
+  /* char *description;              */ "The fraction of the time that the CPU number %d is idle.",
+  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;                 */ 1,
+  /* char  text_value[16];           */ "0 %",
+  /* long  graph_value;              */ 0,
+  /* short graph_scale;              */ 20,
+  /* char  graph_units[8];           */ "(%d%%)"
  }
 };
 
@@ -161,8 +162,8 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];           */ "Stat-CPU",
- /* char *description;       */ "CPU usage statistics. [From /proc/stat]",
+ /* char name[PROCMETER_NAME_LEN]; */ "Stat-CPU",
+ /* char *description;             */ "CPU usage statistics. [From /proc/stat]",
 };
 
 
@@ -245,7 +246,7 @@ ProcMeterOutput **Initialise(char *options)
                 for(i=0;i<N_OUTPUTS;i++)
                   {
                    smp_outputs[i+ncpu*N_OUTPUTS]=_smp_outputs[i];
-                   sprintf(smp_outputs[i+ncpu*N_OUTPUTS].name,_smp_outputs[i].name,ncpu);
+                   snprintf(smp_outputs[i+ncpu*N_OUTPUTS].name, PROCMETER_NAME_LEN, _smp_outputs[i].name, ncpu);
                    smp_outputs[i+ncpu*N_OUTPUTS].description=(char*)malloc(strlen(_smp_outputs[i].description)+8);
                    sprintf(smp_outputs[i+ncpu*N_OUTPUTS].description,_smp_outputs[i].description,ncpu);
                   }

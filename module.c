@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.10 2002-06-04 12:54:33 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/module.c,v 1.11 2002-06-04 13:53:39 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
@@ -312,7 +312,7 @@ Module LoadModule(char* filename)
 
           if(!(string=GetProcMeterRC2(new->module->name,output->name,"label")))
             {
-             static char newstr[16];
+             static char newstr[PROCMETER_NAME_LEN];
              int i;
              for(i=0;output->name[i];i++)
                 if(output->name[i]=='_')
@@ -323,8 +323,8 @@ Module LoadModule(char* filename)
              string=newstr;
             }
 
-          strncpy(new->outputs[noutputs]->label,string,16);
-          new->outputs[noutputs]->label[15]=0;
+          strncpy(new->outputs[noutputs]->label,string,PROCMETER_NAME_LEN);
+          new->outputs[noutputs]->label[PROCMETER_NAME_LEN-1]=0;
 
           noutputs++;
          }
