@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.2 1998-09-22 18:45:32 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.3 1998-09-22 18:59:28 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
@@ -203,6 +203,10 @@ static void add_device(char *dev)
 {
  int scale,nstats;
  int i;
+
+ for(i=0;i<ndevices;i++)
+    if(!strcmp(device[i],dev))
+       return;
 
  if(*dev=='l' || *dev=='d') /* 'lo' or 'dummy' devices. */
     scale=100,nstats=1;
