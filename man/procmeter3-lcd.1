@@ -1,0 +1,94 @@
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3-lcd.1,v 1.1 2002-11-30 19:12:17 amb Exp $
+.\"
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.4.
+.\"
+.\"  Manual page for procmeter-lcd program.
+.\"
+.\"  Written by Andrew M. Bishop
+.\"
+.\"  This file Copyright 1998,99,2000,01,02 Andrew M. Bishop
+.\"  It may be distributed under the GNU Public License, version 2, or
+.\"  any higher version.  See section COPYING of the GNU Public license
+.\"  for conditions under which this file may be redistributed.
+.\"
+.TH PROCMETER3-LCD 1 "November 9, 2002"
+
+.SH NAME
+
+procmeter3-lcd \- A system monitoring / logging program.
+
+.SH SYNOPSIS
+
+.B procmeter3-lcd
+.I [\-h|\-\-help]
+.I [\-\-rc=<filename>] [\-\-...]
+.I [...]
+
+.SH DESCRIPTION
+
+.I ProcMeter
+Displays one or more pieces of information about the operating system and other
+resources.  Most of the information that is displayed comes from the /proc
+filesystem.  The program is modular and very configurable.
+
+.SH OPTIONS
+
+The command line options are described below.
+.TP
+.BR \-h
+Provides a help message listing the available outputs.  This will be different
+for different computers depending on the Linux kernel version that is being used
+and the hardware/software that is configured.
+.TP
+.BR \-\-rc=<filename>
+Load the specified
+.B .procmeterrc
+file in stead of the searching in the usual places.
+.TP
+.BR \-\-...
+A list of configuration file options that will override the values in the
+.B .procmeterrc
+file.  The format of these options is (for example)
+.I \-\-resources.background=grey50
+which is equivalent to the entry in the .procmeterrc file of
+
+ [resources]
+ background = grey50
+
+All spaces around the equal sign must be removed and if spaces are required in
+the value on the right hand side then quotes must be used around the entire
+command line option.
+.TP
+.BR ...
+A list of names of outputs that are to be displayed.  This can include any of
+the outputs that are available (see the -h option).  For the CPU usage is in a
+module named
+.B Statistics
+with an output named
+.B CPU
+and there are graph (-g), text (-t) and bar (-b) options.  Since this version of
+the program does not display anything, but logs the data to a file it does not
+matter which one is chosen.  To store the CPU usage data you would use the
+command line option
+.B Statistics.CPU-t
+
+.SH USAGE
+
+When started the program will log all of the requested information on the
+standard output (stdout).  The outputs that are displayed are those from the
+command line and those from the
+.B .procmeterrc
+configuration file.
+
+.SH MODULES
+
+The modules that are available for procmeter3-lcd are described in the
+procmeter3_modules(1) manual page.
+
+.SH SEE ALSO
+
+procmeterrc(5) procmeter3_modules(1)
+
+.SH AUTHOR
+
+Andrew M. Bishop 1998,99,2000,01,02
