@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.8 2002-12-07 19:38:59 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.9 2003-05-10 11:16:27 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4a.
 
   Memory status module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002 Andrew M. Bishop
+  This file Copyright 1998,99,2002,03 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -180,29 +180,29 @@ ProcMeterOutput **Initialise(char *options)
           fprintf(stderr,"ProcMeter(%s): Unexpected first line in '/proc/meminfo'.\n",__FILE__);
        else
          {
-          unsigned long mem_tot,mem_free,mem_used,mem_buff,mem_cache,swap_tot,swap_free,swap_used;
+          unsigned long long mem_tot,mem_free,mem_used,mem_buff,mem_cache,swap_tot,swap_free,swap_used;
           int i;
 
           proc_meminfo_V2_1_41=!strncmp(line,"MemTotal:",9);
 
           if(proc_meminfo_V2_1_41)
             {
-             sscanf(line,"MemTotal: %lu",&mem_tot);
-             if(fgets(line,80,f) && sscanf(line,"MemFree: %lu",&mem_free)==1)
+             sscanf(line,"MemTotal: %llu",&mem_tot);
+             if(fgets(line,80,f) && sscanf(line,"MemFree: %llu",&mem_free)==1)
                available[MEM_FREE]=available[MEM_USED]=1;
              else
                 fprintf(stderr,"ProcMeter(%s): Expected 'MemTotal' line in '/proc/meminfo'.\n",__FILE__);
              fgets(line,80,f); /* MemShared */
-             if(fgets(line,80,f) && sscanf(line,"Buffers: %lu",&mem_buff)==1)
+             if(fgets(line,80,f) && sscanf(line,"Buffers: %llu",&mem_buff)==1)
                 available[MEM_BUFF]=1;
              else
                 fprintf(stderr,"ProcMeter(%s): Expected 'Buffers' line in '/proc/meminfo'.\n",__FILE__);
-             if(fgets(line,80,f) && sscanf(line,"Cached: %lu",&mem_cache)==1)
+             if(fgets(line,80,f) && sscanf(line,"Cached: %llu",&mem_cache)==1)
                 available[MEM_CACHE]=1;
              else
                 fprintf(stderr,"ProcMeter(%s): Expected 'Cached' line in '/proc/meminfo'.\n",__FILE__);
-             if(fgets(line,80,f) && sscanf(line,"SwapTotal: %lu",&swap_tot)==1 &&
-                fgets(line,80,f) && sscanf(line,"SwapFree: %lu",&swap_free)==1)
+             if(fgets(line,80,f) && sscanf(line,"SwapTotal: %llu",&swap_tot)==1 &&
+                fgets(line,80,f) && sscanf(line,"SwapFree: %llu",&swap_free)==1)
                 available[SWAP_FREE]=available[SWAP_USED]=1;
              else
                 fprintf(stderr,"ProcMeter(%s): Expected 'SwapTotal' and 'SwapFree' lines in '/proc/meminfo'.\n",__FILE__);
@@ -210,16 +210,16 @@ ProcMeterOutput **Initialise(char *options)
           else
             {
              fgets(line,80,f);
-             if(sscanf(line,"Mem: %lu %lu %lu %*u %lu %lu",&mem_tot,&mem_free,&mem_used,&mem_buff,&mem_cache)==5)
+             if(sscanf(line,"Mem: %llu %llu %llu %*u %llu %llu",&mem_tot,&mem_free,&mem_used,&mem_buff,&mem_cache)==5)
                 available[MEM_FREE]=available[MEM_USED]=available[MEM_BUFF]=available[MEM_CACHE]=1;
              else
-                if(sscanf(line,"Mem: %lu %lu %lu %*u %lu",&mem_tot,&mem_free,&mem_used,&mem_buff)==4)
+                if(sscanf(line,"Mem: %llu %llu %llu %*u %llu",&mem_tot,&mem_free,&mem_used,&mem_buff)==4)
                    available[MEM_FREE]=available[MEM_USED]=available[MEM_BUFF]=1;
                 else
                    fprintf(stderr,"ProcMeter(%s): Unexpected 'Mem' line in '/proc/meminfo'.\n",__FILE__);
 
              fgets(line,80,f);
-             if(sscanf(line,"Swap: %lu %lu",&swap_tot,&swap_used)==2)
+             if(sscanf(line,"Swap: %llu %llu",&swap_tot,&swap_used)==2)
                 available[SWAP_FREE]=available[SWAP_USED]=1;
              else
                 fprintf(stderr,"ProcMeter(%s): Unexpected 'Swap' line in '/proc/meminfo'.\n",__FILE__);
@@ -268,7 +268,7 @@ ProcMeterOutput **Initialise(char *options)
 int Update(time_t now,ProcMeterOutput *output)
 {
  static time_t last=0;
- static unsigned long mem_free,mem_used,mem_buff,mem_cache,mem_avail,swap_free,swap_used;
+ static unsigned long long mem_free,mem_used,mem_buff,mem_cache,mem_avail,swap_free,swap_used;
 
  /* Get the statistics from /proc/meminfo */
 
@@ -276,7 +276,7 @@ int Update(time_t now,ProcMeterOutput *output)
    {
     FILE *f;
     char line[80];
-    unsigned long mem_tot=0,swap_tot=0;
+    unsigned long long mem_tot=0,swap_tot=0;
 
     f=fopen("/proc/meminfo","r");
     if(!f)
@@ -285,19 +285,19 @@ int Update(time_t now,ProcMeterOutput *output)
     if(proc_meminfo_V2_1_41)
       {
        fgets(line,80,f);
-       sscanf(line,"MemTotal: %lu",&mem_tot);
+       sscanf(line,"MemTotal: %llu",&mem_tot);
        fgets(line,80,f);
-       sscanf(line,"MemFree: %lu",&mem_free);
+       sscanf(line,"MemFree: %llu",&mem_free);
        mem_used=mem_tot-mem_free;
        fgets(line,80,f); /* MemShared */
        fgets(line,80,f);
-       sscanf(line,"Buffers: %lu",&mem_buff);
+       sscanf(line,"Buffers: %llu",&mem_buff);
        fgets(line,80,f);
-       sscanf(line,"Cached: %lu",&mem_cache);
+       sscanf(line,"Cached: %llu",&mem_cache);
        fgets(line,80,f);
-       sscanf(line,"SwapTotal: %lu",&swap_tot);
+       sscanf(line,"SwapTotal: %llu",&swap_tot);
        fgets(line,80,f);
-       sscanf(line,"SwapFree: %lu",&swap_free);
+       sscanf(line,"SwapFree: %llu",&swap_free);
        swap_used=swap_tot-swap_free;
       }
     else
@@ -305,10 +305,10 @@ int Update(time_t now,ProcMeterOutput *output)
        fgets(line,80,f);
        fgets(line,80,f);
        if(available[MEM_FREE])
-          sscanf(line,"Mem: %*u %lu %lu %*u %lu %lu",&mem_used,&mem_free,&mem_buff,&mem_cache);
+          sscanf(line,"Mem: %*u %llu %llu %*u %llu %llu",&mem_used,&mem_free,&mem_buff,&mem_cache);
        fgets(line,80,f);
        if(available[SWAP_FREE])
-          sscanf(line,"Swap: %lu %lu",&swap_tot,&swap_used);
+          sscanf(line,"Swap: %llu %llu",&swap_tot,&swap_used);
        swap_free=swap_tot-swap_used;
 
        mem_free >>=10;
