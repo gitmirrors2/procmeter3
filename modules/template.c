@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/template.c,v 1.4 2002-06-04 13:54:07 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/template.c,v 1.5 2002-12-07 19:41:00 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Module template source file.
   ******************/ /******************
@@ -25,27 +25,27 @@
 /*+ The graph output +*/
 ProcMeterOutput graph_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Example_Graph",
- /* char *description;              */ "An example graph to show how it works",
- /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_BAR,
- /* short interval;                 */ 1,
- /* char  text_value[16];           */ "n/a",
- /* long  graph_value;              */ 0,
- /* short graph_scale;              */ 10,
- /* char  graph_units[8];           */ "(%d)"
+ /* char  name[];          */ "Example_Graph",
+ /* char *description;     */ "An example graph to show how it works",
+ /* char  type;            */ PROCMETER_GRAPH|PROCMETER_BAR,
+ /* short interval;        */ 1,
+ /* char  text_value[];    */ "n/a",
+ /* long  graph_value;     */ 0,
+ /* short graph_scale;     */ 10,
+ /* char  graph_units[];   */ "(%d)"
 };
 
 /*+ The text output. +*/
 ProcMeterOutput text_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Example_Text",
- /* char *description;              */ "An example text field to show how it works",
- /* char  type;                     */ PROCMETER_TEXT,
- /* short interval;                 */ 10,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ -1,
- /* short graph_scale;              */ 0,
- /* char  graph_units[8];           */ "n/a"
+ /* char  name[];          */ "Example_Text",
+ /* char *description;     */ "An example text field to show how it works",
+ /* char  type;            */ PROCMETER_TEXT,
+ /* short interval;        */ 10,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ -1,
+ /* short graph_scale;     */ 0,
+ /* char  graph_units[];   */ "n/a"
 };
 
 /*+ The outputs. +*/
@@ -59,8 +59,8 @@ ProcMeterOutput *outputs[]=
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "Template",
- /* char *description;             */ "A source code template of the sort of module that ProcMeter can use.",
+ /* char name[];           */ "Template",
+ /* char *description;     */ "A source code template of the sort of module that ProcMeter can use.",
 };
 
 
@@ -112,8 +112,8 @@ int Update(time_t now,ProcMeterOutput *output)
    }
  else if(output==&text_output)
    {
-    static char result1[16]="Example Output";
-    static char result2[16]="ProcMeter";
+    static char result1[]="Example Output";
+    static char result2[]="ProcMeter";
 
     if(now%60)
        strcpy(output->text_value,result1);
