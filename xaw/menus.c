@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.1 1998-09-19 15:21:33 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.2 1998-09-26 09:44:59 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
@@ -685,6 +685,8 @@ static void PopupAMenu(Widget menu,Widget w,XEvent *event)
 {
  Position root_x,root_y;
  Dimension width,height;
+
+ XtRealizeWidget(menu);
 
  XtVaGetValues(menu,XtNwidth,&width,XtNheight,&height,NULL);
  XtTranslateCoords(w,event->xbutton.x,event->xbutton.y,&root_x,&root_y);
