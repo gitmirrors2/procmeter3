@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.9 2003-05-10 11:16:27 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.10 2004-03-27 16:43:23 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4a.
+  ProcMeter - A system monitoring program for Linux - Version 3.4b.
 
   Memory status module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002,03 Andrew M. Bishop
+  This file Copyright 1998,99,2002,03,04 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -28,6 +28,11 @@
 #define SWAP_FREE 5
 #define SWAP_USED 6
 #define N_OUTPUTS 7
+
+#define MEM_TOTAL  7
+#define SWAP_TOTAL 8
+
+#define N_LINES 9
 
 /* The interface information.  */
 
@@ -126,7 +131,9 @@ ProcMeterModule module=
 
 static int proc_meminfo_V2_1_41=0;
 
-static int available[N_OUTPUTS];
+static int contents[20];
+
+static int available[N_LINES];
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -155,13 +162,11 @@ ProcMeterOutput **Initialise(char *options)
  char line[80];
  int n;
 
- for(n=0;n<N_OUTPUTS;n++)
-   {
-    available[n]=0;
+ for(n=0;n<=N_OUTPUTS;n++)
     outputs[n]=NULL;
-   }
- outputs[N_OUTPUTS]=NULL;
- n=0;
+
+ for(n=0;n<N_LINES;n++)
+    available[n]=0;
 
  /* Verify the statistics from /proc/meminfo */
 
@@ -187,25 +192,46 @@ ProcMeterOutput **Initialise(char *options)
 
           if(proc_meminfo_V2_1_41)
             {
-             sscanf(line,"MemTotal: %llu",&mem_tot);
-             if(fgets(line,80,f) && sscanf(line,"MemFree: %llu",&mem_free)==1)
-               available[MEM_FREE]=available[MEM_USED]=1;
-             else
-                fprintf(stderr,"ProcMeter(%s): Expected 'MemTotal' line in '/proc/meminfo'.\n",__FILE__);
-             fgets(line,80,f); /* MemShared */
-             if(fgets(line,80,f) && sscanf(line,"Buffers: %llu",&mem_buff)==1)
-                available[MEM_BUFF]=1;
-             else
-                fprintf(stderr,"ProcMeter(%s): Expected 'Buffers' line in '/proc/meminfo'.\n",__FILE__);
-             if(fgets(line,80,f) && sscanf(line,"Cached: %llu",&mem_cache)==1)
-                available[MEM_CACHE]=1;
-             else
-                fprintf(stderr,"ProcMeter(%s): Expected 'Cached' line in '/proc/meminfo'.\n",__FILE__);
-             if(fgets(line,80,f) && sscanf(line,"SwapTotal: %llu",&swap_tot)==1 &&
-                fgets(line,80,f) && sscanf(line,"SwapFree: %llu",&swap_free)==1)
-                available[SWAP_FREE]=available[SWAP_USED]=1;
-             else
-                fprintf(stderr,"ProcMeter(%s): Expected 'SwapTotal' and 'SwapFree' lines in '/proc/meminfo'.\n",__FILE__);
+             int lineno;
+
+             for(lineno=(sizeof(contents)/sizeof(contents[0]))-1;lineno>=0;lineno--)
+                contents[lineno]=0;
+
+             lineno=1;
+             do
+               {
+                if(sscanf(line,"MemTotal: %llu",&mem_tot)==1)
+                   contents[lineno]=MEM_TOTAL,available[MEM_TOTAL]=1;
+                else if(sscanf(line,"MemFree: %llu",&mem_free)==1)
+                   contents[lineno]=MEM_FREE,available[MEM_FREE]=1;
+                else if(sscanf(line,"Buffers: %llu",&mem_buff)==1)
+                   contents[lineno]=MEM_BUFF,available[MEM_BUFF]=1;
+                else if(sscanf(line,"Cached: %llu",&mem_cache)==1)
+                   contents[lineno]=MEM_CACHE,available[MEM_CACHE]=1;
+                else if(sscanf(line,"SwapTotal: %llu",&swap_tot)==1)
+                   contents[lineno]=SWAP_TOTAL,available[SWAP_TOTAL]=1;
+                else if(sscanf(line,"SwapFree: %llu",&swap_free)==1)
+                   contents[lineno]=SWAP_FREE,available[SWAP_FREE]=1;
+               }
+             while(fgets(line,80,f) && ++lineno<(sizeof(contents)/sizeof(contents[0])));
+
+             if(available[MEM_TOTAL] && available[MEM_FREE])
+                available[MEM_USED]=1;
+             if(available[SWAP_TOTAL] && available[SWAP_FREE])
+                available[SWAP_USED]=1;
+
+             if(!available[MEM_TOTAL])
+                fprintf(stderr,"ProcMeter(%s): Did not find 'MemTotal' line in '/proc/meminfo'.\n",__FILE__);
+             if(!available[MEM_FREE])
+                fprintf(stderr,"ProcMeter(%s): Did not find 'MemFree' line in '/proc/meminfo'.\n",__FILE__);
+             if(!available[MEM_BUFF])
+                fprintf(stderr,"ProcMeter(%s): Did not find 'Buffers' line in '/proc/meminfo'.\n",__FILE__);
+             if(!available[MEM_CACHE])
+                fprintf(stderr,"ProcMeter(%s): Did not find 'Cached' line in '/proc/meminfo'.\n",__FILE__);
+             if(!available[SWAP_TOTAL])
+                fprintf(stderr,"ProcMeter(%s): Did not find 'SwapTotal' line in '/proc/meminfo'.\n",__FILE__);
+             if(!available[SWAP_FREE])
+                fprintf(stderr,"ProcMeter(%s): Did not find 'SwapFree' line in '/proc/meminfo'.\n",__FILE__);
             }
           else
             {
@@ -242,6 +268,7 @@ ProcMeterOutput **Initialise(char *options)
                 _outputs[i].graph_scale=mem_scale;
             }
 
+          n=0;
           for(i=0;i<N_OUTPUTS;i++)
              if(available[i])
                 outputs[n++]=&_outputs[i];
@@ -284,20 +311,36 @@ int Update(time_t now,ProcMeterOutput *output)
 
     if(proc_meminfo_V2_1_41)
       {
-       fgets(line,80,f);
-       sscanf(line,"MemTotal: %llu",&mem_tot);
-       fgets(line,80,f);
-       sscanf(line,"MemFree: %llu",&mem_free);
+       int lineno=0;
+
+       while(fgets(line,80,f) && ++lineno<(sizeof(contents)/sizeof(contents[0])))
+         {
+          switch(contents[lineno])
+            {
+            case MEM_TOTAL:
+             sscanf(line,"MemTotal: %llu",&mem_tot);
+             break;
+            case MEM_FREE:
+             sscanf(line,"MemFree: %llu",&mem_free);
+             break;
+            case MEM_BUFF:
+             sscanf(line,"Buffers: %llu",&mem_buff);
+             break;
+            case MEM_CACHE:
+             sscanf(line,"Cached: %llu",&mem_cache);
+             break;
+            case SWAP_TOTAL:
+             sscanf(line,"SwapTotal: %llu",&swap_tot);
+             break;
+            case SWAP_FREE:
+             sscanf(line,"SwapFree: %llu",&swap_free);
+             break;
+            default:
+             ;
+            }
+         }
+
        mem_used=mem_tot-mem_free;
-       fgets(line,80,f); /* MemShared */
-       fgets(line,80,f);
-       sscanf(line,"Buffers: %llu",&mem_buff);
-       fgets(line,80,f);
-       sscanf(line,"Cached: %llu",&mem_cache);
-       fgets(line,80,f);
-       sscanf(line,"SwapTotal: %llu",&swap_tot);
-       fgets(line,80,f);
-       sscanf(line,"SwapFree: %llu",&swap_free);
        swap_used=swap_tot-swap_free;
       }
     else
@@ -319,8 +362,7 @@ int Update(time_t now,ProcMeterOutput *output)
        swap_used>>=10;
       }
 
-    if(available[MEM_AVAIL])
-       mem_avail=mem_free+mem_cache;
+    mem_avail=mem_free+mem_cache;
 
     if(available[MEM_BUFF])
        mem_used-=mem_buff;
