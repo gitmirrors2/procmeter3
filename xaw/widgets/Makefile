@@ -1,12 +1,12 @@
-# $Header: /home/amb/CVS/procmeter3/xaw/widgets/Makefile,v 1.3 1999-09-27 19:02:21 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/xaw/widgets/Makefile,v 1.4 1999-09-29 19:00:08 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux.
+# ProcMeter - A system monitoring program for Linux - Version 3.2.
 #
 # Widgets Makefile.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1998 Andrew M. Bishop
+# This file Copyright 1998,99 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -19,7 +19,7 @@ XINCLUDE=-I/usr/X11/include
 
 CFLAGS=-g -O2
 
-OBJ=PMGeneric.o PMGraph.o PMText.o SubMenus.o
+OBJ=PMGeneric.o PMGraph.o PMText.o PMBar.o SubMenus.o
 
 ########
 
@@ -33,6 +33,8 @@ PMGraph.o : PMGraph.c PMGraph.h PMGraphP.h PMGeneric.h PMGenericP.h ../procmeter
 	$(CC) -c $(CFLAGS) $< -o $@ -I.. $(XINCLUDE)
 PMText.o : PMText.c PMText.h PMTextP.h PMGeneric.h PMGenericP.h
 	$(CC) -c $(CFLAGS) $< -o $@ $(XINCLUDE)
+PMBar.o : PMBar.c PMBar.h PMBarP.h PMGeneric.h PMGenericP.h
+	$(CC) -c $(CFLAGS) $< -o $@ -I.. $(XINCLUDE)
 
 SubMenus.o : SubMenus.c SubMenus.h
 	$(CC) -c $(CFLAGS) $< -o $@ $(XINCLUDE)

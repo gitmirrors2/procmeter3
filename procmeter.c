@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.4 1999-06-19 12:52:17 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.5 1999-09-29 19:00:08 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.1b.
 
@@ -130,8 +130,9 @@ int main(int argc,char **argv)
 
     printf("Usage: ProcMeter [-h] ...\n\n");
 
-    printf("To specify the default output use <module>.<output>[-g|-t] where module\n"
-           "and output come from the list below and '-g' and '-t' choose graph or text.\n"
+    printf("To specify the default output use <module>.<output>[-g|-t] where module and\n"
+           "output come from the list below and '-g', '-t' and '-b' choose graph, text or\n"
+           "bar format.\n"
            "e.g. procmeter3 Statistics.CPU-g Processes.Load-t\n");
 
     for(modulep=Modules;*modulep;modulep++)
@@ -155,13 +156,14 @@ int main(int argc,char **argv)
              while(p)
                {
                 if(first)
-                   printf("%-16s (%c%c) : ",(*outputp)->output->name,
+                   printf("%-16s (%c%c%c) : ",(*outputp)->output->name,
                           (*outputp)->output->type&PROCMETER_GRAPH?'G':' ',
-                          (*outputp)->output->type&PROCMETER_TEXT?'T':' ');
+                          (*outputp)->output->type&PROCMETER_TEXT?'T':' ',
+                          (*outputp)->output->type&PROCMETER_BAR?'B':' ');
                 else
                    printf("                        ");
 
-                printf("%s\n",get_substring(&p,56));
+                printf("%s\n",get_substring(&p,55));
 
                 first=0;
                }

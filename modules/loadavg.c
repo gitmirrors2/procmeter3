@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/loadavg.c,v 1.3 1999-02-13 11:38:00 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/loadavg.c,v 1.4 1999-09-29 18:59:59 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Load average and number of processes module source file.
   ******************/ /******************
@@ -26,7 +26,7 @@ ProcMeterOutput loadavg_output=
 {
  /* char  name[16];         */ "Load",
  /* char *description;      */ "The system load, a rolling average of the number of processes running.",
- /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+ /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
  /* short interval;         */ 1,
  /* char  text_value[16];   */ "unknown",
  /* long  graph_value;      */ 0,
@@ -39,7 +39,7 @@ ProcMeterOutput processes_output=
 {
  /* char  name[16];         */ "Processes",
  /* char *description;      */ "The number of processes that exist in the system.",
- /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+ /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
  /* short interval;         */ 1,
  /* char  text_value[16];   */ "unknown",
  /* long  graph_value;      */ 0,
@@ -52,7 +52,7 @@ ProcMeterOutput forks_output=
 {
  /* char  name[16];         */ "Forks",
  /* char *description;      */ "The number of new processes that start per second.",
- /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+ /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
  /* short interval;         */ 1,
  /* char  text_value[16];   */ "unknown",
  /* long  graph_value;      */ 0,
@@ -66,8 +66,8 @@ ProcMeterOutput *outputs[4];
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];             */ "Processes",
- /* char *description;         */ "The load average and the number of processes running and starting. [From /proc/loadavg]",
+ /* char name[16];          */ "Processes",
+ /* char *description;      */ "The load average and the number of processes running and starting. [From /proc/loadavg]",
 };
 
 

@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.6 1999-08-22 11:56:43 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.7 1999-09-29 19:00:08 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.1c.
 
@@ -20,15 +20,17 @@
 #include <time.h>
 
 
-#define PROCMETER_VERSION "3.1c"
+#define PROCMETER_VERSION "3.2"
 
 
 #define PROCMETER_MAJOR_VERSION 3
-#define PROCMETER_MINOR_VERSION 1
+#define PROCMETER_MINOR_VERSION 2
 
 
 #define PROCMETER_GRAPH 1
 #define PROCMETER_TEXT  2
+#define PROCMETER_BAR   4
+
 
 /*+ The scaling factor used to get the number of grid lines. +*/
 #define PROCMETER_GRAPH_SCALE 1024

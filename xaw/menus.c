@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.11 1999-09-28 18:42:39 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.12 1999-09-29 19:00:09 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -437,8 +437,6 @@ void AddModuleToMenu(Module module)
                                        XtNheight,10,
                                        NULL);
 
-       XtAddCallback(menuitem,XtNcallback,SelectOutputMenuCallback,(XtPointer)submenu);
-
        if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-foreground")) ||
            (string=GetProcMeterRC(module->module->name,"menu-foreground")) ||
            (string=GetProcMeterRC("resources","menu-foreground"))))
@@ -462,6 +460,8 @@ void AddModuleToMenu(Module module)
        bitmap=GraphBitmap;
     else if(module->outputs[i]->type==PROCMETER_TEXT)
        bitmap=TextBitmap;
+    else if(module->outputs[i]->type==PROCMETER_BAR)
+       bitmap=BarBitmap;
 
     sme=XtVaCreateManagedWidget(module->outputs[i]->output->name,smeBSBObjectClass,submenu,
                                 XtNlabel,"",
@@ -780,8 +780,10 @@ static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *n
 
  if((*outputp)->type==PROCMETER_GRAPH)
     XtVaSetValues(prop_type,XtNlabel,"Graph",NULL);
- else
+ else if((*outputp)->type==PROCMETER_TEXT)
     XtVaSetValues(prop_type,XtNlabel,"Text",NULL);
+ else if((*outputp)->type==PROCMETER_BAR)
+    XtVaSetValues(prop_type,XtNlabel,"Bar",NULL);
 
  if((*outputp)->output->interval)
     sprintf(string,"%d s",(*outputp)->output->interval);
@@ -789,7 +791,7 @@ static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *n
     strcpy(string,"Never");
  XtVaSetValues(prop_interval,XtNlabel,string,NULL);
 
- if((*outputp)->type==PROCMETER_GRAPH)
+ if((*outputp)->type&(PROCMETER_GRAPH|PROCMETER_BAR))
    {
     char str[16];
     sprintf(str,(*outputp)->output->graph_units,(*outputp)->output->graph_scale);

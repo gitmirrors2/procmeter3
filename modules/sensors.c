@@ -1,5 +1,7 @@
 /***************************************
-  ProcMeter - A system monitoring program for Linux - Version 3.1c.
+  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.2 1999-09-29 19:00:02 amb Exp $
+
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Temperature indicators for Mainboard and CPU
   Based on loadavg.c, stat-cpu.c by Andrew M. Bishop
@@ -35,7 +37,7 @@ ProcMeterOutput _temp_output=
 {
  /* char  name[16];         */ "Temp%d",
  /* char *description;      */ "Temperature sensor number %d [from %s].",
- /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+ /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
  /* short interval;         */ 1,
  /* char  text_value[16];   */ "unknown",
  /* long  graph_value;      */ 0,
@@ -48,7 +50,7 @@ ProcMeterOutput _fan_output=
 {
  /* char  name[16];         */ "Fan%d",
  /* char *description;      */ "Fan speed sensor number %d [from %s].",
- /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+ /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
  /* short interval;         */ 1,
  /* char  text_value[16];   */ "unknown",
  /* long  graph_value;      */ 0,
@@ -62,9 +64,9 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];             */ "Sensors",
- /* char *description;         */ "Hardware status information, temperature, fan speed etc. [From /proc/sys/dev/sensors/*/*]"
-                                  "(Requires version 2.x.x of lm78 sensors from http://www.netroedge.com/~lm78/).",
+ /* char name[16];          */ "Sensors",
+ /* char *description;      */ "Hardware status information, temperature, fan speed etc. [From /proc/sys/dev/sensors/*/*]"
+                               " (Requires version 2.x.x of lm78 sensors from http://www.netroedge.com/~lm78/).",
 };
 
 /*+ The temperature outputs. +*/

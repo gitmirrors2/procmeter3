@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.2 1999-06-19 14:50:37 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.3 1999-09-29 19:00:04 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1b.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Disk statistics source file.
   ******************/ /******************
@@ -36,7 +36,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Disk",
   /* char *description;      */ "The total number of disk blocks accessed per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
@@ -47,7 +47,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Disk_Read",
   /* char *description;      */ "The number of disk blocks that are read per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
@@ -58,7 +58,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Disk_Write",
   /* char *description;      */ "The number of disk blocks that are written per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
@@ -74,7 +74,7 @@ ProcMeterOutput _disk_outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Disk%d",
   /* char *description;      */ "The total number of disk blocks accessed per second on disk %d.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
@@ -85,7 +85,7 @@ ProcMeterOutput _disk_outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Disk%d_Read",
   /* char *description;      */ "The number of disk blocks that are read per second on disk %d.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
@@ -96,7 +96,7 @@ ProcMeterOutput _disk_outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Disk%d_Write",
   /* char *description;      */ "The number of disk blocks that are written per second on disk %d.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
@@ -114,8 +114,8 @@ ProcMeterOutput *outputs[N_OUTPUTS*(NDISKS+1)+1];
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];             */ "Stat-Disk",
- /* char *description;         */ "Disk usage statistics. [From /proc/stat]",
+ /* char name[16];           */ "Stat-Disk",
+ /* char *description;       */ "Disk usage statistics. [From /proc/stat]",
 };
 
 

@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.5 1999-02-24 19:44:26 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.6 1999-09-29 19:00:01 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Memory status module source file.
   ******************/ /******************
@@ -37,7 +37,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Mem_Free",
   /* char *description;      */ "The amount of memory that is free, completely unused, wasted.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
@@ -48,7 +48,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Mem_Used",
   /* char *description;      */ "The amount of memory that is used, excluding cache and buffers.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
@@ -59,7 +59,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Mem_Buff",
   /* char *description;      */ "The amount of memory that is used in buffers.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
@@ -70,7 +70,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Mem_Cache",
   /* char *description;      */ "The amount of memory that is used for disk cache.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
@@ -81,7 +81,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Mem_Avail",
   /* char *description;      */ "The amount of memory that is available for programs, free plus cache.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
@@ -92,7 +92,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Swap_Free",
   /* char *description;      */ "The amount of memory that is free in the swap space.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
@@ -103,7 +103,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  {
   /* char  name[16];         */ "Swap_Used",
   /* char *description;      */ "The amount of memory that is used in the swap space.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
@@ -118,9 +118,9 @@ ProcMeterOutput *outputs[N_OUTPUTS+1];
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];             */ "Memory",
- /* char *description;         */ "The amount of memory that is used for programs, buffers, cache and the amount that is free. "
-                                  "[From /proc/meminfo]",
+ /* char name[16];           */ "Memory",
+ /* char *description;       */ "The amount of memory that is used for programs, buffers, cache and the amount that is free. "
+                                "[From /proc/meminfo]",
 };
 
 

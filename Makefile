@@ -1,4 +1,4 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.8 1999-09-27 19:02:08 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.9 1999-09-29 18:59:59 amb Exp $
 #
 # ProcMeter - A system monitoring program for Linux - Version 3.2.
 #
@@ -38,7 +38,7 @@ CDEFS=-DINSTDIR=\"$(INSTDIR)\" -DLIB_PATH=\"$(LIB_PATH)\" \
 
 OBJ =procmeter.o module.o procmeterrc.o \
      xbitmap.o xmenus.o xresources.o xwindow.o
-WOBJ=widgets/PMGeneric.o widgets/PMGraph.o widgets/PMText.o widgets/SubMenus.o
+WOBJ=widgets/PMGeneric.o widgets/PMGraph.o widgets/PMText.o widgets/PMBar.o widgets/SubMenus.o
 
 ########
 

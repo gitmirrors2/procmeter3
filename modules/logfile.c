@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/logfile.c,v 1.3 1999-02-13 11:38:00 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/logfile.c,v 1.4 1999-09-29 19:00:00 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   A log file monitoring source file.
   ******************/ /******************
@@ -32,7 +32,7 @@ ProcMeterOutput _outputs[4]=
  {
   /* char  name[16];         */ "Log_Size_%s",
   /* char *description;      */ "The size of the log file '%s' in KBytes.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 KB",
   /* long  graph_value;      */ 0,
@@ -43,7 +43,7 @@ ProcMeterOutput _outputs[4]=
  {
   /* char  name[16];         */ "Log_Grow_%s",
   /* char *description;      */ "The rate at which the size of the log file '%s' is increasing in KBytes/second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 KB/s",
   /* long  graph_value;      */ 0,
@@ -54,7 +54,7 @@ ProcMeterOutput _outputs[4]=
  {
   /* char  name[16];         */ "Log_Line_%s",
   /* char *description;      */ "The number of lines in the log file '%s'.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 lines",
   /* long  graph_value;      */ 0,
@@ -81,9 +81,9 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];             */ "LogFile",
- /* char *description;         */ "The size and number of lines in the specified log files.  "
-                                  "(Use 'options=<filename1> <filename2>' in the configuration file to specify the files.)"
+ /* char name[16];           */ "LogFile",
+ /* char *description;       */ "The size and number of lines in the specified log files.  "
+                                "(Use 'options=<filename1> <filename2>' in the configuration file to specify the files.)"
 };
 
 static char *fgets_realloc(char *buffer,FILE *file);

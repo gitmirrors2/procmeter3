@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/template.c,v 1.2 1999-02-13 11:38:03 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/template.c,v 1.3 1999-09-29 19:00:07 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Module template source file.
   ******************/ /******************
@@ -26,7 +26,7 @@ ProcMeterOutput graph_output=
 {
  /* char  name[16];         */ "Example_Graph",
  /* char *description;      */ "An example graph to show how it works",
- /* char  type;             */ PROCMETER_GRAPH,
+ /* char  type;             */ PROCMETER_GRAPH|PROCMETER_BAR,
  /* short interval;         */ 1,
  /* char  text_value[16];   */ "n/a",
  /* long  graph_value;      */ 0,
@@ -58,8 +58,8 @@ ProcMeterOutput *outputs[]=
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];             */ "Template",
- /* char *description;         */ "A source code template of the sort of module that ProcMeter can use.",
+ /* char name[16];          */ "Template",
+ /* char *description;      */ "A source code template of the sort of module that ProcMeter can use.",
 };
 
 

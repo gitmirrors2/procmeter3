@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.10 1999-06-19 14:50:37 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.11 1999-09-29 19:00:02 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1b.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Network devices traffic source file.
   ******************/ /******************
@@ -29,7 +29,7 @@ ProcMeterOutput _outputs[6]=
  {
   /* char  name[16];         */ "Pkt_%s",
   /* char *description;      */ "The total number of packets per second on the %s network interface.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
@@ -40,7 +40,7 @@ ProcMeterOutput _outputs[6]=
  {
   /* char  name[16];         */ "Byte_%s",
   /* char *description;      */ "The total number of bytes per second on the %s network interface.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 kB/s",
   /* long  graph_value;      */ 0,
@@ -51,7 +51,7 @@ ProcMeterOutput _outputs[6]=
  {
   /* char  name[16];         */ "Pkt_Tx_%s",
   /* char *description;      */ "The number of packets transmitted per second on the %s network interface.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
@@ -62,7 +62,7 @@ ProcMeterOutput _outputs[6]=
  {
   /* char  name[16];         */ "Byte_Tx_%s",
   /* char *description;      */ "The number of bytes transmitted per second on the %s network interface.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 kB/s",
   /* long  graph_value;      */ 0,
@@ -73,7 +73,7 @@ ProcMeterOutput _outputs[6]=
  {
   /* char  name[16];         */ "Pkt_Rx_%s",
   /* char *description;      */ "The number of packets received per second on the %s network interface.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
@@ -84,7 +84,7 @@ ProcMeterOutput _outputs[6]=
  {
   /* char  name[16];         */ "Byte_Rx_%s",
   /* char *description;      */ "The number of bytes received per second on the %s network interface.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 kB/s",
   /* long  graph_value;      */ 0,
@@ -100,9 +100,9 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];             */ "Network",
- /* char *description;         */ "The network devices and the amount of traffic on each of them. [From /proc/net/dev]  "
-                                  "(Use 'options=ppp0' in the configuration file to specify extra network devices."
+ /* char name[16];           */ "Network",
+ /* char *description;       */ "The network devices and the amount of traffic on each of them. [From /proc/net/dev]  "
+                                "(Use 'options=ppp0' in the configuration file to specify extra network devices."
 };
 
 static char *proc_net_dev_format=NULL;

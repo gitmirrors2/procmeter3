@@ -1,8 +1,8 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.7 1999-07-28 19:55:06 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.8 1999-09-29 19:00:08 amb Exp $
 .\"
 .\"  ProcMeter - A system monitoring program for Linux.
 .\"
-.\"  Manual page for procmeter program (v3.1c).
+.\"  Manual page for procmeter program (v3.2).
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
@@ -27,7 +27,7 @@ procmeter3 \- A user friendly system monitoring program.
 .SH DESCRIPTION
 
 .I ProcMeter
-displays one or more pieces of information about the operating system and other
+Displays one or more pieces of information about the operating system and other
 resources.  Most of the information that is displayed comes from the /proc
 filesystem.  The program is modular and very configurable.
 
@@ -47,8 +47,8 @@ module named
 .B Statistics
 with an output named
 .B CPU
-and there are graph and text options.  To display the CPU usage graph you would
-use the command line option
+and there are graph, text and bar options.  To display the CPU usage graph you
+would use the command line option
 .B Statistics.CPU-g
 .TP
 .BR X \ windows \ options
@@ -63,8 +63,8 @@ to set the display and other general X window options.
 
 When started the program will display all of the requested information in a set
 of output panels (vertically aligned by default).  Each output can be either a
-graph or text, and can have a label indicating what it represents.  The outputs
-that are displayed are those from the command line and those from the
+graph, text or bar, and can have a label indicating what it represents.  The
+outputs that are displayed are those from the command line and those from the
 .B .procmeterrc
 configuration file.
 .LP
@@ -91,14 +91,14 @@ configurable in the
 file.
 .LP
 The right mouse button will produce a set of menus that list the modules that
-are available and for each of them the available set of outputs.  There are two
-types of output, text and graphical, these are indicated in the sub-menus by
-icons to the right of the name in the sub-menu.  Selecting one of the outputs
-from a sub-menu will cause that output to be displayed if it is not already
-visible.  If it is currently displayed then it will be disabled.  Those that are
-currently displayed are indicated by a marker to the left of the name in the
-sub-menu.  When the output is added to the window it will be placed at the
-bottom, use the left mouse button to move it if required.
+are available and for each of them the available set of outputs.  There are
+three types of output, text and two graphical outputs, these are indicated in
+the sub-menus by icons.  Selecting one of the outputs from a sub-menu will cause
+that output to be displayed if it is not already visible.  If it is currently
+displayed then it will be disabled.  Those that are currently displayed are
+indicated by a marker to the left in the sub-menu.  When the output is added to
+the window it will be placed at the bottom, use the left mouse button to move it
+if required.
 .LP
 The middle mouse button will display the sub-menu that is associated with the
 module for the output that is selected.  This is one of sub-menus that are found
@@ -152,7 +152,7 @@ file contains a space separated list of log file names.
 The amount of memory that is used for programs, buffers, cache and the amount
 that is free.  This is the same information that is available from the
 .B free
-program, but is available here as a graph or as text.
+program, but is available here as a graph, bar or as text.
 .TP
 .BR Network
 The network devices and the amount of traffic on each of them.  It will

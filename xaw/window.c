@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.8 1999-09-24 19:02:24 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.9 1999-09-29 19:00:09 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -30,10 +30,12 @@
 #include "widgets/PMGeneric.h"
 #include "widgets/PMGraph.h"
 #include "widgets/PMText.h"
+#include "widgets/PMBar.h"
 
 #include "procmeter.h"
 #include "procmeterp.h"
 #include "xwindow.h"
+
 
 #define MINHEIGHT 30
 #define MINWIDTH  60
@@ -227,6 +229,15 @@ void UpdateX(time_t now)
                }
              else if((*output)->type==PROCMETER_TEXT)
                 ProcMeterTextWidgetChangeData((*output)->output_widget,(*output)->output->text_value);
+             else if((*output)->type==PROCMETER_BAR)
+               {
+                long value=(*output)->output->graph_value;
+                if(value<0)
+                   value=0;
+                if(value>65535)
+                   value=65535;
+                ProcMeterBarWidgetAddDatum((*output)->output_widget,value);
+               }
             }
 
           last=(*output)->output;
@@ -282,6 +293,10 @@ void AddDefaultOutputs(int argc,char **argv)
                            (*outputp)->type==PROCMETER_TEXT &&
                            !(*outputp)->output_widget)
                       AddRemoveOutput(*outputp);
+                   else if(s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='b' &&
+                           (*outputp)->type==PROCMETER_BAR &&
+                           !(*outputp)->output_widget)
+                      AddRemoveOutput(*outputp);
                    found=1;
                   }
 
@@ -318,6 +333,10 @@ void AddDefaultOutputs(int argc,char **argv)
                    AddRemoveOutput(*outputp);
                 else if(argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='t' &&
                         (*outputp)->type==PROCMETER_TEXT &&
+                        !(*outputp)->output_widget)
+                   AddRemoveOutput(*outputp);
+                else if(argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='b' &&
+                        (*outputp)->type==PROCMETER_BAR &&
                         !(*outputp)->output_widget)
                    AddRemoveOutput(*outputp);
                 found=1;
@@ -466,8 +485,32 @@ void AddRemoveOutput(Output output)
        w=XtCreateManagedWidget(output->output->name,procMeterTextWidgetClass,pane,
                                args,nargs);
       }
-    else
-       return;
+    else if(output->type==PROCMETER_BAR)
+      {
+       if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-foreground")) ||
+           (string=GetProcMeterRC(module->module->name,"grid-foreground")) ||
+           (string=GetProcMeterRC("resources","grid-foreground"))))
+         {XtSetArg(args[nargs],XtNgridForeground,StringToPixel(string));nargs++;}
+
+       if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-min")) ||
+           (string=GetProcMeterRC(module->module->name,"grid-min")) ||
+           (string=GetProcMeterRC("resources","grid-min"))))
+         {XtSetArg(args[nargs],XtNgridMin,StringToInt(string));nargs++;}
+
+       if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-max")) ||
+           (string=GetProcMeterRC(module->module->name,"grid-max")) ||
+           (string=GetProcMeterRC("resources","grid-max"))))
+         {XtSetArg(args[nargs],XtNgridMax,StringToInt(string));nargs++;}
+
+       XtSetArg(args[nargs],XtNlabel,output->label);nargs++;
+       sprintf(str,output->output->graph_units,output->output->graph_scale);
+       XtSetArg(args[nargs],XtNgridUnits,str);nargs++;
+       XtSetArg(args[nargs],XtNallowResize,True);nargs++;
+       XtSetArg(args[nargs],XtNshowGrip,False);nargs++;
+
+       w=XtCreateManagedWidget(output->output->name,procMeterBarWidgetClass,pane,
+                               args,nargs);
+      }
 
     AddMenuToOutput(w,module,output);
 
@@ -626,7 +669,9 @@ static void ResizePane(void)
 
     if(displayed[i]->type==PROCMETER_GRAPH)
        ngraphs++;
-    else
+    else if(displayed[i]->type==PROCMETER_TEXT)
+       gsize-=min_size;
+    else if(displayed[i]->type==PROCMETER_BAR)
        gsize-=min_size;
 
     rsize-=min_size;

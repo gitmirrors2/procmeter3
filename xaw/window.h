@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.h,v 1.2 1999-08-31 18:22:33 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.h,v 1.3 1999-09-29 19:00:10 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -43,6 +43,7 @@ int StringToLabelPosition(char *string);
 extern Pixmap CircleBitmap;
 extern Pixmap TextBitmap;
 extern Pixmap GraphBitmap;
+extern Pixmap BarBitmap;
 
 void CreateBitmaps(Widget w);
 

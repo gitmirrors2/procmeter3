@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.3 1999-02-13 11:37:59 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.4 1999-09-29 18:59:59 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Disk capacity monitoring source file.
   ******************/ /******************
@@ -32,7 +32,7 @@ ProcMeterOutput _outputs[2]=
   /* char  name[16];         */ "DF_Used_%s",
   /* char *description;      */ "The percentage of the %s device mounted on %s that is occupied with files.  "
                                 "(This can exceed 100%% on UNIX format drives due to the reserved minimum free space.)",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 10,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
@@ -60,8 +60,8 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];             */ "DiskUsage",
- /* char *description;         */ "The fraction of the disk that is occupied and the amount of space available."
+ /* char name[16];           */ "DiskUsage",
+ /* char *description;       */ "The fraction of the disk that is occupied and the amount of space available."
 };
 
 
