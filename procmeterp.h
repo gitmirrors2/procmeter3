@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.12 2002-06-04 13:53:39 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.13 2002-06-16 14:19:41 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
@@ -35,7 +35,7 @@
 #define MOD_PATH  LIB_PATH "/modules"
 #endif
 #ifndef RC_PATH
-#define RC_PATH   LIB_PATH "/.procmeterrc"
+#define RC_PATH   LIB_PATH
 #endif
 
 /* The run mode options */
