@@ -20,9 +20,9 @@ int acpi_supported (void);
 int acpi_read (int battery, apm_info *info);
 #endif
 char *get_acpi_file (const char *file);
-int scan_acpi_num (const char *buf, const char *key1, const char *key2);
-char *scan_acpi_value (const char *buf, const char *key1, const char *key2);
-char *get_acpi_value (const char *file, const char *key1, const char *key2);
+int scan_acpi_num (const char *buf, const char *key);
+char *scan_acpi_value (const char *buf, const char *key);
+char *get_acpi_value (const char *file, const char *key);
 int get_acpi_batt_capacity(int battery);
 
 extern int acpi_batt_count;
@@ -43,3 +43,24 @@ extern char acpi_thermal_info[ACPI_MAXITEM][128];
 extern char acpi_thermal_status[ACPI_MAXITEM][128];
 #endif
 
+/* This enum is used to index into the acpi_labels */
+enum acpi_labels_items {
+	label_info,
+	label_status,
+	label_battery,
+	label_ac_adapter,
+	label_online,
+	label_design_capacity,
+	label_present,
+	label_remaining_capacity,
+	label_present_rate,
+	label_charging_state,
+#if ACPI_THERMAL
+	label_thermal,
+#endif
+	label_ac_state,
+};
+
+/* This is set to point to a list of strings used for the given acpi
+ *  * version. */
+extern char **acpi_labels;
