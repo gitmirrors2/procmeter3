@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.6 1999-02-13 11:38:01 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.7 1999-02-23 19:34:34 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.1.
 
@@ -23,7 +23,7 @@
 /* The interface information.  */
 
 /*+ The template for the network devices +*/
-ProcMeterOutput _outputs[3]=
+ProcMeterOutput _outputs[6]=
 {
  /*+ The total packets +*/
  {
@@ -36,6 +36,17 @@ ProcMeterOutput _outputs[3]=
   /* short graph_scale;      */ 0, /* calculated later */
   /* char  graph_units[8];   */ "(%d/s)"
  },
+ /*+ The total bytes +*/
+ {
+  /* char  name[16];         */ "Byte_%s",
+  /* char *description;      */ "The total number of bytes per second on the %s network interface.",
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* short interval;         */ 1,
+  /* char  text_value[16];   */ "0 kB/s",
+  /* long  graph_value;      */ 0,
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%dkB/s)"
+ },
  /*+ The transmitted packets +*/
  {
   /* char  name[16];         */ "Pkt_Tx_%s",
@@ -47,6 +58,17 @@ ProcMeterOutput _outputs[3]=
   /* short graph_scale;      */ 0, /* calculated later */
   /* char  graph_units[8];   */ "(%d/s)"
  },
+ /*+ The transmitted bytes +*/
+ {
+  /* char  name[16];         */ "Byte_Tx_%s",
+  /* char *description;      */ "The number of bytes transmitted per second on the %s network interface.",
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* short interval;         */ 1,
+  /* char  text_value[16];   */ "0 kB/s",
+  /* long  graph_value;      */ 0,
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%dkB/s)"
+ },
  /*+ The received packets +*/
  {
   /* char  name[16];         */ "Pkt_Rx_%s",
@@ -57,6 +79,17 @@ ProcMeterOutput _outputs[3]=
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 0, /* calculated later */
   /* char  graph_units[8];   */ "(%d/s)"
+ },
+ /*+ The received bytes +*/
+ {
+  /* char  name[16];         */ "Byte_Rx_%s",
+  /* char *description;      */ "The number of bytes received per second on the %s network interface.",
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* short interval;         */ 1,
+  /* char  text_value[16];   */ "0 kB/s",
+  /* long  graph_value;      */ 0,
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%dkB/s)"
  }
 };
 
@@ -73,6 +106,10 @@ ProcMeterModule module=
 };
 
 static char *proc_net_dev_format=NULL;
+
+static char *proc_net_dev_format1="%lu %*u %*u %*u %*u %lu"; /* kernel version < ~2.1.28 */
+static char *proc_net_dev_format2="%lu %lu %*u %*u %*u %*u %lu %lu"; /* ~2.1.28 < kernel version < ~2.1.80 (two possiblities) */
+static char *proc_net_dev_format3="%lu %lu %*u %*u %*u %*u %*u %*u %lu %lu"; /* ~2.1.91 < kernel version */
 
 static int ndevices=0;
 static long *current=NULL,*previous=NULL;
@@ -104,7 +141,7 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[128];
+ char line[256];
 
  outputs=(ProcMeterOutput**)malloc(sizeof(ProcMeterOutput*));
  outputs[0]=NULL;
@@ -116,7 +153,7 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/net/dev'.\n",__FILE__);
  else
    {
-    if(!fgets(line,128,f))
+    if(!fgets(line,256,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/net/dev'.\n",__FILE__);
     else
        if(strcmp(line,"Inter-|   Receive                  |  Transmit\n") && /* kernel version < ~2.1.80 */
@@ -125,7 +162,7 @@ ProcMeterOutput **Initialise(char *options)
           fprintf(stderr,"ProcMeter(%s): Unexpected header line 1 in '/proc/net/dev'.\n",__FILE__);
        else
          {
-          fgets(line,128,f);
+          fgets(line,256,f);
           if(strcmp(line," face |packets errs drop fifo frame|packets errs drop fifo colls carrier\n") && /* kernel version < ~2.1.28 */
              strcmp(line," face |bytes    packets errs drop fifo frame|bytes    packets errs drop fifo colls carrier\n") && /* ~2.1.28 < kernel version < ~2.1.80 */
              strcmp(line," face |bytes    packets errs drop fifo frame|bytes    packets errs drop fifo colls carrier multicast\n") && /* ~2.1.80 < kernel version < ~2.1.91 */
@@ -134,21 +171,23 @@ ProcMeterOutput **Initialise(char *options)
           else
             {
              if(!strcmp(line," face |packets errs drop fifo frame|packets errs drop fifo colls carrier\n"))
-                proc_net_dev_format="%lu %*u %*u %*u %*u %lu"; /* kernel version < ~2.1.28 */
+                proc_net_dev_format=proc_net_dev_format1; /* kernel version < ~2.1.28 */
              else if(!strcmp(line," face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed\n"))
-                proc_net_dev_format="%*u %lu %*u %*u %*u %*u %*u %*u %*u %lu"; /* ~2.1.91 < kernel version */
+                proc_net_dev_format=proc_net_dev_format3; /* ~2.1.91 < kernel version */
              else
-                proc_net_dev_format="%*u %lu %*u %*u %*u %*u %*u %lu"; /* ~2.1.28 < kernel version < ~2.1.80 (two possiblities) */
+                proc_net_dev_format=proc_net_dev_format2; /* ~2.1.28 < kernel version < ~2.1.80 (two possiblities) */
 
-             while(fgets(line,128,f))
+             while(fgets(line,256,f))
                {
                 int i;
                 char *dev=line;
-                long rx=0,tx=0;
+                long rxp=0,txp=0,rxb=0,txb=0;
 
                 for(;*dev==' ';dev++) ;
                 for(i=strlen(line);i>6 && line[i]!=':';i--); line[i++]=0;
-                if(sscanf(&line[i],proc_net_dev_format,&rx,&tx)==2 || !strcmp(&line[i]," No statistics available.\n"))
+                if(!strcmp(&line[i]," No statistics available.\n") ||
+                   (proc_net_dev_format==proc_net_dev_format1 && sscanf(&line[i],proc_net_dev_format,&rxp,&txp)==2) ||
+                   (proc_net_dev_format!=proc_net_dev_format1 && sscanf(&line[i],proc_net_dev_format,&rxb,&rxp,&txb,&txp)==4))
                    add_device(dev);
                }
             }
@@ -204,7 +243,7 @@ ProcMeterOutput **Initialise(char *options)
 
 static void add_device(char *dev)
 {
- int scale,nstats;
+ int pscale,bscale,nstats;
  int i;
 
  for(i=0;i<ndevices;i++)
@@ -212,13 +251,16 @@ static void add_device(char *dev)
        return;
 
  if(*dev=='l' || *dev=='d') /* 'lo' or 'dummy' devices. */
-    scale=100,nstats=1;
+    pscale=100,bscale=100,nstats=1;
  else
     if(*dev=='s' || *dev=='p' || (*dev=='f' && *(dev+1)=='l') || *dev=='i')
        /* 'sl' or 'ppp'/'plip' or 'flip' or 'isdn'/'ippp' devices. */
-       scale=5,nstats=3;
+       pscale=5,bscale=1,nstats=3;
     else /* other devices */
-       scale=50,nstats=3;
+       pscale=50,bscale=100,nstats=3;
+
+ if(proc_net_dev_format!=proc_net_dev_format1)
+    nstats*=2;
 
  outputs=(ProcMeterOutput**)realloc((void*)outputs,(ndevices+nstats+1)*sizeof(ProcMeterOutput*));
  device=(char**)realloc((void*)device,(ndevices+nstats+1)*sizeof(char*));
@@ -232,7 +274,10 @@ static void add_device(char *dev)
     sprintf(outputs[ndevices]->name,_outputs[i].name,dev);
     outputs[ndevices]->description=(char*)malloc(strlen(dev)+strlen(_outputs[i].description)+4);
     sprintf(outputs[ndevices]->description,_outputs[i].description,dev);
-    outputs[ndevices]->graph_scale=scale;
+    if(proc_net_dev_format!=proc_net_dev_format1 && i%2)
+       outputs[ndevices]->graph_scale=bscale;
+    else
+       outputs[ndevices]->graph_scale=pscale;
 
     strcpy(device[ndevices],dev);
 
@@ -263,7 +308,7 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[128];
+    char line[256];
     long *temp;
 
     temp=current;
@@ -274,30 +319,46 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    fgets(line,128,f);
-    fgets(line,128,f);
-    while(fgets(line,128,f))
+    fgets(line,256,f);
+    fgets(line,256,f);
+    while(fgets(line,256,f))
       {
        int i;
-       long rx=0,tx=0;
+       long rxp=0,txp=0,rxb=0,txb=0;
        char *dev=line;
 
        for(;*dev==' ';dev++) ;
        for(i=strlen(line);i>6 && line[i]!=':';i--); line[i++]=0;
-       sscanf(&line[i],proc_net_dev_format,&rx,&tx);
+       if(proc_net_dev_format==proc_net_dev_format1)
+          sscanf(&line[i],proc_net_dev_format,&rxp,&txp);
+       else
+          sscanf(&line[i],proc_net_dev_format,&rxb,&rxp,&txb,&txp);
 
        for(j=0;outputs[j];j++)
           if(!strcmp(device[j],dev))
             {
-             if(outputs[j+1] && !strcmp(device[j+1],dev))
+             if(proc_net_dev_format==proc_net_dev_format1 && outputs[j+1] && !strcmp(device[j+1],dev))
                {
-                current[j]=rx+tx;
-                current[++j]=tx;
-                if(outputs[j+1] && !strcmp(device[j+1],dev))
-                   current[++j]=rx;
+                current[  j]=rxp+txp;
+                current[++j]=txp;
+                current[++j]=rxp;
                }
+             else if(proc_net_dev_format!=proc_net_dev_format1 && outputs[j+2] && !strcmp(device[j+2],dev))
+               {
+                current[  j]=rxp+txp;
+                current[++j]=rxb+txb;
+                current[++j]=txp;
+                current[++j]=txb;
+                current[++j]=rxp;
+                current[++j]=rxb;
+               }
+             else if(proc_net_dev_format==proc_net_dev_format1)
+                current[j]=txp;
              else
-                current[j]=tx;
+               {
+                current[  j]=txp;
+                current[++j]=txb;
+               }
              break;
             }
       }
@@ -314,8 +375,14 @@ int Update(time_t now,ProcMeterOutput *output)
 
        value=(double)(current[j]-previous[j])/output->interval;
 
+       if(proc_net_dev_format!=proc_net_dev_format1 && j%2)
+          value/=1024.0;
+
        output->graph_value=PROCMETER_GRAPH_FLOATING(value/output->graph_scale);
-       sprintf(output->text_value,"%.0f /s",value);
+       if(proc_net_dev_format!=proc_net_dev_format1 && j%2)
+          sprintf(output->text_value,"%.1f kB/s",value);
+       else
+          sprintf(output->text_value,"%.0f /s",value);
 
        return(0);
       }
