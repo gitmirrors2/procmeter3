@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.8 2004-11-28 10:40:46 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.9 2004-12-11 16:11:32 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.4d.
 
@@ -664,16 +664,16 @@ int Update(time_t now, ProcMeterOutput *output)
 		buf = get_acpi_file(acpi_batt_status[index]);
 		if (! buf) return(-1);
 		
-		if (strcmp(scan_acpi_value(buf, "Present:"), "yes") == 0) {
-			pcap = scan_acpi_num(buf, "Remaining Capacity:");
-			rate = scan_acpi_num(buf, "Present Rate:");
+		if (strcmp(scan_acpi_value(buf, acpi_labels[label_present]), "yes") == 0) {
+			pcap = scan_acpi_num(buf, acpi_labels[label_remaining_capacity]);
+			rate = scan_acpi_num(buf, acpi_labels[label_present_rate]);
 			
 			if (rate) {
 				/* time remaining till empty = current_capacity / discharge rate) */
 				timeleft = (float) pcap / (float) rate * 60;
 			}
 			else {
-				char *rate_s = scan_acpi_value(buf, "Present Rate:");
+				char *rate_s = scan_acpi_value(buf, acpi_labels[label_present_rate]);
 				/* If the battery is not present, ACPI may
 				 * still say it is but sets rate to unknown
 				 * (on my picturebook, anyway). I don't
@@ -688,7 +688,7 @@ int Update(time_t now, ProcMeterOutput *output)
 			timefull = (float)(acpi_batt_capacity[index] - pcap) / (float) rate * 60;
 
 			/* Status. */
-			status = scan_acpi_value(buf, "State:");
+			status = scan_acpi_value(buf, acpi_labels[label_charging_state]);
 			sprintf(batt_outputs[index + 2].text_value, "%s", status);
 			
 			if (strcmp(status, "charging") == 0) {
