@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMGraph.c,v 1.1 2000-12-16 16:38:51 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMGraph.c,v 1.2 2001-01-04 19:26:11 amb Exp $
 
   ProcMeter Graph Widget Source file (for ProcMeter3 3.3).
   ******************/ /******************
@@ -27,8 +27,8 @@ static void size_request(GtkWidget *widget,GtkRequisition *requisition);
 static void size_allocate(GtkWidget *widget,GtkAllocation *allocation);
 static gint expose(GtkWidget *widget,GdkEventExpose *event);
 
-static void ProcMeterGraphResize(ProcMeterGraph *pmw);
-static void ProcMeterGraphUpdate(ProcMeterGraph *pmw,gboolean all);
+static void GraphResize(ProcMeterGraph *pmw);
+static void GraphUpdate(ProcMeterGraph *pmw,gboolean all);
 
 static char *empty_string="";
 
@@ -78,8 +78,8 @@ static void procmetergraph_class_init(ProcMeterGraphClass *class)
  object_class=(GtkObjectClass*)class;
  widget_class=(GtkWidgetClass*)class;
 
- class->resize=ProcMeterGraphResize;
- class->update=ProcMeterGraphUpdate;
+ class->resize=GraphResize;
+ class->update=GraphUpdate;
 
  parent_class=gtk_type_class(gtk_procmetergeneric_get_type());
 
@@ -127,7 +127,7 @@ static void procmetergraph_init(ProcMeterGraph *pmw)
 
  /* The rest of the sizing. */
 
- ProcMeterGraphResize(pmw);
+ GraphResize(pmw);
 }
 
 
@@ -213,7 +213,7 @@ static void realize(GtkWidget *widget)
  if(pmw->generic.body_bg_set)
     gdk_window_set_background(widget->window,&pmw->generic.body_bg_color);
 
- ProcMeterGraphUpdate(pmw,TRUE);
+ GraphUpdate(pmw,TRUE);
 }
 
 
@@ -263,7 +263,7 @@ static void size_allocate(GtkWidget *widget,GtkAllocation *allocation)
                            allocation->x,allocation->y,
                            allocation->width,allocation->height);
 
-    ProcMeterGraphResize(pmw);
+    GraphResize(pmw);
    }
 }
 
@@ -291,7 +291,7 @@ static gint expose(GtkWidget *widget,GdkEventExpose *event)
 
  pmw=GTK_PROCMETERGRAPH(widget);
 
- ProcMeterGraphUpdate(pmw,TRUE);
+ GraphUpdate(pmw,TRUE);
 
  return(FALSE);
 }
@@ -303,7 +303,7 @@ static gint expose(GtkWidget *widget,GdkEventExpose *event)
   ProcMeterGraph *pmw The Widget to resize.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void ProcMeterGraphResize(ProcMeterGraph *pmw)
+static void GraphResize(ProcMeterGraph *pmw)
 {
  GdkFont *label_font;
 
@@ -373,7 +373,7 @@ static void ProcMeterGraphResize(ProcMeterGraph *pmw)
   gboolean all Indicates if the whole widget is to be updated.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void ProcMeterGraphUpdate(ProcMeterGraph *pmw,gboolean all)
+static void GraphUpdate(ProcMeterGraph *pmw,gboolean all)
 {
  g_return_if_fail(pmw!=NULL);
 
@@ -504,7 +504,7 @@ void ProcMeterGraphSetGridColour(ProcMeterGraph *pmw,GdkColor grid_color)
     pmw->grid_gc=gdk_gc_new_with_values(pmw->generic.widget.parent->window,&values,GDK_GC_FOREGROUND);
    }
 
- ProcMeterGraphUpdate(pmw,TRUE);
+ GraphUpdate(pmw,TRUE);
 }
 
 
@@ -538,9 +538,9 @@ void ProcMeterGraphSetGridMin(ProcMeterGraph *pmw,gint grid_min)
  if(pmw->grid_min>=pmw->grid_num)
     pmw->grid_num=pmw->grid_min;
 
- ProcMeterGraphResize(pmw);
+ GraphResize(pmw);
 
- ProcMeterGraphUpdate(pmw,TRUE);
+ GraphUpdate(pmw,TRUE);
 }
 
 
@@ -560,9 +560,9 @@ void ProcMeterGraphSetGridMax(ProcMeterGraph *pmw,gint grid_max)
  if(grid_max && grid_max<pmw->grid_min)
     pmw->grid_max=pmw->grid_min;
 
- ProcMeterGraphResize(pmw);
+ GraphResize(pmw);
 
- ProcMeterGraphUpdate(pmw,TRUE);
+ GraphUpdate(pmw,TRUE);
 }
 
 
@@ -578,7 +578,7 @@ void ProcMeterGraphSetSolid(ProcMeterGraph *pmw,gboolean solid)
 {
  pmw->line_solid=solid;
 
- ProcMeterGraphUpdate(pmw,TRUE);
+ GraphUpdate(pmw,TRUE);
 }
 
 
@@ -597,9 +597,9 @@ void ProcMeterGraphSetGridUnits(ProcMeterGraph *pmw,gchar *units)
  pmw->grid_units=(char*)malloc(strlen(units)+1);
  strcpy(pmw->grid_units,units);
 
- ProcMeterGraphResize(pmw);
+ GraphResize(pmw);
 
- ProcMeterGraphUpdate(pmw,TRUE);
+ GraphUpdate(pmw,TRUE);
 }
 
 
@@ -649,9 +649,9 @@ void ProcMeterGraphAddDatum(ProcMeterGraph *pmw,gushort datum)
        if(pmw->grid_num<=pmw->grid_maxvis && pmw->grid_drawn)
           pmw->grid_drawn=1;
 
-       ProcMeterGraphUpdate(pmw,TRUE);
+       GraphUpdate(pmw,TRUE);
       }
    }
 
- ProcMeterGraphUpdate(pmw,FALSE);
+ GraphUpdate(pmw,FALSE);
 }

@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMGeneric.c,v 1.1 2000-12-16 16:38:27 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMGeneric.c,v 1.2 2001-01-04 19:26:11 amb Exp $
 
   ProcMeter Generic Widget Source file (for ProcMeter 3.3).
   ******************/ /******************
@@ -24,8 +24,8 @@ static gint expose(GtkWidget *widget,GdkEventExpose *event);
 static void size_request(GtkWidget *widget,GtkRequisition *requisition);
 static void size_allocate(GtkWidget *widget,GtkAllocation *allocation);
 
-static void ProcMeterGenericResize(ProcMeterGeneric *pmw);
-static void ProcMeterGenericUpdate(ProcMeterGeneric *pmw);
+static void GenericResize(ProcMeterGeneric *pmw);
+static void GenericUpdate(ProcMeterGeneric *pmw);
 
 static char *empty_string="";
 
@@ -75,8 +75,8 @@ static void procmetergeneric_class_init(ProcMeterGenericClass *class)
  object_class=(GtkObjectClass*)class;
  widget_class=(GtkWidgetClass*)class;
 
- class->resize=ProcMeterGenericResize;
- class->update=ProcMeterGenericUpdate;
+ class->resize=GenericResize;
+ class->update=GenericUpdate;
 
  parent_class=gtk_type_class(gtk_widget_get_type());
 
@@ -133,7 +133,7 @@ static void procmetergeneric_init(ProcMeterGeneric *pmw)
 
  /* The rest of the sizing. */
 
- ProcMeterGenericResize(pmw);
+ GenericResize(pmw);
 }
 
 
@@ -204,7 +204,7 @@ static void realize(GtkWidget *widget)
  if(pmw->body_bg_set)
     gdk_window_set_background(widget->window,&pmw->body_bg_color);
 
- ProcMeterGenericUpdate(pmw);
+ GenericUpdate(pmw);
 }
 
 
@@ -254,7 +254,7 @@ static void size_allocate(GtkWidget *widget,GtkAllocation *allocation)
                            allocation->x,allocation->y,
                            allocation->width,allocation->height);
 
-    ProcMeterGenericResize(pmw);
+    GenericResize(pmw);
    }
 }
 
@@ -282,7 +282,7 @@ static gint expose(GtkWidget *widget,GdkEventExpose *event)
 
  pmw=GTK_PROCMETERGENERIC(widget);
 
- ProcMeterGenericUpdate(pmw);
+ GenericUpdate(pmw);
 
  return(FALSE);
 }
@@ -294,7 +294,7 @@ static gint expose(GtkWidget *widget,GdkEventExpose *event)
   ProcMeterGeneric *pmw The Widget to resize.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void ProcMeterGenericResize(ProcMeterGeneric *pmw)
+static void GenericResize(ProcMeterGeneric *pmw)
 {
  g_return_if_fail(pmw!=NULL);
 
@@ -335,7 +335,7 @@ static void ProcMeterGenericResize(ProcMeterGeneric *pmw)
   ProcMeterGeneric *pmw The Widget to update.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void ProcMeterGenericUpdate(ProcMeterGeneric *pmw)
+static void GenericUpdate(ProcMeterGeneric *pmw)
 {
  g_return_if_fail(pmw!=NULL);
 
@@ -402,7 +402,7 @@ void ProcMeterGenericSetBackgroundColour(ProcMeterGeneric *pmw,GdkColor body_bg_
     pmw->label_gc=gdk_gc_new_with_values(pmw->widget.parent->window,&values,GDK_GC_BACKGROUND);
    }
 
- ProcMeterGenericUpdate(pmw);
+ GenericUpdate(pmw);
 }
 
 
@@ -428,7 +428,7 @@ void ProcMeterGenericSetForegroundColour(ProcMeterGeneric *pmw,GdkColor body_fg_
     pmw->body_gc=gdk_gc_new_with_values(pmw->widget.parent->window,&values,GDK_GC_FOREGROUND);
    }
 
- ProcMeterGenericUpdate(pmw);
+ GenericUpdate(pmw);
 }
 
 
@@ -454,7 +454,7 @@ void ProcMeterGenericSetLabelColour(ProcMeterGeneric *pmw,GdkColor label_color)
     pmw->label_gc=gdk_gc_new_with_values(pmw->widget.parent->window,&values,GDK_GC_FOREGROUND);
    }
 
- ProcMeterGenericUpdate(pmw);
+ GenericUpdate(pmw);
 }
 
 
@@ -474,9 +474,9 @@ void ProcMeterGenericSetLabelPosition(ProcMeterGeneric *pmw,int label_position)
    {
     pmw->label_pos=label_position;
 
-    ProcMeterGenericResize(pmw);
+    GenericResize(pmw);
 
-    ProcMeterGenericUpdate(pmw);
+    GenericUpdate(pmw);
    }
 }
 
@@ -493,9 +493,9 @@ void ProcMeterGenericSetLabelFont(ProcMeterGeneric *pmw,GdkFont *font)
 {
  pmw->label_font=font;
 
- ProcMeterGenericResize(pmw);
+ GenericResize(pmw);
 
- ProcMeterGenericUpdate(pmw);
+ GenericUpdate(pmw);
 }
 
 
@@ -512,5 +512,5 @@ void ProcMeterGenericSetLabel(ProcMeterGeneric *pmw,gchar *label)
  pmw->label_string=(char*)malloc(strlen(label)+1);
  strcpy(pmw->label_string,label);
 
- ProcMeterGenericUpdate(pmw);
+ GenericUpdate(pmw);
 }

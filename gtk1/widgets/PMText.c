@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMText.c,v 1.1 2000-12-16 16:39:11 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMText.c,v 1.2 2001-01-04 19:26:11 amb Exp $
 
   ProcMeter Text Widget Source file (for ProcMeter 3.3).
   ******************/ /******************
@@ -25,8 +25,8 @@ static gint expose(GtkWidget *widget,GdkEventExpose *event);
 static void size_request(GtkWidget *widget,GtkRequisition *requisition);
 static void size_allocate(GtkWidget *widget,GtkAllocation *allocation);
 
-static void ProcMeterTextResize(ProcMeterText *pmw);
-static void ProcMeterTextUpdate(ProcMeterText *pmw,gboolean all);
+static void TextResize(ProcMeterText *pmw);
+static void TextUpdate(ProcMeterText *pmw,gboolean all);
 
 static char *empty_string="";
 
@@ -76,8 +76,8 @@ static void procmetertext_class_init(ProcMeterTextClass *class)
  object_class=(GtkObjectClass*)class;
  widget_class=(GtkWidgetClass*)class;
 
- class->resize=ProcMeterTextResize;
- class->update=ProcMeterTextUpdate;
+ class->resize=TextResize;
+ class->update=TextUpdate;
 
  parent_class=gtk_type_class(gtk_procmetergeneric_get_type());
 
@@ -108,7 +108,7 @@ static void procmetertext_init(ProcMeterText *pmw)
 
  /* The rest of the sizing. */
 
- ProcMeterTextResize(pmw);
+ TextResize(pmw);
 }
 
 
@@ -191,7 +191,7 @@ static void realize(GtkWidget *widget)
  if(pmw->generic.body_bg_set)
     gdk_window_set_background(widget->window,&pmw->generic.body_bg_color);
 
- ProcMeterTextUpdate(pmw,TRUE);
+ TextUpdate(pmw,TRUE);
 }
 
 
@@ -243,7 +243,7 @@ static void size_allocate(GtkWidget *widget,GtkAllocation *allocation)
                            allocation->x,allocation->y,
                            allocation->width,allocation->height);
 
-    ProcMeterTextResize(pmw);
+    TextResize(pmw);
    }
 }
 
@@ -271,7 +271,7 @@ static gint expose(GtkWidget *widget,GdkEventExpose *event)
 
  pmw=GTK_PROCMETERTEXT(widget);
 
- ProcMeterTextUpdate(pmw,TRUE);
+ TextUpdate(pmw,TRUE);
 
  return(FALSE);
 }
@@ -283,7 +283,7 @@ static gint expose(GtkWidget *widget,GdkEventExpose *event)
   ProcMeterText *pmw The Widget to resize.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void ProcMeterTextResize(ProcMeterText *pmw)
+static void TextResize(ProcMeterText *pmw)
 {
  GdkFont *text_font;
 
@@ -308,7 +308,7 @@ static void ProcMeterTextResize(ProcMeterText *pmw)
   gboolean all Indicates if the whole widget is to be updated.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void ProcMeterTextUpdate(ProcMeterText *pmw,gboolean all)
+static void TextUpdate(ProcMeterText *pmw,gboolean all)
 {
  g_return_if_fail(pmw!=NULL);
 
@@ -343,9 +343,9 @@ void ProcMeterTextSetFont(ProcMeterText *pmw,GdkFont *font)
 {
  pmw->text_font=font;
 
- ProcMeterTextResize(pmw);
+ TextResize(pmw);
 
- ProcMeterTextUpdate(pmw,TRUE);
+ TextUpdate(pmw,TRUE);
 }
 
 
@@ -366,5 +366,5 @@ void ProcMeterTextChangeData(ProcMeterText *pmw,char *text)
 
  pmw->text_x=(pmw->generic.widget.allocation.width-gdk_string_width(pmw->text_font,pmw->text_string))/2;
 
- ProcMeterTextUpdate(pmw,FALSE);
+ TextUpdate(pmw,FALSE);
 }

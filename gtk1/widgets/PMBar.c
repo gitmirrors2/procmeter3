@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMBar.c,v 1.1 2000-12-16 16:38:00 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMBar.c,v 1.2 2001-01-04 19:26:11 amb Exp $
 
   ProcMeter Bar Widget Source file (for ProcMeter3 3.3).
   ******************/ /******************
@@ -27,8 +27,8 @@ static void size_request(GtkWidget *widget,GtkRequisition *requisition);
 static void size_allocate(GtkWidget *widget,GtkAllocation *allocation);
 static gint expose(GtkWidget *widget,GdkEventExpose *event);
 
-static void ProcMeterBarResize(ProcMeterBar *pmw);
-static void ProcMeterBarUpdate(ProcMeterBar *pmw,gboolean all);
+static void BarResize(ProcMeterBar *pmw);
+static void BarUpdate(ProcMeterBar *pmw,gboolean all);
 
 static char *empty_string="";
 
@@ -78,8 +78,8 @@ static void procmeterbar_class_init(ProcMeterBarClass *class)
  object_class=(GtkObjectClass*)class;
  widget_class=(GtkWidgetClass*)class;
 
- class->resize=ProcMeterBarResize;
- class->update=ProcMeterBarUpdate;
+ class->resize=BarResize;
+ class->update=BarUpdate;
 
  parent_class=gtk_type_class(gtk_procmetergeneric_get_type());
 
@@ -131,7 +131,7 @@ static void procmeterbar_init(ProcMeterBar *pmw)
 
  /* The rest of the sizing. */
 
- ProcMeterBarResize(pmw);
+ BarResize(pmw);
 }
 
 
@@ -216,7 +216,7 @@ static void realize(GtkWidget *widget)
  if(pmw->generic.body_bg_set)
     gdk_window_set_background(widget->window,&pmw->generic.body_bg_color);
 
- ProcMeterBarUpdate(pmw,TRUE);
+ BarUpdate(pmw,TRUE);
 }
 
 
@@ -266,7 +266,7 @@ static void size_allocate(GtkWidget *widget,GtkAllocation *allocation)
                            allocation->x,allocation->y,
                            allocation->width,allocation->height);
 
-    ProcMeterBarResize(pmw);
+    BarResize(pmw);
    }
 }
 
@@ -294,7 +294,7 @@ static gint expose(GtkWidget *widget,GdkEventExpose *event)
 
  pmw=GTK_PROCMETERBAR(widget);
 
- ProcMeterBarUpdate(pmw,TRUE);
+ BarUpdate(pmw,TRUE);
 
  return(FALSE);
 }
@@ -306,7 +306,7 @@ static gint expose(GtkWidget *widget,GdkEventExpose *event)
   ProcMeterBar *pmw The Widget to resize.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void ProcMeterBarResize(ProcMeterBar *pmw)
+static void BarResize(ProcMeterBar *pmw)
 {
  GdkFont *label_font;
 
@@ -344,7 +344,7 @@ static void ProcMeterBarResize(ProcMeterBar *pmw)
   gboolean all Indicates if it all is to be updated including the generic parts.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void ProcMeterBarUpdate(ProcMeterBar *pmw,gboolean all)
+static void BarUpdate(ProcMeterBar *pmw,gboolean all)
 {
  g_return_if_fail(pmw!=NULL);
 
@@ -436,7 +436,7 @@ void ProcMeterBarSetGridColour(ProcMeterBar *pmw,GdkColor grid_color)
     pmw->grid_gc=gdk_gc_new_with_values(pmw->generic.widget.parent->window,&values,GDK_GC_FOREGROUND);
    }
 
- ProcMeterBarUpdate(pmw,TRUE);
+ BarUpdate(pmw,TRUE);
 }
 
 
@@ -466,9 +466,9 @@ void ProcMeterBarSetGridMin(ProcMeterBar *pmw,gint grid_min)
  if(pmw->grid_min>=pmw->grid_num)
     pmw->grid_num=pmw->grid_min;
 
- ProcMeterBarResize(pmw);
+ BarResize(pmw);
 
- ProcMeterBarUpdate(pmw,TRUE);
+ BarUpdate(pmw,TRUE);
 }
 
 
@@ -488,9 +488,9 @@ void ProcMeterBarSetGridMax(ProcMeterBar *pmw,gint grid_max)
  if(grid_max && grid_max<pmw->grid_min)
     pmw->grid_max=pmw->grid_min;
 
- ProcMeterBarResize(pmw);
+ BarResize(pmw);
 
- ProcMeterBarUpdate(pmw,TRUE);
+ BarUpdate(pmw,TRUE);
 }
 
 
@@ -509,9 +509,9 @@ void ProcMeterBarSetGridUnits(ProcMeterBar *pmw,gchar *units)
  pmw->grid_units=(char*)malloc(strlen(units)+1);
  strcpy(pmw->grid_units,units);
 
- ProcMeterBarResize(pmw);
+ BarResize(pmw);
 
- ProcMeterBarUpdate(pmw,TRUE);
+ BarUpdate(pmw,TRUE);
 }
 
 
@@ -557,5 +557,5 @@ void ProcMeterBarAddDatum(ProcMeterBar *pmw,gushort datum)
        pmw->grid_drawn=1;
    }
 
- ProcMeterBarUpdate(pmw,TRUE);
+ BarUpdate(pmw,TRUE);
 }
