@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.1 1998-09-19 15:19:20 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/module.c,v 1.2 1998-09-26 09:35:27 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
@@ -104,13 +104,13 @@ void LoadAllModules(void)
 
     while(*l)
       {
-       char *r=l;
+       char *r=l,pr;
 
        while(*r && *r!=' ')
           r++;
 
-       if(*r==' ')
-          *r=0;
+       pr=*r;
+       *r=0;
 
        if(*l=='/')
           LoadModule(l);
@@ -120,7 +120,7 @@ void LoadAllModules(void)
           LoadModule(lib);
          }
 
-       *r=' ';
+       *r=pr;
        while(*r && *r==' ')
           r++;
 

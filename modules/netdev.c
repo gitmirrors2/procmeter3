@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.3 1998-09-22 18:59:28 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.4 1998-09-26 09:35:41 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
@@ -165,17 +165,17 @@ ProcMeterOutput **Initialise(char *options)
 
     while(*l)
       {
-       char *r=l;
+       char *r=l,pr;
 
        while(*r && *r!=' ')
           r++;
 
-       if(*r==' ')
-          *r=0;
+       pr=*r;
+       *r=0;
 
        add_device(l);
 
-       *r=' ';
+       *r=pr;
        while(*r && *r==' ')
           r++;
 
