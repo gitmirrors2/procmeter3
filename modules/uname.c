@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/uname.c,v 1.1 1998-09-19 15:26:14 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/uname.c,v 1.2 1998-10-24 09:02:09 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux (v3.0a).
 
   Uname system information module source file.
   ******************/ /******************
@@ -112,8 +112,15 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Error calling uname()\n",__FILE__);
  else
    {
+    char *p;
+
     strncpy(hostname_output.text_value,buf.nodename,16);     hostname_output.text_value[15]=0;
     strncpy(kernelversion_output.text_value,buf.release,16); kernelversion_output.text_value[15]=0;
+
+    p=hostname_output.text_value;
+    while(*p && *p!='.')
+       p++;
+    *p=0;
    }
 
  return(outputs);
