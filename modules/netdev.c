@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.15 2002-06-04 13:54:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.16 2002-07-07 14:50:34 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
@@ -228,8 +228,8 @@ ProcMeterOutput **Initialise(char *options)
       }
    }
 
- current =(long*)malloc(sizeof(long)*ndevices);
- previous=(long*)malloc(sizeof(long)*ndevices);
+ current =(long*)calloc(sizeof(long),ndevices);
+ previous=(long*)calloc(sizeof(long),ndevices);
 
  return(outputs);
 }
