@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.6 1999-12-12 14:08:02 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.7 2001-07-22 08:58:01 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -293,7 +293,7 @@ int Update(time_t now,ProcMeterOutput *output)
          {
           if(i%2)
             {
-             long avail=(buf.f_bavail>>10)*buf.f_bsize;
+             long avail=(buf.f_bavail>>5)*(buf.f_bsize>>5);
 
              sprintf(output->text_value,"%.1f MB",avail/1024.0);
             }
