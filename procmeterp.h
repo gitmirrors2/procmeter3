@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.2 1998-09-19 15:44:00 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.3 1999-02-07 14:20:26 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
@@ -91,6 +91,7 @@ void SleepX(time_t until);
 void UpdateX(time_t now);
 void AddDefaultOutputs(int argc,char **argv);
 void AddRemoveOutput(Output);
+void MoveOutput(Output output1,Output output2,int direction);
 
 /* In xmenus.c */
 

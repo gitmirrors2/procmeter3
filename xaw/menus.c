@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.3 1999-02-06 18:47:37 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.4 1999-02-07 14:20:27 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.1.
 
@@ -30,34 +30,41 @@
 #include <X11/Xaw/Form.h>
 #include <X11/Xaw/Command.h>
 #include <X11/Xaw/AsciiText.h>
+#include <X11/cursorfont.h>
 
 #include "xwindow.h"
 #include "procmeterp.h"
 
 
+/*+ The orientation of the windows. +*/
+extern int vertical;
+
+/*+ The pane that contains all of the outputs. +*/
+extern Widget pane;
+
 static void ModuleMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params);
 static void ModuleMenuEvent(Widget w,XEvent *event,String *params,Cardinal *num_params);
 static void OutputMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params);
-static void PropertiesMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params);
+static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params);
 
 static void PopupAMenu(Widget menu,Widget w,XEvent *event);
 
 static void SelectModuleMenuCallback(Widget widget,XtPointer clientData,XtPointer callData);
 static void SelectOutputMenuCallback(Widget widget,XtPointer clientData,XtPointer callData);
-static void SelectPropertiesMenuCallback(Widget widget,XtPointer clientData,XtPointer callData);
+static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPointer callData);
 static void DonePropertiesDialogCallback(Widget widget,XtPointer clientData,XtPointer callData);
 static void AtomPropertiesDialogCloseCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb);
 
 
 static Widget module_menu;
-static Widget properties_menu,properties_dialog;
+static Widget functions_menu,properties_dialog;
 static Widget prop_modname,prop_moddesc,prop_outname,prop_outdesc,prop_type,prop_interval,prop_scale;
-static Boolean properties_popped_up=False;
+static Boolean properties_popped_up=False,doing_move=False;
 
 XtActionsRec MenuActions[]={{"ModuleMenuStart",ModuleMenuStart},
                             {"ModuleMenuEvent",ModuleMenuEvent},
                             {"OutputMenuStart",OutputMenuStart},
-                            {"PropertiesMenuStart",PropertiesMenuStart}};
+                            {"FunctionsMenuStart",FunctionsMenuStart}};
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -68,7 +75,8 @@ XtActionsRec MenuActions[]={{"ModuleMenuStart",ModuleMenuStart},
 
 void CreateMenus(Widget parent)
 {
- Widget menulabel1,/*menulabel2,*/smeline1,/*smeline2,*/sme;
+ Widget menulabel1,smeline1;
+ Widget menulabel2,smeline2,sme_prop,sme_up,sme_down;
  Widget prop_form,prop_modlabel,prop_outlabel,prop_typlabel,prop_intlabel,prop_scllabel,prop_done;
  Dimension width,height;
  char *string;
@@ -90,25 +98,36 @@ void CreateMenus(Widget parent)
 
  smeline1=XtVaCreateManagedWidget("line",smeLineObjectClass,module_menu,NULL);
 
- /* The properties menu */
+ /* The functions menu */
 
- properties_menu=XtVaCreatePopupShell("PropertiesMenu",simpleMenuWidgetClass,parent,
-                                      NULL);
+ functions_menu=XtVaCreatePopupShell("FunctionsMenu",simpleMenuWidgetClass,parent,
+                                     XtNlabel,"Functions",
+                                     NULL);
 
-/*
- menulabel2=XtNameToWidget(properties_menu,"menuLabel");
-*/
+ menulabel2=XtNameToWidget(functions_menu,"menuLabel");
 
-/*
- smeline2=XtVaCreateManagedWidget("line",smeLineObjectClass,properties_menu,NULL);
-*/
+ smeline2=XtVaCreateManagedWidget("line",smeLineObjectClass,functions_menu,NULL);
 
- sme=XtVaCreateManagedWidget("Properties",smeBSBObjectClass,properties_menu,
-                             XtNlabel,"Properties",
-                             XtNheight,10,
-                             NULL);
+ sme_prop=XtVaCreateManagedWidget("Properties",smeBSBObjectClass,functions_menu,
+                                  XtNlabel,"Properties",
+                                  XtNheight,10,
+                                  NULL);
 
- XtAddCallback(sme,XtNcallback,SelectPropertiesMenuCallback,0);
+ XtAddCallback(sme_prop,XtNcallback,SelectFunctionsMenuCallback,0);
+
+ sme_up=XtVaCreateManagedWidget("AboveOrLeft",smeBSBObjectClass,functions_menu,
+                                XtNlabel,vertical?"Move To Above":"Move To Left Of",
+                                XtNheight,10,
+                                NULL);
+
+ XtAddCallback(sme_up,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)1);
+
+ sme_down=XtVaCreateManagedWidget("BelowOrRight",smeBSBObjectClass,functions_menu,
+                                  XtNlabel,vertical?"Move To Below":"Move To Right Of",
+                                  XtNheight,10,
+                                  NULL);
+
+ XtAddCallback(sme_down,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)2);
 
  /* The properties_dialog */
 
@@ -212,14 +231,12 @@ void CreateMenus(Widget parent)
     (resource=(XtPointer)StringToPixel(string)))
    {
     XtVaSetValues(menulabel1,XtNforeground,*(Pixel*)resource,NULL);
-/*
     XtVaSetValues(menulabel2,XtNforeground,*(Pixel*)resource,NULL);
-*/
     XtVaSetValues(smeline1,XtNforeground,*(Pixel*)resource,NULL);
-/*
     XtVaSetValues(smeline2,XtNforeground,*(Pixel*)resource,NULL);
-*/
-    XtVaSetValues(sme,XtNforeground,*(Pixel*)resource,NULL);
+    XtVaSetValues(sme_prop,XtNforeground,*(Pixel*)resource,NULL);
+    XtVaSetValues(sme_up,XtNforeground,*(Pixel*)resource,NULL);
+    XtVaSetValues(sme_down,XtNforeground,*(Pixel*)resource,NULL);
     XtVaSetValues(properties_dialog,XtNforeground,*(Pixel*)resource,NULL);
     XtVaSetValues(prop_form,XtNforeground,*(Pixel*)resource,NULL);
     XtVaSetValues(prop_modlabel,XtNforeground,*(Pixel*)resource,NULL);
@@ -241,7 +258,7 @@ void CreateMenus(Widget parent)
     (resource=(XtPointer)StringToPixel(string)))
    {
     XtVaSetValues(module_menu,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(properties_menu,XtNbackground,*(Pixel*)resource,NULL);
+    XtVaSetValues(functions_menu,XtNbackground,*(Pixel*)resource,NULL);
     XtVaSetValues(properties_dialog,XtNbackground,*(Pixel*)resource,NULL);
     XtVaSetValues(prop_form,XtNbackground,*(Pixel*)resource,NULL);
     XtVaSetValues(prop_modlabel,XtNbackground,*(Pixel*)resource,NULL);
@@ -263,10 +280,10 @@ void CreateMenus(Widget parent)
     (resource=(XtPointer)StringToFont(string)))
    {
     XtVaSetValues(menulabel1,XtNfont,resource,NULL);
-/*
     XtVaSetValues(menulabel2,XtNfont,resource,NULL);
-*/
-    XtVaSetValues(sme,XtNfont,resource,NULL);
+    XtVaSetValues(sme_prop,XtNfont,resource,NULL);
+    XtVaSetValues(sme_up,XtNfont,resource,NULL);
+    XtVaSetValues(sme_down,XtNfont,resource,NULL);
     XtVaSetValues(prop_form,XtNfont,resource,NULL);
     XtVaSetValues(prop_modlabel,XtNfont,resource,NULL);
     XtVaSetValues(prop_modname,XtNfont,resource,NULL);
@@ -388,12 +405,6 @@ void AddModuleToMenu(Module module)
        XtVaSetValues(sme,XtNforeground,*(Pixel*)resource,NULL);
 
     if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-font")) ||
-        (string=GetProcMeterRC(module->module->name,"menu-background")) ||
-        (string=GetProcMeterRC("resources","menu-background"))) &&
-       (resource=(XtPointer)StringToPixel(string)))
-       XtVaSetValues(sme,XtNbackground,*(Pixel*)resource,NULL);
-
-    if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-font")) ||
         (string=GetProcMeterRC(module->module->name,"menu-font")) ||
         (string=GetProcMeterRC("resources","menu-font"))) &&
        (resource=(XtPointer)StringToFont(string)))
@@ -431,7 +442,7 @@ void AddMenuToOutput(Widget widget,Module module,Output output)
  if(output)
    {
     char string[80];
-    sprintf(string,"<Btn1Down>: PropertiesMenuStart(%s)",module->module->name);
+    sprintf(string,"<Btn1Down>: FunctionsMenuStart(%s)",module->module->name);
     XtOverrideTranslations(widget,XtParseTranslationTable(string));
    }
 }
@@ -502,7 +513,7 @@ static void SelectOutputMenuCallback(Widget widget,XtPointer clientData,XtPointe
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  The callback that is called by something being selected on the properties menu.
+  The callback that is called by an item being selected on the functions menu.
 
   Widget widget The widget that the callback came from.
 
@@ -513,7 +524,7 @@ static void SelectOutputMenuCallback(Widget widget,XtPointer clientData,XtPointe
   This function is only ever called from the Xt Intrinsics routines.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void SelectPropertiesMenuCallback(Widget widget,XtPointer clientData,XtPointer callData)
+static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPointer callData)
 {
  if((int)clientData==0)
    {
@@ -531,6 +542,12 @@ static void SelectPropertiesMenuCallback(Widget widget,XtPointer clientData,XtPo
 
     XtPopup(properties_dialog,XtGrabNone);
     properties_popped_up=True;
+   }
+ else if((int)clientData==1 || (int)clientData==2)
+   {
+    doing_move=(int)clientData;
+
+    XtGrabPointer(pane,True,ButtonPressMask|ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,XCreateFontCursor(XtDisplay(pane),XC_hand1),CurrentTime);
    }
 }
 
@@ -696,11 +713,32 @@ static void OutputMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_
   This function is only ever called from the Xt Intrinsics routines.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void PropertiesMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params)
+static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params)
 {
+ static Output *outputp=NULL;
+ static Module *modulep=NULL;
  char string[16];
- Output *outputp=NULL;
- Module *modulep=NULL;
+
+ if(doing_move)
+   {
+    Module *newmodulep;
+    Output *newoutputp;
+
+    for(newmodulep=Modules;*newmodulep;newmodulep++)
+       if(!strcmp((*newmodulep)->module->name,params[0]))
+         {
+          for(newoutputp=(*newmodulep)->outputs;*newoutputp;newoutputp++)
+             if(w==(*newoutputp)->output_widget)
+                break;
+          break;
+         }
+
+    XtUngrabPointer(pane,CurrentTime);
+
+    MoveOutput(*outputp,*newoutputp,doing_move);
+    doing_move=0;
+    return;
+   }
 
  for(modulep=Modules;*modulep;modulep++)
     if(!strcmp((*modulep)->module->name,params[0]))
@@ -749,7 +787,7 @@ static void PropertiesMenuStart(Widget w,XEvent *event,String *params,Cardinal *
    }
 
  if(!properties_popped_up)
-    PopupAMenu(properties_menu,w,event);
+    PopupAMenu(functions_menu,w,event);
 }
 
 
