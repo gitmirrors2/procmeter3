@@ -1,3 +1,22 @@
+Version 3.3b of ProcMeter3 released : Sat Aug 10 16:45:00 2002
+--------------------------------------------------------------
+
+New modules:
+ Transmeta Crusoe longrun performance level (contributed by Joey Hess).
+ Wireless network link quality and signal, noise levels (contrib by Joey Hess).
+ Temperatures and battery status from the ACPI interface (contrib by Joey Hess).
+
+New output format:
+ Text only output for logging to a file.
+
+New features:
+ NFS mounts can appear in df outputs.
+ 12 hour clock option for data and time.
+
+Bug fixes:
+ Fix for disk statistics kernel version detection.
+
+
 Version 3.3a of ProcMeter3 released : Sun May 27 08:45:00 2001
 --------------------------------------------------------------
 
