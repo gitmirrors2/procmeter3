@@ -1,12 +1,12 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.11 2001-01-05 19:48:45 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.12 2002-04-14 13:58:55 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.3.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 .\"
 .\"  Manual page for procmeter program.
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998,99,2000,01 Andrew M. Bishop
+.\"  This file Copyright 1998,99,2000,01,02 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
@@ -214,6 +214,21 @@ The system information, hostname and Linux kernel version, the same as the
 output of the
 .B uname
 program.
+.TP
+.BR Wireless
+Information about wireless network devices. It will
+automatically pick up available devices when it starts. To specify others
+use the
+.I options
+parameter in the 
+.B .procmeterrc 
+configuration file which is a space separated list of device names.
+.TP
+.BR Longrun
+For systems with the Transmeta Crueso processor, information about longrun.
+Will not work unless the kernel is compiled with CPUID support, and
+/dev/cpu/0/cpuid must be readable by procmeter. (Allow regular users to
+access the cpuid device at your own risk!)
 .TP
 
 .SH X RESOURCES
