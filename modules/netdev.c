@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.8 1999-03-06 14:40:14 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.9 1999-04-18 08:18:21 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.1a.
 
   Network devices traffic source file.
   ******************/ /******************
@@ -112,7 +112,7 @@ static char *proc_net_dev_format2="%lu %lu %*u %*u %*u %*u %lu %lu"; /* ~2.1.28 
 static char *proc_net_dev_format3="%lu %lu %*u %*u %*u %*u %*u %*u %lu %lu"; /* ~2.1.91 < kernel version */
 
 static int ndevices=0;
-static long *current=NULL,*previous=NULL;
+static unsigned long *current=NULL,*previous=NULL;
 static char **device=NULL;
 
 static void add_device(char *dev);
@@ -259,6 +259,9 @@ static void add_device(char *dev)
     else /* other devices */
        pscale=50,bscale=100,nstats=3;
 
+ if(proc_net_dev_format!=proc_net_dev_format1)
+    nstats*=2;
+
  outputs=(ProcMeterOutput**)realloc((void*)outputs,(ndevices+nstats+1)*sizeof(ProcMeterOutput*));
  device=(char**)realloc((void*)device,(ndevices+nstats+1)*sizeof(char*));
 
@@ -356,7 +359,7 @@ int Update(time_t now,ProcMeterOutput *output)
                }
              else if(proc_net_dev_format==proc_net_dev_format1)
                 current[j]=txp;
-             else
+             else /* proc_net_dev_format!=proc_net_dev_format1 */
                {
                 current[  j]=txp;
                 current[++j]=txb;
