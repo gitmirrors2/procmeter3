@@ -1,12 +1,12 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.14 2001-02-02 09:22:38 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.15 2002-06-04 12:57:16 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.3.
+# ProcMeter - A system monitoring program for Linux - Version 3.3b.
 #
 # Makefile.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994,95,96,97,98,99,2000,01 Andrew M. Bishop
+# This file Copyright 1994,95,96,97,98,99,2000,01,02 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -46,13 +46,14 @@ OBJ=$(foreach f,$(SRC),$(addsuffix .o,$(basename $f)))
 
 ########
 
-all : procmeter3 gprocmeter3
-
+all : procmeter3 gprocmeter3 procmeter3-no-x
 ########
 
-procmeter3  : obj procmeter.xaw procmeter.modules procmeterrc.install
+procmeter3      : obj procmeter.xaw  procmeter.modules procmeterrc.install
 
-gprocmeter3 : obj procmeter.gtk procmeter.modules procmeterrc.install
+gprocmeter3     : obj procmeter.gtk  procmeter.modules procmeterrc.install
+
+procmeter3-no-x : obj procmeter.no-x procmeter.modules procmeterrc.install
 
 ########
 
@@ -74,13 +75,16 @@ procmeter.modules :
 
 ########
 
-.PHONY : procmeter.xaw procmeter.gtk
+.PHONY : procmeter.xaw procmeter.gtk procmeter.no-x
 
 procmeter.xaw :
 	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C xaw
 
 procmeter.gtk :
 	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C gtk
+
+procmeter.no-x :
+	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C no-x
 
 ########
 
@@ -119,9 +123,10 @@ install :
 	@[ -f gprocmeter3 ] || (echo "" ; echo "*** The gprocmeter3 program has not been installed (it does not exist)." ; echo "")
 	install -d $(INSTDIR)/man/man1
 	install -d $(INSTDIR)/man/man5
-	[ ! -f procmeter3 ] || install -m 644 procmeter3.1 $(INSTDIR)/man/man1
-	[ ! -f gprocmeter3 ] || install -m 644 gprocmeter3.1 $(INSTDIR)/man/man1
-	install -m 644 procmeterrc.5 $(INSTDIR)/man/man5/procmeterrc.5
+	[ ! -f procmeter3 ]      || install -m 644 man/procmeter3.1      $(INSTDIR)/man/man1
+	[ ! -f procmeter3-no-x ] || install -m 644 man/procmeter3-no-x.1 $(INSTDIR)/man/man1
+	[ ! -f gprocmeter3 ]     || install -m 644 man/gprocmeter3.1     $(INSTDIR)/man/man1
+	install -m 644 man/procmeterrc.5 $(INSTDIR)/man/man5/procmeterrc.5
 	[ ! -f $(LIB_PATH)/.procmeterrc ] || mv $(LIB_PATH)/.procmeterrc $(LIB_PATH)/procmeterrc
 	[ ! -f $(RC_PATH) ] || for n in 0 1 2 3 4 5 6 7 8 9; do \
 				  [ ! -f $(RC_PATH) -o -f $(RC_PATH).bak.$$n ] || mv $(RC_PATH) $(RC_PATH).bak.$$n ; \
