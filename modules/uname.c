@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/uname.c,v 1.2 1998-10-24 09:02:09 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/uname.c,v 1.3 1998-10-24 13:09:54 amb Exp $
 
   ProcMeter - A system monitoring program for Linux (v3.0a).
 
@@ -101,6 +101,8 @@ ProcMeterOutput **Initialise(char *options)
    {
     if(!fgets(line,128,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/version'\n",__FILE__);
+    else
+       line[strlen(line)-1]=0;
     fclose(f);
    }
 
