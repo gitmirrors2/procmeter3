@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.5 1999-02-13 11:38:57 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.6 1999-03-03 19:48:56 amb Exp $
 
   ProcMeter - A system monitoring program for Linux (v3.0a).
 
@@ -233,6 +233,10 @@ void UpdateX(time_t now)
 
 /*++++++++++++++++++++++++++++++++++++++
   Add the default outputs at startup.
+
+  int argc The number of command line arguments.
+
+  char **argv The command line arguments.
   ++++++++++++++++++++++++++++++++++++++*/
 
 void AddDefaultOutputs(int argc,char **argv)
@@ -241,6 +245,53 @@ void AddDefaultOutputs(int argc,char **argv)
  Module *modulep=NULL;
  char *string;
  int arg;
+
+ if((string=GetProcMeterRC("startup","order")))
+   {
+    char *s=string;
+
+    while(*s && *s==' ')
+       s++;
+
+    while(*s)
+      {
+       int found=0;
+
+       for(modulep=Modules;*modulep;modulep++)
+          if(!strncmp((*modulep)->module->name,s,strlen((*modulep)->module->name)) &&
+             s[strlen((*modulep)->module->name)]=='.')
+            {
+             for(outputp=(*modulep)->outputs;*outputp;outputp++)
+                if(!strncmp((*outputp)->output->name,&s[strlen((*modulep)->module->name)+1],strlen((*outputp)->output->name)) &&
+                   (s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]=='-' ||
+                    s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]==' ' ||
+                    s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]==0))
+                  {
+                   if((s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]==' ' ||
+                       s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]==0) &&
+                      !(*outputp)->output_widget)
+                      AddRemoveOutput(*outputp);
+                   else if(s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='g' &&
+                           (*outputp)->type==PROCMETER_GRAPH &&
+                           !(*outputp)->output_widget)
+                      AddRemoveOutput(*outputp);
+                   else if(s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='t' &&
+                           (*outputp)->type==PROCMETER_TEXT &&
+                           !(*outputp)->output_widget)
+                      AddRemoveOutput(*outputp);
+                   found=1;
+                  }
+
+             if(found)
+                break;
+            }
+
+       while(*s && *s!=' ')
+          s++;
+       while(*s && *s==' ')
+          s++;
+      }
+   }
 
  for(arg=1;arg<argc;arg++)
    {
@@ -255,13 +306,16 @@ void AddDefaultOutputs(int argc,char **argv)
                 (argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]=='-' ||
                  argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]==0))
                {
-                if(!argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1])
+                if(!argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1] &&
+                   !(*outputp)->output_widget)
                    AddRemoveOutput(*outputp);
                 else if(argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='g' &&
-                        (*outputp)->type==PROCMETER_GRAPH)
+                        (*outputp)->type==PROCMETER_GRAPH &&
+                        !(*outputp)->output_widget)
                    AddRemoveOutput(*outputp);
                 else if(argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='t' &&
-                        (*outputp)->type==PROCMETER_TEXT)
+                        (*outputp)->type==PROCMETER_TEXT &&
+                        !(*outputp)->output_widget)
                    AddRemoveOutput(*outputp);
                 found=1;
                }
@@ -273,17 +327,6 @@ void AddDefaultOutputs(int argc,char **argv)
     if(!*modulep)
        fprintf(stderr,"ProcMeter: Unrecognised output '%s'\n",argv[arg]);
    }
-
- for(modulep=Modules;*modulep;modulep++)
-    for(outputp=(*modulep)->outputs;*outputp;outputp++)
-       if(!(*outputp)->output_widget)
-          if(((*outputp)->type==PROCMETER_GRAPH &&
-              (string=GetProcMeterRC2((*modulep)->module->name,(*outputp)->output->name,"startup-graph")) &&
-              *StringToBoolean(string)) ||
-             ((*outputp)->type==PROCMETER_TEXT &&
-              (string=GetProcMeterRC2((*modulep)->module->name,(*outputp)->output->name,"startup-text")) &&
-              *StringToBoolean(string)))
-             AddRemoveOutput(*outputp);
 
  initialising=0;
 
