@@ -1,4 +1,4 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.13 2001-01-05 19:49:53 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.14 2001-02-02 09:22:38 amb Exp $
 #
 # ProcMeter - A system monitoring program for Linux - Version 3.3.
 #
@@ -15,7 +15,7 @@
 # Paths
 
 # INSTDIR - the default root directory for the package
-INSTDIR=/tmp/procmeter/usr/local
+INSTDIR=/usr/local
 
 # LIB_PATH - the root dir for library files
 LIB_PATH=$(INSTDIR)/lib/X11/ProcMeter3
