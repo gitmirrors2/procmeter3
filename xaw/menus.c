@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.5 1999-02-09 19:56:18 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.6 1999-02-13 11:38:57 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.1.
 
@@ -814,10 +814,12 @@ static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *n
 
  if((*outputp)->type==PROCMETER_GRAPH)
    {
-    if(*((*outputp)->output->graph_units)=='(')
-       strcpy(string,(*outputp)->output->graph_units+1);
+    char str[16];
+    sprintf(str,(*outputp)->output->graph_units,(*outputp)->output->graph_scale);
+    if(*str=='(')
+       strcpy(string,str+1);
     else
-       strcpy(string,(*outputp)->output->graph_units);
+       strcpy(string,str);
     if(string[strlen(string)-1]==')')
        string[strlen(string)-1]=0;
     XtVaSetValues(prop_scale,XtNlabel,string,NULL);

@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.4 1999-02-07 17:16:20 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.5 1999-02-13 11:38:57 amb Exp $
 
   ProcMeter - A system monitoring program for Linux (v3.0a).
 
@@ -321,7 +321,7 @@ void AddRemoveOutput(Output output)
  else
    {
     Widget w;
-    char *string;
+    char *string,str[16];
     XtPointer resource;
     Arg args[16];
     int nargs=0;
@@ -395,13 +395,20 @@ void AddRemoveOutput(Output output)
           (resource=(XtPointer)StringToInt(string)))
          {XtSetArg(args[nargs],XtNgridMin,*(int*)resource);nargs++;}
 
+       if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-max")) ||
+           (string=GetProcMeterRC(module->module->name,"grid-max")) ||
+           (string=GetProcMeterRC("resources","grid-max"))) &&
+          (resource=(XtPointer)StringToInt(string)))
+         {XtSetArg(args[nargs],XtNgridMax,*(int*)resource);nargs++;}
+
        if(vertical)
          {XtSetArg(args[nargs],XtNmin,MINHEIGHT);nargs++;}
        else
          {XtSetArg(args[nargs],XtNmin,MINWIDTH);nargs++;}
 
        XtSetArg(args[nargs],XtNlabel,output->output->name);nargs++;
-       XtSetArg(args[nargs],XtNgridUnits,output->output->graph_units);nargs++;
+       sprintf(str,output->output->graph_units,output->output->graph_scale);
+       XtSetArg(args[nargs],XtNgridUnits,str);nargs++;
        XtSetArg(args[nargs],XtNallowResize,True);nargs++;
        XtSetArg(args[nargs],XtNshowGrip,False);nargs++;
 

@@ -1,4 +1,4 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.3 1999-02-12 16:37:53 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.4 1999-02-13 11:38:56 amb Exp $
 .\"
 .\"  ProcMeter - A system monitoring program for Linux - Version 3.1.
 .\"
@@ -84,6 +84,9 @@ no, true or false, 0 or 1.)
 .BR grid-min=...
 The minimum number of grid lines to display on a graph.  (An integer.)
 .TP
+.BR grid-max=...
+The maximum number of grid lines to display on a graph.  (An integer.)
+.TP
 .BR text-font=...
 The font to use for the textual outputs.  (An X11 font name.)
 .TP
@@ -107,14 +110,21 @@ of this module.
 .BR options=...
 A string containing options that are passed to the module at startup.
 .TP
+.BR update=...
+The update interval for the output in seconds (an integer).
+.TP
+.BR graph-scale=...
+The scaling of the graph, the number of units between each of the grid lines (an
+integer).
+.TP
 .BR run=...
 A string that specifies a program that can be run by selecting it from the menu
 for the left mouse button.
 .LP
 The output sections e.g.
 .I ProcMeter.Version
-These can contain any of the resource values which will then apply to the
-specified output.
+These can contain any of the resource or module options which will then apply to
+the specified output.
 .TP
 .BR startup-graph=...
 A boolean to indicate if the graph for this output should be started as default.

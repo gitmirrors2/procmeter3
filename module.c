@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.3 1999-02-09 18:35:30 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/module.c,v 1.4 1999-02-13 11:38:56 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.1.
 
@@ -26,7 +26,6 @@
 
 #include "procmeter.h"
 #include "procmeterp.h"
-
 
 /*+ The list of all of the modules. +*/
 Module *Modules=NULL;
@@ -288,6 +287,16 @@ Module LoadModule(char* filename)
       {
        if(output->type&t)
          {
+          char *string;
+
+          if((string=GetProcMeterRC2(new->module->name,output->name,"update")) ||
+             (string=GetProcMeterRC(new->module->name,"update")))
+             output->interval=atoi(string);
+
+          if((string=GetProcMeterRC2(new->module->name,output->name,"graph-scale")) ||
+             (string=GetProcMeterRC(new->module->name,"graph-scale")))
+             output->graph_scale=atoi(string);
+
           new->outputs[noutputs]=(Output)malloc(sizeof(struct _Output));
           new->outputs[noutputs]->output=output;
           new->outputs[noutputs]->type=t;
