@@ -1,17 +1,17 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3_modules.1,v 1.3 2003-06-21 18:41:29 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3_modules.1,v 1.4 2004-04-04 10:10:14 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.4a.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.4b.
 .\"
 .\"  Manual page for procmeter modules.
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998,99,2000,01,02,03 Andrew M. Bishop
+.\"  This file Copyright 1998,99,2000,01,02,03,04 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETER3_MODULES 4 "June 21, 2003"
+.TH PROCMETER3_MODULES 4 "April 4, 2004"
 
 .SH NAME
 
@@ -95,23 +95,25 @@ The load average and the number of processes running and starting.
 Information about the procmeter program itself.
 .TP
 .BR Sensors
-Hardware sensors for temperature and fan speed.  (Requires lm78 hardware and
-kernel patch from http://www.netroedge.com/~lm78/).
+Hardware sensors for temperature and fan speed.  (Requires kernel patch from
+http://www.netroedge.com/~lm78/ or version 2.6 kernel or later).
 .TP
 .BR Statistics
-Low level system statistics.  For example CPU usage, disk usage, swapping and
-paging.
+Low level system statistics.  For example CPU usage, context switches,
+interrupts, disk usage (before kernel 2.6), swapping and paging (before kernel
+2.6).
 .TP
 .BR Stat-CPU
-More detailed statistics about individual CPU usage including support for SMP
-machines.
+More detailed statistics about individual CPU usage including individual CPU
+usage for SMP machines.
 .TP
 .BR Stat-Disk
 More detailed statistics about individual disk usage read and write.  For older
-linux kernels (before version 2.4.0) there is only support for up to 4 disks
-(this limit is set by the kernel and not by procmeter).  For newer kernels the
-limit is removed and the disk names are picked up when the program starts.  To
-force other disks to be listed use the
+linux kernels (before version 2.4) there is only support for up to 4 disks (this
+limit is set by the kernel and not by procmeter).  For version 2.4 or later
+kernels the limit is removed and the disk names are picked up when the program
+starts.  For version 2.6 or later kernels individual partitions are available.
+To force other disks to be listed use the
 .I options
 parameter in the
 .B .procmeterrc
@@ -120,7 +122,8 @@ configuration file which is a space separated list of device names
 .TP
 .BR Stat-Intr
 More detailed statistics about individual interrupts including support for up to
-32 interrupts (more interrupts are available from the kernel but not displayed).
+32 interrupts (more interrupts may be available from the kernel but not
+displayed).
 .TP
 .BR Uname
 The system information, hostname and Linux kernel version, the same as the
@@ -151,7 +154,7 @@ system's battery, and may also have thermal outputs available.
 .TP
 .BR VM_Statistics
 Low level system statistics about virtual memory (swaping and paging) for kernel
-version 2.5 where the information has moved from the Statistics section.
+version 2.6 where the information has moved from the Statistics section.
 
 .SH SEE ALSO
 
