@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.16 2002-07-07 14:50:34 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.17 2002-12-07 19:40:25 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Network devices traffic source file.
   ******************/ /******************
@@ -27,69 +27,69 @@ ProcMeterOutput _outputs[6]=
 {
  /*+ The total packets +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Pkt_%s",
-  /* char *description;              */ "The total number of packets per second on the %s network interface.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Pkt_%s",
+  /* char *description;     */ "The total number of packets per second on the %s network interface.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The total bytes +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Byte_%s",
-  /* char *description;              */ "The total number of bytes per second on the %s network interface.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 kB/s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%dkB/s)"
+  /* char  name[];          */ "Byte_%s",
+  /* char *description;     */ "The total number of bytes per second on the %s network interface.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 kB/s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%dkB/s)"
  },
  /*+ The transmitted packets +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Pkt_Tx_%s",
-  /* char *description;              */ "The number of packets transmitted per second on the %s network interface.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Pkt_Tx_%s",
+  /* char *description;     */ "The number of packets transmitted per second on the %s network interface.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The transmitted bytes +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Byte_Tx_%s",
-  /* char *description;              */ "The number of bytes transmitted per second on the %s network interface.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 kB/s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%dkB/s)"
+  /* char  name[];          */ "Byte_Tx_%s",
+  /* char *description;     */ "The number of bytes transmitted per second on the %s network interface.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 kB/s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%dkB/s)"
  },
  /*+ The received packets +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Pkt_Rx_%s",
-  /* char *description;              */ "The number of packets received per second on the %s network interface.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Pkt_Rx_%s",
+  /* char *description;     */ "The number of packets received per second on the %s network interface.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The received bytes +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Byte_Rx_%s",
-  /* char *description;              */ "The number of bytes received per second on the %s network interface.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 kB/s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 0, /* calculated later */
-  /* char  graph_units[8];           */ "(%dkB/s)"
+  /* char  name[];          */ "Byte_Rx_%s",
+  /* char *description;     */ "The number of bytes received per second on the %s network interface.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 kB/s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 0, /* calculated later */
+  /* char  graph_units[];   */ "(%dkB/s)"
  }
 };
 
@@ -100,9 +100,9 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "Network",
- /* char *description;             */ "The network devices and the amount of traffic on each of them. [From /proc/net/dev]  "
-                                      "(Use 'options=ppp0' in the configuration file to specify extra network devices."
+ /* char name[];            */ "Network",
+ /* char *description;      */ "The network devices and the amount of traffic on each of them. [From /proc/net/dev]  "
+                               "(Use 'options=ppp0' in the configuration file to specify extra network devices."
 };
 
 static char *proc_net_dev_format=NULL;
@@ -271,7 +271,7 @@ static void add_device(char *dev)
     device[ndevices]=(char*)malloc(strlen(dev)+1);
 
     *outputs[ndevices]=_outputs[i];
-    snprintf(outputs[ndevices]->name, PROCMETER_NAME_LEN, _outputs[i].name, dev);
+    snprintf(outputs[ndevices]->name, PROCMETER_NAME_LEN+1, _outputs[i].name, dev);
     outputs[ndevices]->description=(char*)malloc(strlen(dev)+strlen(_outputs[i].description)+4);
     sprintf(outputs[ndevices]->description,_outputs[i].description,dev);
     if(i%2)

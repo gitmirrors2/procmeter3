@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.8 2002-11-09 19:44:11 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.9 2002-12-07 19:40:25 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3c.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Disk statistics source file.
   ******************/ /******************
@@ -42,36 +42,36 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
 {
  /*+ The disk blocks accessed per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Disk",
-  /* char *description;              */ "The total number of disk blocks that are accessed per second.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 25,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Disk",
+  /* char *description;     */ "The total number of disk blocks that are accessed per second.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 25,
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The disk blocks read per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Disk_Read",
-  /* char *description;              */ "The number of disk blocks that are read per second.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 25,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Disk_Read",
+  /* char *description;     */ "The number of disk blocks that are read per second.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 25,
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The disk blocks write per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Disk_Write",
-  /* char *description;              */ "The number of disk blocks that are written per second.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 25,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Disk_Write",
+  /* char *description;     */ "The number of disk blocks that are written per second.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 25,
+  /* char  graph_units[];   */ "(%d/s)"
  }
 };
 
@@ -80,36 +80,36 @@ ProcMeterOutput _disk_outputs[N_OUTPUTS]=
 {
  /*+ The disk blocks accessed per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Disk%d",
-  /* char *description;              */ "The total number of disk blocks that are accessed per second on disk %d.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 25,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Disk%d",
+  /* char *description;     */ "The total number of disk blocks that are accessed per second on disk %d.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 25,
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The disk blocks read per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Disk%d_Read",
-  /* char *description;              */ "The number of disk blocks that are read per second on disk %d.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 25,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Disk%d_Read",
+  /* char *description;     */ "The number of disk blocks that are read per second on disk %d.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 25,
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The disk blocks write per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Disk%d_Write",
-  /* char *description;              */ "The number of disk blocks that are written per second on disk %d.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 25,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Disk%d_Write",
+  /* char *description;     */ "The number of disk blocks that are written per second on disk %d.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 25,
+  /* char  graph_units[];   */ "(%d/s)"
  }
 };
 
@@ -118,36 +118,36 @@ ProcMeterOutput _disk_outputs_240[N_OUTPUTS]=
 {
  /*+ The disk blocks accessed per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Disk_%s",
-  /* char *description;              */ "The total number of disk blocks that are accessed per second on disk /dev/%s.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 25,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Disk_%s",
+  /* char *description;     */ "The total number of disk blocks that are accessed per second on disk /dev/%s.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 25,
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The disk blocks read per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Disk_%s_R",
-  /* char *description;              */ "The number of disk blocks that are read per second on disk /dev/%s.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 25,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Disk_%s_R",
+  /* char *description;     */ "The number of disk blocks that are read per second on disk /dev/%s.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 25,
+  /* char  graph_units[];   */ "(%d/s)"
  },
  /*+ The disk blocks write per second +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Disk_%s_W",
-  /* char *description;              */ "The number of disk blocks that are written per second on disk /dev/%s.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 /s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 25,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Disk_%s_W",
+  /* char *description;     */ "The number of disk blocks that are written per second on disk /dev/%s.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 /s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 25,
+  /* char  graph_units[];   */ "(%d/s)"
  }
 };
 
@@ -160,8 +160,8 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "Stat-Disk",
- /* char *description;             */ "Disk usage statistics. [From /proc/stat]",
+ /* char name[];            */ "Stat-Disk",
+ /* char *description;      */ "Disk usage statistics. [From /proc/stat]",
 };
 
 
@@ -268,7 +268,7 @@ ProcMeterOutput **Initialise(char *options)
                 for(j=0;j<ndisks;j++)
                   {
                    disk_outputs[i+j*N_OUTPUTS]=_disk_outputs[i];
-                   snprintf(disk_outputs[i+j*N_OUTPUTS].name, PROCMETER_NAME_LEN, _disk_outputs[i].name, j);
+                   snprintf(disk_outputs[i+j*N_OUTPUTS].name, PROCMETER_NAME_LEN+1, _disk_outputs[i].name, j);
                    disk_outputs[i+j*N_OUTPUTS].description=(char*)malloc(strlen(_disk_outputs[i].description)+8);
                    sprintf(disk_outputs[i+j*N_OUTPUTS].description,_disk_outputs[i].description,j);
                   }

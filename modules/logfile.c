@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/logfile.c,v 1.7 2002-06-04 13:54:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/logfile.c,v 1.8 2002-12-07 19:40:25 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   A log file monitoring source file.
   ******************/ /******************
@@ -30,47 +30,47 @@ ProcMeterOutput _outputs[4]=
 {
  /*+ The size in bytes +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Log_Size_%s",
-  /* char *description;              */ "The size of the log file '%s' in KBytes.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 KB",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 100,
-  /* char  graph_units[8];           */ "(%dKB)"
+  /* char  name[];          */ "Log_Size_%s",
+  /* char *description;     */ "The size of the log file '%s' in KBytes.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 KB",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 100,
+  /* char  graph_units[];   */ "(%dKB)"
  },
  /*+ The rate of change of size in bytes +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Log_Grow_%s",
-  /* char *description;              */ "The rate at which the size of the log file '%s' is increasing in KBytes/second.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 KB/s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 1,
-  /* char  graph_units[8];           */ "(%dK/s)"
+  /* char  name[];          */ "Log_Grow_%s",
+  /* char *description;     */ "The rate at which the size of the log file '%s' is increasing in KBytes/second.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 KB/s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 1,
+  /* char  graph_units[];   */ "(%dK/s)"
  },
  /*+ The number of lines +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Log_Line_%s",
-  /* char *description;              */ "The number of lines in the log file '%s'.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 lines",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 100,
-  /* char  graph_units[8];           */ "(%d)"
+  /* char  name[];          */ "Log_Line_%s",
+  /* char *description;     */ "The number of lines in the log file '%s'.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 lines",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 100,
+  /* char  graph_units[];   */ "(%d)"
  },
  /*+ The rate of change of number of lines +*/
  {
-  /* char  name[PROCMETER_NAME_LEN]; */ "Log_Rate_%s",
-  /* char *description;              */ "The number of lines by which the log file '%s' is increasing per second.",
-  /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;                 */ 1,
-  /* char  text_value[16];           */ "0 lines/s",
-  /* long  graph_value;              */ 0,
-  /* short graph_scale;              */ 10,
-  /* char  graph_units[8];           */ "(%d/s)"
+  /* char  name[];          */ "Log_Rate_%s",
+  /* char *description;     */ "The number of lines by which the log file '%s' is increasing per second.",
+  /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;        */ 1,
+  /* char  text_value[];    */ "0 lines/s",
+  /* long  graph_value;     */ 0,
+  /* short graph_scale;     */ 10,
+  /* char  graph_units[];   */ "(%d/s)"
  }
 };
 
@@ -81,9 +81,9 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "LogFile",
- /* char *description;             */ "The size and number of lines in the specified log files.  "
-                                      "(Use 'options=<filename1> <filename2>' in the configuration file to specify the files.)"
+ /* char name[];            */ "LogFile",
+ /* char *description;      */ "The size and number of lines in the specified log files.  "
+                               "(Use 'options=<filename1> <filename2>' in the configuration file to specify the files.)"
 };
 
 static char *fgets_realloc(char *buffer,FILE *file);
@@ -186,7 +186,7 @@ static void add_file(char *fil)
     outputs[j]=(ProcMeterOutput*)malloc(sizeof(ProcMeterOutput));
 
     *outputs[j]=_outputs[i];
-    snprintf(outputs[j]->name, PROCMETER_NAME_LEN, _outputs[i].name, lastslash+1);
+    snprintf(outputs[j]->name, PROCMETER_NAME_LEN+1, _outputs[i].name, lastslash+1);
     outputs[j]->description=(char*)malloc(strlen(fil)+strlen(_outputs[i].description)+4);
     sprintf(outputs[j]->description,_outputs[i].description,fil);
    }

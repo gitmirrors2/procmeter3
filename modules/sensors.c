@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.5 2002-06-04 13:54:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.6 2002-12-07 19:40:25 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Temperature indicators for Mainboard and CPU
   Based on loadavg.c, stat-cpu.c by Andrew M. Bishop
@@ -35,27 +35,27 @@
 /*+ The mainboard temperature output. +*/
 ProcMeterOutput _temp_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Temp%d",
- /* char *description;              */ "Temperature sensor number %d [from %s].",
- /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
- /* short interval;                 */ 1,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ 0,
- /* short graph_scale;              */ 10,
- /* char  graph_units[8];           */ "(%d C)"
+ /* char  name[];          */ "Temp%d",
+ /* char *description;     */ "Temperature sensor number %d [from %s].",
+ /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+ /* short interval;        */ 1,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ 0,
+ /* short graph_scale;     */ 10,
+ /* char  graph_units[];   */ "(%d C)"
 };
 
 /*+ The mainboard fan output. +*/
 ProcMeterOutput _fan_output=
 {
- /* char  name[PROCMETER_NAME_LEN]; */ "Fan%d",
- /* char *description;              */ "Fan speed sensor number %d [from %s].",
- /* char  type;                     */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
- /* short interval;                 */ 1,
- /* char  text_value[16];           */ "unknown",
- /* long  graph_value;              */ 0,
- /* short graph_scale;              */ 1000,
- /* char  graph_units[8];           */ "(%d rpm)"
+ /* char  name[];          */ "Fan%d",
+ /* char *description;     */ "Fan speed sensor number %d [from %s].",
+ /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+ /* short interval;        */ 1,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ 0,
+ /* short graph_scale;     */ 1000,
+ /* char  graph_units[];   */ "(%d rpm)"
 };
 
 /*+ The outputs. +*/
@@ -64,9 +64,9 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[PROCMETER_NAME_LEN]; */ "Sensors",
- /* char *description;             */ "Hardware status information, temperature, fan speed etc. [From /proc/sys/dev/sensors/*/*]"
-                                      " (Requires version 2.x.x of lm78 sensors from http://www.netroedge.com/~lm78/).",
+ /* char name[];           */ "Sensors",
+ /* char *description;     */ "Hardware status information, temperature, fan speed etc. [From /proc/sys/dev/sensors/*/*]"
+                              " (Requires version 2.x.x of lm78 sensors from http://www.netroedge.com/~lm78/).",
 };
 
 /*+ The temperature outputs. +*/
@@ -216,7 +216,7 @@ static void add_temperature(char *filename)
 
           temp_outputs=(ProcMeterOutput*)realloc((void*)temp_outputs,(ntemps+1)*sizeof(ProcMeterOutput));
           temp_outputs[ntemps]=_temp_output;
-          snprintf(temp_outputs[ntemps].name, PROCMETER_NAME_LEN, _temp_output.name, ntemps);
+          snprintf(temp_outputs[ntemps].name, PROCMETER_NAME_LEN+1, _temp_output.name, ntemps);
           temp_outputs[ntemps].description=(char*)malloc(strlen(_temp_output.description)+8+strlen(filename));
           sprintf(temp_outputs[ntemps].description,_temp_output.description,ntemps,filename);
           ntemps++;
