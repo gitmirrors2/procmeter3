@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.7 1999-08-31 18:22:18 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.8 1999-09-24 19:02:24 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -442,7 +442,7 @@ void AddRemoveOutput(Output output)
        else
          {XtSetArg(args[nargs],XtNmin,MINWIDTH);nargs++;}
 
-       XtSetArg(args[nargs],XtNlabel,output->output->name);nargs++;
+       XtSetArg(args[nargs],XtNlabel,output->label);nargs++;
        sprintf(str,output->output->graph_units,output->output->graph_scale);
        XtSetArg(args[nargs],XtNgridUnits,str);nargs++;
        XtSetArg(args[nargs],XtNallowResize,True);nargs++;
@@ -458,7 +458,7 @@ void AddRemoveOutput(Output output)
            (string=GetProcMeterRC("resources","text-font"))))
          {XtSetArg(args[nargs],XtNtextFont,StringToFont(string));nargs++;}
 
-       XtSetArg(args[nargs],XtNlabel,output->output->name);nargs++;
+       XtSetArg(args[nargs],XtNlabel,output->label);nargs++;
        XtSetArg(args[nargs],XtNallowResize,True);nargs++;
        XtSetArg(args[nargs],XtNskipAdjust,True);nargs++;
        XtSetArg(args[nargs],XtNshowGrip,False);nargs++;

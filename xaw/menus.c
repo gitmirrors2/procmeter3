@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.7 1999-08-31 18:22:09 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.8 1999-09-24 19:02:24 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -64,7 +64,9 @@ static void AtomPropertiesDialogCloseCallback(Widget w,XtPointer va,XEvent* e,Bo
 static Widget module_menu;
 static Widget functions_menu,properties_dialog;
 static Widget func_run;
-static Widget prop_modname,prop_moddesc,prop_outname,prop_outdesc,prop_type,prop_interval,prop_scale;
+static Widget prop_modname,prop_moddesc,
+              prop_outname,prop_outdesc,
+              prop_label,prop_type,prop_interval,prop_scale;
 static Boolean properties_popped_up=False,doing_move=False;
 
 XtActionsRec MenuActions[]={{"ModuleMenuStart",ModuleMenuStart},
@@ -86,7 +88,10 @@ void CreateMenus(Widget parent)
  Widget menulabel;
  Widget menuline;
  Widget func_prop,func_above,func_below;
- Widget prop_form,prop_modlabel,prop_outlabel,prop_typlabel,prop_intlabel,prop_scllabel,prop_done;
+ Widget prop_form,
+        prop_modlabel,prop_outlabel,
+        prop_lbllabel,prop_typlabel,prop_intlabel,prop_scllabel,
+        prop_done;
  Dimension width,height;
  char *string;
  Arg args[3];
@@ -203,7 +208,7 @@ void CreateMenus(Widget parent)
                                         NULL);
 
  prop_form=XtVaCreateManagedWidget("PropertiesForm",formWidgetClass,properties_dialog,
-                                   XtNwidth,300,XtNheight,200,
+                                   XtNwidth,300,XtNheight,300,
                                    XtVaNestedList,resources,
                                    NULL);
 
@@ -260,10 +265,18 @@ void CreateMenus(Widget parent)
                                       XtVaNestedList,resources,
                                       NULL);
 
+ prop_lbllabel=XtVaCreateManagedWidget("LabelLabel",labelWidgetClass,prop_form,
+                                       XtNlabel,"Label:",
+                                       XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                       XtNfromVert,prop_outdesc,
+                                       XtNborderWidth,0,XtNshadowWidth,0,
+                                       XtVaNestedList,resources,
+                                       NULL);
+
  prop_typlabel=XtVaCreateManagedWidget("TypeLabel",labelWidgetClass,prop_form,
                                        XtNlabel,"Type:",
                                        XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
-                                       XtNfromVert,prop_outdesc,
+                                       XtNfromVert,prop_lbllabel,
                                        XtNborderWidth,0,XtNshadowWidth,0,
                                        XtVaNestedList,resources,
                                        NULL);
@@ -284,10 +297,18 @@ void CreateMenus(Widget parent)
                                        XtVaNestedList,resources,
                                        NULL);
 
+ prop_label=XtVaCreateManagedWidget("Label",labelWidgetClass,prop_form,
+                                    XtNlabel,"NNNNNNNNNNNNNNNN",XtNjustify,XtJustifyLeft,
+                                    XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                    XtNfromHoriz,prop_scllabel,XtNfromVert,prop_outdesc,
+                                    XtNborderWidth,0,XtNshadowWidth,0,
+                                    XtVaNestedList,resources,
+                                    NULL);
+
  prop_type=XtVaCreateManagedWidget("Type",labelWidgetClass,prop_form,
                                    XtNlabel,"NNNNNNN",XtNjustify,XtJustifyLeft,
                                    XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
-                                   XtNfromHoriz,prop_scllabel,XtNfromVert,prop_outdesc,
+                                   XtNfromHoriz,prop_scllabel,XtNfromVert,prop_lbllabel,
                                    XtNborderWidth,0,XtNshadowWidth,0,
                                    XtVaNestedList,resources,
                                    NULL);
@@ -404,7 +425,7 @@ void AddModuleToMenu(Module module)
        bitmap=TextBitmap;
 
     sme=XtVaCreateManagedWidget(module->outputs[i]->output->name,smeBSBObjectClass,module->submenu_widget,
-                                XtNlabel,module->outputs[i]->output->name,
+                                XtNlabel,module->outputs[i]->label,
                                 XtNleftMargin,12,XtNrightMargin,20,
                                 XtNrightBitmap,bitmap,
                                 XtNheight,10,
@@ -799,6 +820,8 @@ static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *n
 
  XtVaSetValues(prop_outname,XtNlabel,(*outputp)->output->name,NULL);
  XtVaSetValues(prop_outdesc,XtNstring,(*outputp)->output->description,NULL);
+
+ XtVaSetValues(prop_label,XtNlabel,(*outputp)->label,NULL);
 
  if((*outputp)->type==PROCMETER_GRAPH)
     XtVaSetValues(prop_type,XtNlabel,"Graph",NULL);
