@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/run.c,v 1.2 1999-12-04 16:57:31 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/run.c,v 1.3 1999-12-05 17:16:52 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -50,13 +50,13 @@ void ParseRunCommand(char *string,RunOption *run)
  if(!string)
     return;
 
- if(!strncasecmp("XBeep",string,5))
+ if(!strncmp("XBeep",string,5))
    {offset=5; run->flag=RUN_XBELL;}
- else if(!strncasecmp("Shell",string,5))
+ else if(!strncmp("Shell",string,5))
    {offset=5; run->flag=RUN_SHELL;}
- else if(!strncasecmp("XTermWait",string,9))
+ else if(!strncmp("XTermWait",string,9))
    {offset=9; run->flag=RUN_XTERM_WAIT;}
- else if(!strncasecmp("XTerm",string,5))
+ else if(!strncmp("XTerm",string,5))
    {offset=5; run->flag=RUN_XTERM;}
  else
    {offset=0; run->flag=RUN_SHELL;}
@@ -69,9 +69,10 @@ void ParseRunCommand(char *string,RunOption *run)
  if(offset && *l!='(')
    {
     fprintf(stderr,"ProcMeter3: Cannot parse run command '%s'\n",string);
+    run->flag=RUN_NONE;
     return;
    }       
- else
+ else if(offset)
     l++;
  while(isspace(*l))
     l++;
@@ -81,9 +82,10 @@ void ParseRunCommand(char *string,RunOption *run)
  if(offset && *r!=')')
    {
     fprintf(stderr,"ProcMeter3: Cannot parse run command '%s'\n",string);
+    run->flag=RUN_NONE;
     return;
    }       
- else
+ else if(offset)
     r--;
  while(isspace(*r))
     r--;
@@ -121,6 +123,10 @@ void RunProgram(RunOption *run)
        char *string,*display;
 
        display=XDisplayString(XtDisplay(pane));
+       display=(char*)malloc(strlen(display)+10);
+
+       sprintf(display,"DISPLAY=%s",XDisplayString(XtDisplay(pane)));
+       putenv(display);
 
        /* close the X connection */
 
@@ -134,13 +140,13 @@ void RunProgram(RunOption *run)
           break;
 
          case RUN_XTERM:
-          execlp("xterm","xterm","-title","ProcMeter3","-display",display,"-e","/bin/sh","-c",run->command,NULL);
+          execlp("xterm","xterm","-title","ProcMeter3","-e","/bin/sh","-c",run->command,NULL);
           break;
 
          case RUN_XTERM_WAIT:
           string=(char*)malloc(strlen(run->command)+64);
-          sprintf(string,"( %s ) ; echo 'Press Return to exit' ; read x",run->command);
-          execlp("xterm","xterm","-title","ProcMeter3","-display",display,"-e","/bin/sh","-c",string,NULL);
+          sprintf(string,"( %s ) ; echo -n 'Press Return to exit' ; read x",run->command);
+          execlp("xterm","xterm","-title","ProcMeter3","-e","/bin/sh","-c",string,NULL);
           break;
          }
 
