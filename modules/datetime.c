@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.1 1998-09-19 15:25:02 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.2 1999-02-09 19:03:21 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.1.
 
   Date and Time Information module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -245,7 +245,7 @@ int Update(time_t now,ProcMeterOutput* output)
     int hours=(uptime%(24*3600))/3600;
     int mins =(uptime%3600)/60;
 
-    sprintf(output->text_value,"%3dD %2dH %2dM",
+    sprintf(output->text_value,"%dD %2dH %2dM",
             days,
             hours,
             mins);
