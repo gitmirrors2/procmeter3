@@ -1,3 +1,60 @@
+Version 3.4 of ProcMeter3 released : Sun Jan 12 10:00:00 2003
+-------------------------------------------------------------
+
+New output format:
+ Using the LCD driver daemon from http://lcdproc.omnipotent.net.
+
+New or changed modules:
+ The length of the module names and output names has been increased.
+ Virtual Memory statistics (for kernel V2.5, swap and page only).
+ Added new DateTime outputs that show the time without the timezone.
+ Changed the DateTime outputs to display the weekday in the current locale.
+ Longer names allow to show DiskUsage outputs for mountpoints with long names.
+ Fix the parsing of /proc/apm where the version number contains letters.
+
+Documentation changes:
+ Added a new manual page for the modules (shared among all programs).
+
+Bug fixes:
+ Doesn't crash if the --rc=... file doesn't exist.
+ Use snprintf() in more places to avoid buffer overflow.
+
+
+**** IMPORTANT ****
+
+The name of the text only output version of the program is now procmeter3-log
+and not procmeter3-no-x like in the previous version.
+
+**** IMPORTANT ****
+
+The Linux kernel version 2.5.x has removed some information from /proc/stat and
+placed it into /proc/vmstat.  This means that procmeterrc files need to be
+updated for these kernel versions if displaying swap and page statistics.
+
+**** IMPORTANT ****
+
+The longer names mean that some of the procmeterrc entries need to be changed.
+
+ACPI.Thermal<n>_Stat -> ACPI.Thermal<n>_State
+ACPI.Batt<n>_ChrgTm  -> ACPI.Batt<n>_ChargeTime
+
+DiskUsage.DF_Used_/export -> DiskUsage.DF_Used_/export/name
+
+(In the case of DiskUsage.DF_Used_... and DiskUsage.DF_Free_... the first 16
+ characters of the mount point are used and not just the first 7).
+
+**** IMPORTANT ****
+
+The new DateTime outputs for the current time don't contain the timezone by
+default.  To reproduce the behaviour of earlier versions make the following
+changes.
+
+DateTime.Time_HM  -> DateTime.Time_HM_TZ
+DateTime.Time_HMS -> DateTime.Time_HMS_TZ
+
+**** IMPORTANT ****
+
+
 Version 3.3b of ProcMeter3 released : Sat Aug 10 16:45:00 2002
 --------------------------------------------------------------
 
