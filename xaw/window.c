@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.1 1998-09-19 15:22:10 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.2 1998-09-26 09:36:13 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
@@ -214,7 +214,14 @@ void UpdateX(time_t now)
           if(!(*output)->first)
             {
              if((*output)->type==PROCMETER_GRAPH)
-                ProcMeterGraphWidgetAddDatum((*output)->output_widget,(*output)->output->graph_value);
+               {
+                long value=(*output)->output->graph_value;
+                if(value<0)
+                   value=0;
+                if(value>65535)
+                   value=65535;
+                ProcMeterGraphWidgetAddDatum((*output)->output_widget,value);
+               }
              else if((*output)->type==PROCMETER_TEXT)
                 ProcMeterTextWidgetChangeData((*output)->output_widget,(*output)->output->text_value);
             }
