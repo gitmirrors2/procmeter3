@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.5 2000-10-22 14:11:52 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.6 2000-12-16 16:32:30 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2a.
+  ProcMeter - A system monitoring program for Linux - Version 3.3.
 
   Handle the .procmeterrc file.
   ******************/ /******************
