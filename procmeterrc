@@ -50,6 +50,7 @@ grid-min = 5
 
 text-font = 6x10
 label-position = none
+startup-text = true
 
 #
 # The resources for the Date and Time module
