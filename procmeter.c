@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.3 1999-02-09 18:35:30 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.4 1999-06-19 12:52:17 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.1b.
 
   Main program.
   ******************/ /******************
@@ -103,7 +103,7 @@ int main(int argc,char **argv)
 
        now2=time(NULL);            /* Should be now+interval if there is no jump. */
 
-       if(now2>(now+6) || now2<(now-4))
+       if(now2>(now+4) || now2<(now-4))
           now=now2+1;
        else
           now=now+1;
@@ -126,12 +126,12 @@ int main(int argc,char **argv)
 
     printf("\nProcMeter Version %s\n\n",PROCMETER_VERSION);
     printf("A system monitoring program for Linux.\n");
-    printf("(c) Andrew Bishop 1998. [amb@gedanken.demon.co.uk]\n\n");
+    printf("(c) Andrew M. Bishop 1998,99 [amb@gedanken.demon.co.uk]\n\n");
 
     printf("Usage: ProcMeter [-h] ...\n\n");
 
     printf("To specify the default output use <module>.<output>[-g|-t] where module\n"
-           "and output come from the list below and '-g' and '-t' choose graph or text\n"
+           "and output come from the list below and '-g' and '-t' choose graph or text.\n"
            "e.g. procmeter3 Statistics.CPU-g Processes.Load-t\n");
 
     for(modulep=Modules;*modulep;modulep++)
@@ -155,11 +155,13 @@ int main(int argc,char **argv)
              while(p)
                {
                 if(first)
-                   printf("%-16s : ",(*outputp)->output->name);
+                   printf("%-16s (%c%c) : ",(*outputp)->output->name,
+                          (*outputp)->output->type&PROCMETER_GRAPH?'G':' ',
+                          (*outputp)->output->type&PROCMETER_TEXT?'T':' ');
                 else
-                   printf("                   ");
+                   printf("                        ");
 
-                printf("%s\n",get_substring(&p,61));
+                printf("%s\n",get_substring(&p,56));
 
                 first=0;
                }
