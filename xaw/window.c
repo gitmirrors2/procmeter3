@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.11 2000-12-16 16:51:15 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.12 2002-06-04 12:53:08 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3.
 
@@ -42,7 +42,6 @@
 
 static void SleepCallback(XtPointer p,XtIntervalId i);
 static void ResizePaneCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb);
-static void ResizePane(void);
 static void CloseCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb);
 
 
@@ -73,14 +72,14 @@ static int initialising=1;
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  Start the X-Windows part.
+  Start the X-Windows & Athena part.
 
   int *argc The number of command line arguments.
 
   char **argv The actual command line arguments.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void StartX(int *argc,char **argv)
+void Start(int *argc,char **argv)
 {
  Atom close_atom;
  Widget toplevel;
@@ -141,10 +140,10 @@ void StartX(int *argc,char **argv)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  Stop the X-Windows part.
+  Stop the X-Windows & Athena part.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void StopX(void)
+void Stop(void)
 {
  DestroyMenus();
 
@@ -158,10 +157,20 @@ void StopX(void)
   time_t until The time to sleep until.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void SleepX(time_t until)
+void Sleep(time_t until)
 {
  struct timeval now;
  int delay;
+
+ /* Before we sleep the first time, resize the window. */
+
+ if(initialising)
+   {
+    Resize();
+    initialising=0;
+   }
+
+ /* Sleep */
 
  gettimeofday(&now,NULL);
 
@@ -187,173 +196,6 @@ void SleepX(time_t until)
          }
       }
    }
-}
-
-
-/*++++++++++++++++++++++++++++++++++++++
-  Perform the updates.
-
-  time_t now The current time.
-  ++++++++++++++++++++++++++++++++++++++*/
-
-void UpdateX(time_t now)
-{
- Module *module;
- Output *output;
- ProcMeterOutput *last=NULL;
-
- for(module=Modules;*module;module++)
-    for(output=(*module)->outputs;*output;output++)
-       if((*output)->output_widget &&
-          (((*output)->output->interval && !(now%(*output)->output->interval)) ||
-          (*output)->first))
-         {
-          if(last!=(*output)->output)
-             if((*module)->Update(now,(*output)->output)==-1)
-                fprintf(stderr,"ProcMeter: Error updating %s.%s\n",(*module)->module->name,(*output)->output->name);
-
-          if((*output)->first)
-             (*output)->first--;
-
-          if(!(*output)->first)
-            {
-             if((*output)->type==PROCMETER_GRAPH)
-               {
-                long value=(*output)->output->graph_value;
-                if(value<0)
-                   value=0;
-                if(value>65535)
-                   value=65535;
-                ProcMeterGraphAddDatum((*output)->output_widget,value);
-               }
-             else if((*output)->type==PROCMETER_TEXT)
-                ProcMeterTextChangeData((*output)->output_widget,(*output)->output->text_value);
-             else if((*output)->type==PROCMETER_BAR)
-               {
-                long value=(*output)->output->graph_value;
-                if(value<0)
-                   value=0;
-                if(value>65535)
-                   value=65535;
-                ProcMeterBarAddDatum((*output)->output_widget,value);
-               }
-            }
-
-          last=(*output)->output;
-         }
-}
-
-
-/*++++++++++++++++++++++++++++++++++++++
-  Add the default outputs at startup.
-
-  int argc The number of command line arguments.
-
-  char **argv The command line arguments.
-  ++++++++++++++++++++++++++++++++++++++*/
-
-void AddDefaultOutputs(int argc,char **argv)
-{
- Output *outputp=NULL;
- Module *modulep=NULL;
- char *string;
- int arg;
-
- if((string=GetProcMeterRC("startup","order")))
-   {
-    char *s=string;
-
-    while(*s && *s==' ')
-       s++;
-
-    while(*s)
-      {
-       int found=0;
-
-       for(modulep=Modules;*modulep;modulep++)
-         {
-          if(!strncmp((*modulep)->module->name,s,strlen((*modulep)->module->name)) &&
-             s[strlen((*modulep)->module->name)]=='.')
-            {
-             for(outputp=(*modulep)->outputs;*outputp;outputp++)
-                if(!strncmp((*outputp)->output->name,&s[strlen((*modulep)->module->name)+1],strlen((*outputp)->output->name)) &&
-                   (s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]=='-' ||
-                    s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]==' ' ||
-                    s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]==0))
-                  {
-                   if((s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]==' ' ||
-                       s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]==0) &&
-                      !(*outputp)->output_widget)
-                      AddRemoveOutput(*outputp);
-                   else if(s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='g' &&
-                           (*outputp)->type==PROCMETER_GRAPH &&
-                           !(*outputp)->output_widget)
-                      AddRemoveOutput(*outputp);
-                   else if(s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='t' &&
-                           (*outputp)->type==PROCMETER_TEXT &&
-                           !(*outputp)->output_widget)
-                      AddRemoveOutput(*outputp);
-                   else if(s[strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='b' &&
-                           (*outputp)->type==PROCMETER_BAR &&
-                           !(*outputp)->output_widget)
-                      AddRemoveOutput(*outputp);
-                   found=1;
-                  }
-
-             if(found)
-                break;
-            }
-         }
-
-       while(*s && *s!=' ')
-          s++;
-       while(*s && *s==' ')
-          s++;
-      }
-   }
-
- for(arg=1;arg<argc;arg++)
-   {
-    int found=0;
-
-    for(modulep=Modules;*modulep;modulep++)
-       if(!strncmp((*modulep)->module->name,argv[arg],strlen((*modulep)->module->name)) &&
-          argv[arg][strlen((*modulep)->module->name)]=='.')
-         {
-          for(outputp=(*modulep)->outputs;*outputp;outputp++)
-             if(!strncmp((*outputp)->output->name,&argv[arg][strlen((*modulep)->module->name)+1],strlen((*outputp)->output->name)) &&
-                (argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]=='-' ||
-                 argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1]==0))
-               {
-                if(!argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+1] &&
-                   !(*outputp)->output_widget)
-                   AddRemoveOutput(*outputp);
-                else if(argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='g' &&
-                        (*outputp)->type==PROCMETER_GRAPH &&
-                        !(*outputp)->output_widget)
-                   AddRemoveOutput(*outputp);
-                else if(argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='t' &&
-                        (*outputp)->type==PROCMETER_TEXT &&
-                        !(*outputp)->output_widget)
-                   AddRemoveOutput(*outputp);
-                else if(argv[arg][strlen((*modulep)->module->name)+strlen((*outputp)->output->name)+2]=='b' &&
-                        (*outputp)->type==PROCMETER_BAR &&
-                        !(*outputp)->output_widget)
-                   AddRemoveOutput(*outputp);
-                found=1;
-               }
-
-          if(found)
-             break;
-         }
-
-    if(!*modulep)
-       fprintf(stderr,"ProcMeter: Unrecognised output '%s'\n",argv[arg]);
-   }
-
- initialising=0;
-
- ResizePane();
 }
 
 
@@ -529,7 +371,49 @@ void AddRemoveOutput(Output output)
 
  XawPanedSetRefigureMode(pane,True);
 
- ResizePane();
+ Resize();
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Update a graph output.
+
+  Output output The output to update.
+
+  short value The new value.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+void UpdateGraph(Output output,short value)
+{
+ ProcMeterGraphAddDatum(output->output_widget,value);
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Update a text output.
+
+  Output output The output to update.
+
+  char *value The new value.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+void UpdateText(Output output,char *value)
+{
+ ProcMeterTextChangeData(output->output_widget,value);
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Update a bar output.
+
+  Output output The output to update.
+
+  short value The new value.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+void UpdateBar(Output output,short value)
+{
+ ProcMeterBarAddDatum(output->output_widget,value);
 }
 
 
@@ -579,7 +463,7 @@ void MoveOutput(Output output1,Output output2,int direction)
 
  XawPanedSetRefigureMode(pane,True);
 
- ResizePane();
+ Resize();
 
  if(direction==1 && i2>i1)
    {
@@ -609,46 +493,10 @@ void MoveOutput(Output output1,Output output2,int direction)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  The function called by the timeout to terminate the sleep.
-
-  XtPointer p Not used.
-
-  XtIntervalId i Not used.
-
-  This function is only ever called from the Xt Intrinsics routines.
-  ++++++++++++++++++++++++++++++++++++++*/
-
-static void SleepCallback(XtPointer p,XtIntervalId i)
-{
- sleeping=0;
-}
-
-
-/*++++++++++++++++++++++++++++++++++++++
-  A callback that is activated by a resize event on the parent pane.
-
-  Widget w The widget that caused the callback.
-
-  XtPointer va Not used.
-
-  XEvent* e The event that requires action.
-
-  Boolean* vb Not used.
-
-  This function is only ever called from the Xt Intrinsics routines.
-  ++++++++++++++++++++++++++++++++++++++*/
-
-static void ResizePaneCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb)
-{
- ResizePane();
-}
-
-
-/*++++++++++++++++++++++++++++++++++++++
   Resize the pane.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void ResizePane(void)
+void Resize(void)
 {
  Dimension psize,size;
  int gsize,msize;
@@ -705,6 +553,42 @@ static void ResizePane(void)
 
     XtVaSetValues(displayed[i]->output_widget,vertical?XtNheight:XtNwidth,size,NULL);
    }
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  The function called by the timeout to terminate the sleep.
+
+  XtPointer p Not used.
+
+  XtIntervalId i Not used.
+
+  This function is only ever called from the Xt Intrinsics routines.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+static void SleepCallback(XtPointer p,XtIntervalId i)
+{
+ sleeping=0;
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  A callback that is activated by a resize event on the parent pane.
+
+  Widget w The widget that caused the callback.
+
+  XtPointer va Not used.
+
+  XEvent* e The event that requires action.
+
+  Boolean* vb Not used.
+
+  This function is only ever called from the Xt Intrinsics routines.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+static void ResizePaneCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb)
+{
+ Resize();
 }
 
 
