@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.10 1999-10-05 17:54:10 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.11 2000-12-16 16:51:15 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2.
+  ProcMeter - A system monitoring program for Linux - Version 3.3.
 
   X Windows interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997,98,99 Andrew M. Bishop
+  This file Copyright 1997,98,99,2000 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -34,7 +34,7 @@
 
 #include "procmeter.h"
 #include "procmeterp.h"
-#include "xwindow.h"
+#include "window.h"
 
 
 #define MINHEIGHT 30
@@ -52,6 +52,9 @@ XtAppContext app_context;
 /*+ The display that the meter is on. +*/
 Display* display=NULL;
 
+/*+ The pane that contains all of the outputs. +*/
+Widget pane;
+
 /*+ If the meters are aligned vertically. +*/
 int vertical=1;
 
@@ -60,9 +63,6 @@ extern int quit;
 
 /*+ Set to true when we are sleeping waiting for a timeout. +*/
 static int sleeping;
-
-/*+ The pane that contains all of the outputs. +*/
-Widget pane;
 
 /*+ A list of the outputs that are currently visible. +*/
 static Output *displayed=NULL;
@@ -123,7 +123,7 @@ void StartX(int *argc,char **argv)
 
  XtAddEventHandler(pane,StructureNotifyMask,False,(XtEventHandler)ResizePaneCallback,NULL);
 
- AddMenuToOutput(pane,NULL,NULL);
+ AddMenuToOutput(pane,NULL);
 
  /* Show the widgets */
 
@@ -160,7 +160,6 @@ void StopX(void)
 
 void SleepX(time_t until)
 {
- XtIntervalId id;
  struct timeval now;
  int delay;
 
@@ -170,7 +169,7 @@ void SleepX(time_t until)
 
  if(delay>0)
    {
-    id=XtAppAddTimeOut(app_context,(unsigned)delay,(XtTimerCallbackProc)SleepCallback,NULL);
+    XtIntervalId id=XtAppAddTimeOut(app_context,(unsigned)delay,(XtTimerCallbackProc)SleepCallback,NULL);
     sleeping=1;
 
     while(sleeping)
@@ -225,10 +224,10 @@ void UpdateX(time_t now)
                    value=0;
                 if(value>65535)
                    value=65535;
-                ProcMeterGraphWidgetAddDatum((*output)->output_widget,value);
+                ProcMeterGraphAddDatum((*output)->output_widget,value);
                }
              else if((*output)->type==PROCMETER_TEXT)
-                ProcMeterTextWidgetChangeData((*output)->output_widget,(*output)->output->text_value);
+                ProcMeterTextChangeData((*output)->output_widget,(*output)->output->text_value);
              else if((*output)->type==PROCMETER_BAR)
                {
                 long value=(*output)->output->graph_value;
@@ -236,7 +235,7 @@ void UpdateX(time_t now)
                    value=0;
                 if(value>65535)
                    value=65535;
-                ProcMeterBarWidgetAddDatum((*output)->output_widget,value);
+                ProcMeterBarAddDatum((*output)->output_widget,value);
                }
             }
 
@@ -272,6 +271,7 @@ void AddDefaultOutputs(int argc,char **argv)
        int found=0;
 
        for(modulep=Modules;*modulep;modulep++)
+         {
           if(!strncmp((*modulep)->module->name,s,strlen((*modulep)->module->name)) &&
              s[strlen((*modulep)->module->name)]=='.')
             {
@@ -303,6 +303,7 @@ void AddDefaultOutputs(int argc,char **argv)
              if(found)
                 break;
             }
+         }
 
        while(*s && *s!=' ')
           s++;
@@ -514,7 +515,7 @@ void AddRemoveOutput(Output output)
                                args,nargs);
       }
 
-    AddMenuToOutput(w,module,output);
+    AddMenuToOutput(w,module);
 
     XtVaSetValues(output->menu_item_widget,XtNleftBitmap,CircleBitmap,NULL);
 
@@ -650,7 +651,7 @@ static void ResizePaneCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb)
 static void ResizePane(void)
 {
  Dimension psize,size;
- int rsize,gsize;
+ int gsize,msize;
  int i,ngraphs=0;
 
  if(initialising)
@@ -660,7 +661,8 @@ static void ResizePane(void)
     return;
 
  XtVaGetValues(pane,vertical?XtNheight:XtNwidth,&psize,NULL);
- rsize=psize;
+
+ msize=0;
  gsize=psize;
 
  for(i=0;i<ndisplayed;i++)
@@ -676,28 +678,33 @@ static void ResizePane(void)
     else if(displayed[i]->type==PROCMETER_BAR)
        ngraphs++;
 
-    rsize-=min_size;
+    msize+=min_size;
 
     if(i)
-       rsize-=2,gsize-=2;       /* separator between panes */
+       msize+=2,gsize-=2;       /* separator between panes */
    }
 
- if(rsize<0)
+ if(msize>psize || (ngraphs==0 && msize!=psize))
    {
-    XtVaSetValues(XtParent(pane),vertical?XtNheight:XtNwidth,psize-rsize,NULL);
+    XtVaSetValues(XtParent(pane),vertical?XtNheight:XtNwidth,msize,NULL);
     return;
    }
 
- if(ngraphs)
+ for(i=0;i<ndisplayed;i++)
    {
-    size=gsize/ngraphs;
+    if(displayed[i]->type==PROCMETER_GRAPH || displayed[i]->type==PROCMETER_BAR)
+      {
+       size=gsize/ngraphs;
+       gsize-=size;
+       ngraphs--;
+      }
+    else
+      {
+       continue;
+      }
 
-    for(i=0;i<ndisplayed;i++)
-       if(displayed[i]->type==PROCMETER_GRAPH || displayed[i]->type==PROCMETER_BAR)
-          XtVaSetValues(displayed[i]->output_widget,vertical?XtNheight:XtNwidth,size,NULL);
+    XtVaSetValues(displayed[i]->output_widget,vertical?XtNheight:XtNwidth,size,NULL);
    }
- else
-    XtVaSetValues(XtParent(pane),vertical?XtNheight:XtNwidth,psize-rsize,NULL);
 }
 
 
