@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.2 1998-09-26 09:44:59 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.3 1999-02-06 18:47:37 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.1.
 
   X Window menus.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -51,7 +51,7 @@ static void AtomPropertiesDialogCloseCallback(Widget w,XtPointer va,XEvent* e,Bo
 
 static Widget module_menu;
 static Widget properties_menu,properties_dialog;
-static Widget prop_modname,prop_moddesc,prop_outname,prop_outdesc;
+static Widget prop_modname,prop_moddesc,prop_outname,prop_outdesc,prop_type,prop_interval,prop_scale;
 static Boolean properties_popped_up=False;
 
 XtActionsRec MenuActions[]={{"ModuleMenuStart",ModuleMenuStart},
@@ -69,7 +69,7 @@ XtActionsRec MenuActions[]={{"ModuleMenuStart",ModuleMenuStart},
 void CreateMenus(Widget parent)
 {
  Widget menulabel1,/*menulabel2,*/smeline1,/*smeline2,*/sme;
- Widget prop_form,prop_modlabel,prop_outlabel,prop_done;
+ Widget prop_form,prop_modlabel,prop_outlabel,prop_typlabel,prop_intlabel,prop_scllabel,prop_done;
  Dimension width,height;
  char *string;
  XtPointer resource;
@@ -163,10 +163,46 @@ void CreateMenus(Widget parent)
                                       XtNscrollVertical,XawtextScrollAlways,
                                       NULL);
 
+ prop_typlabel=XtVaCreateManagedWidget("TypeLabel",labelWidgetClass,prop_form,
+                                       XtNlabel,"Type:",
+                                       XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                       XtNfromVert,prop_outdesc,
+                                       XtNborderWidth,0,
+                                       NULL);
+ prop_type=XtVaCreateManagedWidget("Type",labelWidgetClass,prop_form,
+                                   XtNlabel,"NNNNNNN",XtNjustify,XtJustifyLeft,
+                                   XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                   XtNfromHoriz,prop_typlabel,XtNfromVert,prop_outdesc,
+                                   NULL);
+
+ prop_intlabel=XtVaCreateManagedWidget("IntervalLabel",labelWidgetClass,prop_form,
+                                       XtNlabel,"Interval:",
+                                       XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                       XtNfromVert,prop_typlabel,
+                                       XtNborderWidth,0,
+                                       NULL);
+ prop_interval=XtVaCreateManagedWidget("Interval",labelWidgetClass,prop_form,
+                                       XtNlabel,"NNNNNNN",XtNjustify,XtJustifyLeft,
+                                       XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                       XtNfromHoriz,prop_intlabel,XtNfromVert,prop_typlabel,
+                                       NULL);
+
+ prop_scllabel=XtVaCreateManagedWidget("ScaleLabel",labelWidgetClass,prop_form,
+                                       XtNlabel,"Grid Spacing:",
+                                       XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                       XtNfromVert,prop_intlabel,
+                                       XtNborderWidth,0,
+                                       NULL);
+ prop_scale=XtVaCreateManagedWidget("Scale",labelWidgetClass,prop_form,
+                                    XtNlabel,"NNNNNNN",XtNjustify,XtJustifyLeft,
+                                    XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                    XtNfromHoriz,prop_scllabel,XtNfromVert,prop_intlabel,
+                                    NULL);
+
  prop_done=XtVaCreateManagedWidget("Done",commandWidgetClass,prop_form,
                                    XtNwidth,200,XtNresizable,False,
                                    XtNleft,XawChainLeft,XtNright,XawChainRight,XtNtop,XawChainTop,XtNbottom,XawChainTop,
-                                   XtNfromVert,prop_outdesc,
+                                   XtNfromVert,prop_scllabel,
                                    NULL);
  XtAddCallback(prop_done,XtNcallback,DonePropertiesDialogCallback,0);
 
@@ -192,6 +228,12 @@ void CreateMenus(Widget parent)
     XtVaSetValues(prop_outlabel,XtNforeground,*(Pixel*)resource,NULL);
     XtVaSetValues(prop_outname,XtNforeground,*(Pixel*)resource,NULL);
     XtVaSetValues(prop_outdesc,XtNforeground,*(Pixel*)resource,NULL);
+    XtVaSetValues(prop_typlabel,XtNforeground,*(Pixel*)resource,NULL);
+    XtVaSetValues(prop_type,XtNforeground,*(Pixel*)resource,NULL);
+    XtVaSetValues(prop_intlabel,XtNforeground,*(Pixel*)resource,NULL);
+    XtVaSetValues(prop_interval,XtNforeground,*(Pixel*)resource,NULL);
+    XtVaSetValues(prop_scllabel,XtNforeground,*(Pixel*)resource,NULL);
+    XtVaSetValues(prop_scale,XtNforeground,*(Pixel*)resource,NULL);
     XtVaSetValues(prop_done,XtNforeground,*(Pixel*)resource,NULL);
    }
 
@@ -208,6 +250,12 @@ void CreateMenus(Widget parent)
     XtVaSetValues(prop_outlabel,XtNbackground,*(Pixel*)resource,NULL);
     XtVaSetValues(prop_outname,XtNbackground,*(Pixel*)resource,NULL);
     XtVaSetValues(prop_outdesc,XtNbackground,*(Pixel*)resource,NULL);
+    XtVaSetValues(prop_typlabel,XtNbackground,*(Pixel*)resource,NULL);
+    XtVaSetValues(prop_type,XtNbackground,*(Pixel*)resource,NULL);
+    XtVaSetValues(prop_intlabel,XtNbackground,*(Pixel*)resource,NULL);
+    XtVaSetValues(prop_interval,XtNbackground,*(Pixel*)resource,NULL);
+    XtVaSetValues(prop_scllabel,XtNbackground,*(Pixel*)resource,NULL);
+    XtVaSetValues(prop_scale,XtNbackground,*(Pixel*)resource,NULL);
     XtVaSetValues(prop_done,XtNbackground,*(Pixel*)resource,NULL);
    }
 
@@ -226,6 +274,12 @@ void CreateMenus(Widget parent)
     XtVaSetValues(prop_outlabel,XtNfont,resource,NULL);
     XtVaSetValues(prop_outname,XtNfont,resource,NULL);
     XtVaSetValues(prop_outdesc,XtNfont,resource,NULL);
+    XtVaSetValues(prop_typlabel,XtNfont,resource,NULL);
+    XtVaSetValues(prop_type,XtNfont,resource,NULL);
+    XtVaSetValues(prop_intlabel,XtNfont,resource,NULL);
+    XtVaSetValues(prop_interval,XtNfont,resource,NULL);
+    XtVaSetValues(prop_scllabel,XtNfont,resource,NULL);
+    XtVaSetValues(prop_scale,XtNfont,resource,NULL);
     XtVaSetValues(prop_done,XtNfont,resource,NULL);
    }
 
@@ -377,7 +431,7 @@ void AddMenuToOutput(Widget widget,Module module,Output output)
  if(output)
    {
     char string[80];
-    sprintf(string,"<Btn1Down>: PropertiesMenuStart(%s.%s)",module->module->name,output->output->name);
+    sprintf(string,"<Btn1Down>: PropertiesMenuStart(%s)",module->module->name);
     XtOverrideTranslations(widget,XtParseTranslationTable(string));
    }
 }
@@ -644,20 +698,20 @@ static void OutputMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_
 
 static void PropertiesMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params)
 {
+ char string[16];
  Output *outputp=NULL;
  Module *modulep=NULL;
 
  for(modulep=Modules;*modulep;modulep++)
-    if(!strncmp((*modulep)->module->name,params[0],strlen((*modulep)->module->name)) &&
-       params[0][strlen((*modulep)->module->name)]=='.')
+    if(!strcmp((*modulep)->module->name,params[0]))
       {
        for(outputp=(*modulep)->outputs;*outputp;outputp++)
-          if(!strcmp((*outputp)->output->name,&params[0][strlen((*modulep)->module->name)+1]))
+          if(w==(*outputp)->output_widget)
              break;
        break;
       }
 
- if(!*modulep)
+ if(!*modulep || !*outputp)
     return;
 
  XtVaSetValues(prop_modname,XtNlabel,(*modulep)->module->name,NULL);
@@ -665,6 +719,34 @@ static void PropertiesMenuStart(Widget w,XEvent *event,String *params,Cardinal *
 
  XtVaSetValues(prop_outname,XtNlabel,(*outputp)->output->name,NULL);
  XtVaSetValues(prop_outdesc,XtNstring,(*outputp)->output->description,NULL);
+
+ if((*outputp)->type==PROCMETER_GRAPH)
+    XtVaSetValues(prop_type,XtNlabel,"Graph",NULL);
+ else
+    XtVaSetValues(prop_type,XtNlabel,"Text",NULL);
+
+ if((*outputp)->output->interval)
+    sprintf(string,"%d s",(*outputp)->output->interval);
+ else
+    strcpy(string,"Never");
+ XtVaSetValues(prop_interval,XtNlabel,string,NULL);
+
+ if((*outputp)->type==PROCMETER_GRAPH)
+   {
+    if(*((*outputp)->output->graph_units)=='(')
+       strcpy(string,(*outputp)->output->graph_units+1);
+    else
+       strcpy(string,(*outputp)->output->graph_units);
+    if(string[strlen(string)-1]==')')
+       string[strlen(string)-1]=0;
+    XtVaSetValues(prop_scale,XtNlabel,string,NULL);
+    XtSetSensitive(prop_scale,True);
+   }
+ else
+   {
+    XtVaSetValues(prop_scale,XtNlabel,"n/a",NULL);
+    XtSetSensitive(prop_scale,False);
+   }
 
  if(!properties_popped_up)
     PopupAMenu(properties_menu,w,event);
