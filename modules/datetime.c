@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.8 2002-12-08 14:50:52 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.9 2003-06-21 18:39:25 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4a.
 
   Date and Time Information module source file.
   ******************/ /******************
@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <time.h>
 #include <sys/time.h>

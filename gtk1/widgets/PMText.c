@@ -1,11 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMText.c,v 1.2 2001-01-04 19:26:11 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMText.c,v 1.3 2003-06-21 18:39:05 amb Exp $
 
-  ProcMeter Text Widget Source file (for ProcMeter 3.3).
+  ProcMeter Text Widget Source file (for ProcMeter 3.4a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,2000 Andrew M. Bishop
+  This file Copyright 1996,98,2000,01,02,03 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -13,6 +13,7 @@
 
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "PMGeneric.h"
 #include "PMText.h"
