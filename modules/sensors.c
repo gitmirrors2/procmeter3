@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.6 2002-12-07 19:40:25 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.7 2004-03-19 19:00:53 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4b.
 
   Temperature indicators for Mainboard and CPU
   Based on loadavg.c, stat-cpu.c by Andrew M. Bishop
@@ -9,7 +9,7 @@
   Written by Matt Kemner, Andrew M. Bishop
 
   This file Copyright 1999 Matt Kemner, Andrew M. Bishop
-  parts of it are Copyright 1998,99,2002 Andrew M. Bishop
+  parts of it are Copyright 1998,99,2002,04 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -87,6 +87,10 @@ static int ntemps=0;
 /*+ The number of fan speed sensors. +*/
 static int nfans=0;
 
+/*+ A flag to indicate if it is kernel version 2.6.0 or later +*/
+int kernel_2_6_0=0;
+
+
 static void add_temperature(char *filename);
 static void add_fan(char *filename);
 
@@ -115,15 +119,24 @@ ProcMeterOutput **Initialise(char *options)
 {
  DIR *d1,*d2;
  struct dirent* ent1,*ent2;
+ char *dirstart=NULL;
  struct stat buf;
  int n=0,i;
 
  /* Find the directory with the sensor information in it. */
 
- d1=opendir("/proc/sys/dev/sensors");
- if(!d1)
-    ;                           /* Don't give an error message for most users. */
- else
+ if((d1=opendir("/proc/sys/dev/sensors"))) /* kernel < 2.6.0 */
+   {
+    dirstart="/proc/sys/dev/sensors";
+    kernel_2_6_0=0;
+   }
+ else if((d1=opendir("/sys/bus/i2c/devices"))) /* kernel >= 2.6.0 */
+   {
+    dirstart="/sys/bus/i2c/devices";
+    kernel_2_6_0=1;
+   }
+
+ if(d1)
    {
     char dirname[64];
 
@@ -134,7 +147,7 @@ ProcMeterOutput **Initialise(char *options)
        if(!strcmp(ent1->d_name,".."))
           continue;
 
-       sprintf(dirname,"/proc/sys/dev/sensors/%s",ent1->d_name);
+       sprintf(dirname,"%s/%s",dirstart,ent1->d_name);
        if(stat(dirname,&buf)==0 && S_ISDIR(buf.st_mode))
          {
           d2=opendir(dirname);
@@ -159,9 +172,13 @@ ProcMeterOutput **Initialise(char *options)
                    add_temperature(filename);
                 else if(!strcmp(ent2->d_name,"remote_temp"))
                    add_temperature(filename);
-                else if(!strncmp(ent2->d_name,"temp",4) && isdigit(ent2->d_name[4]) && !ent2->d_name[5])
+                else if(!strncmp(ent2->d_name,"temp",4) && isdigit(ent2->d_name[4]) && !ent2->d_name[5]) /* kernel < 2.6.0 */
                    add_temperature(filename);
-                else if(!strncmp(ent2->d_name,"fan",3) && isdigit(ent2->d_name[3]) && !ent2->d_name[4])
+                else if(!strncmp(ent2->d_name,"temp_input",10) && isdigit(ent2->d_name[10]) && !ent2->d_name[11]) /* kernel >= 2.6.0 */
+                   add_temperature(filename);
+                else if(!strncmp(ent2->d_name,"fan",3) && isdigit(ent2->d_name[3]) && !ent2->d_name[4]) /* kernel < 2.6.0 */
+                   add_fan(filename);
+                else if(!strncmp(ent2->d_name,"fan_input",9) && isdigit(ent2->d_name[9]) && !ent2->d_name[10]) /* kernel >= 2.6.0 */
                    add_fan(filename);
                }
 
@@ -206,7 +223,9 @@ static void add_temperature(char *filename)
       {
        double t1,t2,t3;
 
-       if(sscanf(line,"%lf %lf %lf",&t1,&t2,&t3)!=3)
+       if(!kernel_2_6_0 && sscanf(line,"%lf %lf %lf",&t1,&t2,&t3)!=3)
+          fprintf(stderr,"ProcMeter(%s): Unexpected line in '%s'.\n",__FILE__,filename);
+       else if(kernel_2_6_0 && sscanf(line,"%lf",&t1)!=1)
           fprintf(stderr,"ProcMeter(%s): Unexpected line in '%s'.\n",__FILE__,filename);
        else
          {
@@ -249,7 +268,9 @@ static void add_fan(char *filename)
       {
        int f1,f2;
 
-       if(sscanf(line,"%d %d",&f1,&f2)!=2)
+       if(!kernel_2_6_0 && sscanf(line,"%d %d",&f1,&f2)!=2)
+          fprintf(stderr,"ProcMeter(%s): Unexpected line in '%s'.\n",__FILE__,filename);
+       else if(kernel_2_6_0 && sscanf(line,"%d",&f1)!=1)
           fprintf(stderr,"ProcMeter(%s): Unexpected line in '%s'.\n",__FILE__,filename);
        else
          {
@@ -297,9 +318,19 @@ int Update(time_t now,ProcMeterOutput *output)
        if(!f)
           return(-1);
 
-       if(fscanf(f,"%*f %*f %lf",&temp)!=1)
-          return(-1);
-       
+       if(!kernel_2_6_0)
+         {
+          if(fscanf(f,"%*f %*f %lf",&temp)!=1)
+             return(-1);
+         }
+       else
+         {
+          if(fscanf(f,"%lf",&temp)!=1)
+             return(-1);
+          else
+             temp/=1000;
+         }
+
        fclose(f);
 
        sprintf(output->text_value,"%.1f C",temp);
@@ -321,8 +352,16 @@ int Update(time_t now,ProcMeterOutput *output)
        if(!f)
           return(-1);
 
-       if(fscanf(f,"%*d %d",&fan)!=1)
-          return(-1);
+       if(!kernel_2_6_0)
+         {
+          if(fscanf(f,"%*d %d",&fan)!=1)
+             return(-1);
+         }
+       else
+         {
+          if(fscanf(f,"%d",&fan)!=1)
+             return(-1);
+         }
        
        fclose(f);
 
