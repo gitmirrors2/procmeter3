@@ -1,4 +1,4 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.12 2002-04-14 13:58:55 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.13 2002-04-20 12:51:08 amb Exp $
 .\"
 .\"  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 .\"
@@ -230,6 +230,11 @@ Will not work unless the kernel is compiled with CPUID support, and
 /dev/cpu/0/cpuid must be readable by procmeter. (Allow regular users to
 access the cpuid device at your own risk!)
 .TP
+.BR ACPI
+Advanced Configuration and Power Interface information. These outputs are
+only available if you have enabled ACPI in the Linux kernel and you have
+the appropriate hardware.  ACPI can report various information about a
+system's battery, and may also have thermal outputs available.
 
 .SH X RESOURCES
 
