@@ -54,7 +54,7 @@ text-font = 6x10
 label-position = none
 
 # More information about procmeter3
-run = xterm -e sh -c 'procmeter3 -h | less'
+run = XTerm(procmeter3 -h | less)
 
 ##
 ## The resources for the 'Statistics' module.
@@ -74,7 +74,7 @@ grid-min = 5
 [Processes]
 
 # A more detailed look at the processes.
-run = xterm -e top
+run = XTerm(top)
 
 ##
 ## The resources for the 'Memory' module.
@@ -83,7 +83,7 @@ run = xterm -e top
 [Memory]
 
 # More information about memory usage.
-run = xterm -e sh -c 'free ; echo "Press return to continue" ; read x'
+run = XTermWait(free)
 
 ##
 ## The resources for the 'Date and Time' module
@@ -95,7 +95,7 @@ run = xterm -e sh -c 'free ; echo "Press return to continue" ; read x'
 label-position = none
 
 # A different clock.
-run = xclock
+run = Shell(xclock)
 
 [Date_Time.Uptime_DHM]
 
@@ -112,7 +112,7 @@ label-position = bottom
 #options=ppp0 slip0
 
 # Information about the network devices
-run = xterm -e sh -c 'ifconfig -a ; echo "Press return to continue" ; read x'
+run = XTermWait(ifconfig -a)
 
 ##
 ## The resources for the 'DiskUsage' module
@@ -121,7 +121,7 @@ run = xterm -e sh -c 'ifconfig -a ; echo "Press return to continue" ; read x'
 [DiskUsage]
 
 # Information about the disks
-run = xterm -e sh -c 'df ; echo "Press return to continue" ; read x'
+run = XTermWait(df)
 
 ##
 ## The resources for the 'LogFile' module

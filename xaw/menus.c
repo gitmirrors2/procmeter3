@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.12 1999-09-29 19:00:09 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.13 1999-11-30 19:48:28 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -605,11 +605,8 @@ static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPoi
    }
  else if((int)clientData==4)    /* Run */
    {
-    if(fork()==0)
-      {
-       execl("/bin/sh","/bin/sh","-c",function_output->run,NULL);
-       exit(1);
-      }
+    if(function_output->menu_run.flag)
+       RunProgram(&function_output->menu_run);
    }
 }
 
@@ -739,22 +736,13 @@ static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *n
 
  function_output=*outputp;
 
- if((*outputp)->run)
+ if((*outputp)->menu_run.flag)
    {
-    char *r=(*outputp)->run;
-
-    if(!strncmp(r,"xterm -e ",9) && r[9])
-       r+=9;
-    if(!strncmp(r,"sh -c ",6) && r[6])
-       r+=6;
-    if(*r=='\'')
-       r++;
+    char *r=(*outputp)->menu_run.command;
 
     strncpy(string,"Run '",16);
     strncpy(string+5,r,8);
-    if(string[strlen(string)-1]=='\'')
-       string[strlen(string)-1]=0;
-    if(strlen(r)>16)
+    if(strlen(r)>8)
        strcat(string," ...'");
     else
        strcat(string,"'");

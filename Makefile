@@ -1,4 +1,4 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.9 1999-09-29 18:59:59 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.10 1999-11-30 19:48:27 amb Exp $
 #
 # ProcMeter - A system monitoring program for Linux - Version 3.2.
 #
@@ -37,7 +37,7 @@ CDEFS=-DINSTDIR=\"$(INSTDIR)\" -DLIB_PATH=\"$(LIB_PATH)\" \
       -DMOD_PATH=\"$(MOD_PATH)\" -DRC_PATH=\"$(RC_PATH)\"
 
 OBJ =procmeter.o module.o procmeterrc.o \
-     xbitmap.o xmenus.o xresources.o xwindow.o
+     run.o xbitmap.o xmenus.o xresources.o xwindow.o
 WOBJ=widgets/PMGeneric.o widgets/PMGraph.o widgets/PMText.o widgets/PMBar.o widgets/SubMenus.o
 
 ########
@@ -58,6 +58,8 @@ module.o      : module.c      procmeterp.h procmeter.h
 procmeterrc.o : procmeterrc.c procmeterp.h procmeter.h
 	$(CC) -c $(CFLAGS) $< -o $@  $(CDEFS)
 
+run.o         : run.c         procmeterp.h procmeter.h xwindow.h
+	$(CC) -c $(CFLAGS) $< -o $@ $(CDEFS) $(XINCLUDE) 
 xbitmap.o     : xbitmap.c     procmeterp.h procmeter.h xwindow.h
 	$(CC) -c $(CFLAGS) $< -o $@ $(CDEFS) $(XINCLUDE) 
 xmenus.o      : xmenus.c      procmeterp.h procmeter.h xwindow.h

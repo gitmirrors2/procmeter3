@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.6 1999-09-24 19:02:24 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.7 1999-11-30 19:48:28 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.1.
 
@@ -17,6 +17,11 @@
 #ifndef PROCMETERP_H
 #define PROCMETERP_H    /*+ To stop multiple inclusions. +*/
 
+/* The public header file. */
+
+#include "procmeter.h"
+
+
 /* The file locations. */
 
 #ifndef INSTDIR
@@ -33,10 +38,23 @@
 #define RC_PATH   LIB_PATH "/.procmeterrc"
 #endif
 
-/* The public header file. */
+/* The run mode options */
 
-#include "procmeter.h"
+#define RUN_NONE       0
+#define RUN_SHELL      1
+#define RUN_XTERM      2
+#define RUN_XTERM_WAIT 3
+#define RUN_XBELL      4
 
+/*+ The information needed to run a command. +*/
+typedef struct _RunOption
+{
+ char flag;                     /*+ The type of command to run. +*/
+ char *command;                 /*+ The pre-parsed command string. +*/
+}
+RunOption;
+
+/* A forward definition for the Output type. */
 
 typedef struct _Output *Output;
 
@@ -64,7 +82,7 @@ struct _Output
 
  char  label[16];               /*+ The label of the output. +*/
 
- char *run;                     /* The function that can be run for this. */
+ RunOption menu_run;            /*+ The function that can be run for this output. +*/
 
  int type;                      /*+ The type of output. +*/
 
@@ -107,5 +125,10 @@ void MoveOutput(Output output1,Output output2,int direction);
 
 void AddModuleToMenu(Module module);
 void RemoveModuleFromMenu(Module module);
+
+/* In run.c */
+
+void ParseRunCommand(char *string,RunOption *run);
+void RunProgram(RunOption *run);
 
 #endif /* PROCMETERP_H */

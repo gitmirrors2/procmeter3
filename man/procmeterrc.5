@@ -1,6 +1,6 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.10 1999-10-05 17:55:44 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.11 1999-11-30 19:48:28 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.1b.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.2.
 .\"
 .\"  Manual page for .procmeterrc file
 .\"
@@ -11,7 +11,7 @@
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETERRC 5 "June 19, 1999"
+.TH PROCMETERRC 5 "October 5, 1999"
 
 .SH NAME
 
@@ -151,7 +151,32 @@ grid lines (an integer).
 .TP
 .BR run=...
 A string that specifies a program that can be run by selecting it from the menu
-for the left mouse button.
+for the left mouse button.  The way that the command is run can be specfied
+using one of the following abbreviations;
+.B XTerm(
+.I command
+.B )
+to run
+.I command
+in an
+.B xterm
+then exit.
+.B XTermWait(
+.I command
+.B )
+to run
+.I command
+in an
+.B xterm
+and wait for user input before exiting.
+.B Shell(
+.I command
+.B )
+to run
+.I command
+in an
+.B shell
+and exit.  This last one is equivalent to using none of these abbreviations.
 .LP
 The output sections e.g.
 .I ProcMeter.Version
@@ -210,6 +235,10 @@ file, it is a much reduced version of the system default procmeterrc file.
 
  # The minimum number of grid lines, they are 20% each.
  grid-min = 5
+
+ [Processes]
+
+ run = XTerm(top)
 
  [Network]
 
