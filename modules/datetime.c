@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.7 2002-12-07 19:38:59 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.8 2002-12-08 14:50:52 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.4.
 
@@ -54,6 +54,19 @@ ProcMeterOutput date_dm_output=
 ProcMeterOutput time_hms_output=
 {
  /* char  name[];          */ "Time_HMS",
+ /* char *description;     */ "The current time in the local timezone; hours, minutes and seconds.",
+ /* char  type;            */ PROCMETER_TEXT,
+ /* short interval;        */ 1,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ -1,
+ /* short graph_scale;     */ 0,
+ /* char  graph_units[];   */ "n/a"
+};
+
+/*+ The current time output with seconds, with timezone. +*/
+ProcMeterOutput time_hms_tz_output=
+{
+ /* char  name[];          */ "Time_HMS_TZ",
  /* char *description;     */ "The current time in the local timezone; hours, minutes, seconds and timezone.",
  /* char  type;            */ PROCMETER_TEXT,
  /* short interval;        */ 1,
@@ -63,10 +76,23 @@ ProcMeterOutput time_hms_output=
  /* char  graph_units[];   */ "n/a"
 };
 
-/*+ The current time output. +*/
+/*+ The current time output, without seconds. +*/
 ProcMeterOutput time_hm_output=
 {
  /* char  name[];          */ "Time_HM",
+ /* char *description;     */ "The current time in the local timezone; hours and minutes.",
+ /* char  type;            */ PROCMETER_TEXT,
+ /* short interval;        */ 60,
+ /* char  text_value[];    */ "unknown",
+ /* long  graph_value;     */ -1,
+ /* short graph_scale;     */ 0,
+ /* char  graph_units[];   */ "n/a"
+};
+
+/*+ The current time output, without seconds, with timezone. +*/
+ProcMeterOutput time_hm_tz_output=
+{
+ /* char  name[];          */ "Time_HM_TZ",
  /* char *description;     */ "The current time in the local timezone; hours, minutes and timezone.",
  /* char  type;            */ PROCMETER_TEXT,
  /* short interval;        */ 60,
@@ -95,7 +121,9 @@ ProcMeterOutput *outputs[]=
  &date_dmy_output,
  &date_dm_output,
  &time_hms_output,
+ &time_hms_tz_output,
  &time_hm_output,
+ &time_hm_tz_output,
  NULL,                          /* Insert uptime_dhm_output here if /proc/uptime exists. */
  NULL
 };
@@ -174,95 +202,71 @@ ProcMeterOutput **Initialise(char *options)
 
 int Update(time_t now,ProcMeterOutput* output)
 {
- if(output==&date_dmy_output)
-   {
-    static char *week[7]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
-    static char *month[12]={"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
-    struct tm *tim;
-
-    tim=localtime(&now);
-    if(tim->tm_isdst<0)
-       tim=gmtime(&now);
-
-    sprintf(output->text_value,"%3s %02d %3s %4d",
-            week[tim->tm_wday],
-            tim->tm_mday,
-            month[tim->tm_mon],
-            tim->tm_year+1900);
-
-    return(0);
-   }
- if(output==&date_dm_output)
-   {
-    static char *week[7]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
-    static char *month[12]={"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
-    struct tm *tim;
-
-    tim=localtime(&now);
-    if(tim->tm_isdst<0)
-       tim=gmtime(&now);
-
-    sprintf(output->text_value,"%3s %02d %3s",
-            week[tim->tm_wday],
-            tim->tm_mday,
-            month[tim->tm_mon]);
-
-    return(0);
-   }
- else if(output==&time_hms_output)
-   {
-    struct tm *tim;
-    int utc=0;
-
-    tim=localtime(&now);
-    if(tim->tm_isdst<0)
-      {tim=gmtime(&now);utc=1;}
-
-    if (twelve_hour && tim->tm_hour > 12)
-      tim->tm_hour-=12;
-    else if (twelve_hour && tim->tm_hour == 0)
-      tim->tm_hour=12;
-    
-    sprintf(output->text_value,"%02d:%02d:%02d %s",
-            tim->tm_hour,
-            tim->tm_min,
-            tim->tm_sec,
-            utc?"GMT":tzname[tim->tm_isdst>0]);
-
-    return(0);
-   }
- else if(output==&time_hm_output)
-   {
-    struct tm *tim;
-    int utc=0;
-
-    tim=localtime(&now);
-    if(tim->tm_isdst<0)
-      {tim=gmtime(&now);utc=1;}
-
-    if (twelve_hour && tim->tm_hour > 12)
-      tim->tm_hour-=12;
-    else if (twelve_hour && tim->tm_hour == 0)
-      tim->tm_hour=12;
-    
-    sprintf(output->text_value,"%02d:%02d %s",
-            tim->tm_hour,
-            tim->tm_min,
-            utc?"GMT":tzname[tim->tm_isdst>0]);
-
-    return(0);
-   }
- else if(output==&uptime_dhm_output && boot_time)
+ if(output==&uptime_dhm_output)
    {
     time_t uptime=now-boot_time;
     int days =uptime/(24*3600);
     int hours=(uptime%(24*3600))/3600;
     int mins =(uptime%3600)/60;
 
-    sprintf(output->text_value,"%dD %2dH %2dM",
-            days,
-            hours,
-            mins);
+    if(boot_time)
+      {
+       sprintf(output->text_value,"%dD %2dH %2dM",
+               days,
+               hours,
+               mins);
+      }
+    else
+       return(-1);
+
+    return(0);
+   }
+ else
+   {
+    struct tm *tim;
+
+    tim=localtime(&now);
+    if(tim->tm_isdst<0)
+       tim=gmtime(&now);
+
+    if(output==&date_dmy_output)
+      {
+       strftime(output->text_value,PROCMETER_TEXT_LEN,"%a %e %b %Y",tim);
+      }
+    else if(output==&date_dm_output)
+      {
+       strftime(output->text_value,PROCMETER_TEXT_LEN,"%a %e %b",tim);
+      }
+    else if(output==&time_hms_output)
+      {
+       if(twelve_hour)
+          strftime(output->text_value,PROCMETER_TEXT_LEN,"%I:%M:%S %p",tim);
+       else
+          strftime(output->text_value,PROCMETER_TEXT_LEN,"%H:%M:%S",tim);
+      }
+    else if(output==&time_hms_tz_output)
+      {
+       if(twelve_hour)
+          strftime(output->text_value,PROCMETER_TEXT_LEN,"%I:%M:%S %p %Z",tim);
+       else
+          strftime(output->text_value,PROCMETER_TEXT_LEN,"%H:%M:%S %Z",tim);
+      }
+    else if(output==&time_hm_output)
+      {
+       if(twelve_hour)
+          strftime(output->text_value,PROCMETER_TEXT_LEN,"%I:%M %p",tim);
+       else
+          strftime(output->text_value,PROCMETER_TEXT_LEN,"%H:%M",tim);
+      }
+    else if(output==&time_hm_tz_output)
+      {
+       if(twelve_hour)
+          strftime(output->text_value,PROCMETER_TEXT_LEN,"%I:%M %p %Z",tim);
+       else
+          strftime(output->text_value,PROCMETER_TEXT_LEN,"%H:%M %Z",tim);
+      }
+    else
+       return(-1);
 
     return(0);
    }
