@@ -55,5 +55,9 @@ Procmeter Version 3.3 Written August 2000 - January 2001
 
 email: amb@gedanken.demon.co.uk [Please put procmeter in the subject line]
 
-This program is Copyright Andrew M. Bishop 1994,95,96,97,98,99,2000,01
+This program is Copyright Andrew M. Bishop 1994,95,96,97,98,99,2000,01,02
 and distributed under GPL.
+
+
+Some modules were written by Joey Hess <joey@kitenet.net>, a long time supporter
+of the program: wireless, longrun and acpi.
