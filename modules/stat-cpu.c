@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.4 1999-12-03 19:53:02 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.5 2000-12-13 17:32:49 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2.
+  ProcMeter - A system monitoring program for Linux - Version 3.2b.
 
   Low level system statistics for CPU usage.
   ******************/ /******************
@@ -209,7 +209,7 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/stat'.\n",__FILE__);
  else
    {
-    if(!fgets(line,256,f))
+    if(!fgets(line,256,f)) /* cpu */
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
     else
       {
@@ -219,8 +219,8 @@ ProcMeterOutput **Initialise(char *options)
 
           current[CPU]=current[CPU_USER]+current[CPU_NICE]+current[CPU_SYS];
 
-          fgets(line,256,f);
-          while(line[0]=='c' && line[1]=='p' && line[2]=='u')      /* kernel version > ~2.1.84 */
+          fgets(line,256,f); /* cpu or disk or page */
+          while(line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
             {
              int ncpu;
              long cpu_user,cpu_nice,cpu_sys,cpu_idle;
@@ -253,7 +253,7 @@ ProcMeterOutput **Initialise(char *options)
              else
                 fprintf(stderr,"ProcMeter(%s): Unexpected 'cpu%d' line in '/proc/stat'.\n",__FILE__,ncpu);
 
-             fgets(line,256,f);
+             fgets(line,256,f); /* cpu or disk or page */
             }
 
           outputs=(ProcMeterOutput**)realloc((void*)outputs,(1+N_OUTPUTS+ncpus*N_OUTPUTS)*sizeof(ProcMeterOutput*));
@@ -312,12 +312,12 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    fgets(line,256,f);
+    fgets(line,256,f); /* cpu */
     sscanf(line,"cpu %lu %lu %lu %lu",&current[CPU_USER],&current[CPU_NICE],&current[CPU_SYS],&current[CPU_IDLE]);
     current[CPU]=current[CPU_USER]+current[CPU_NICE]+current[CPU_SYS];
 
-    fgets(line,256,f);
-    while(line[0]=='c' && line[1]=='p' && line[2]=='u')      /* kernel version > ~2.1.84 */
+    fgets(line,256,f); /* cpu or disk or page */
+    while(line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
       {
        int ncpu;
        long cpu_user,cpu_nice,cpu_sys,cpu_idle;
@@ -331,7 +331,7 @@ int Update(time_t now,ProcMeterOutput *output)
 
        smp_current[CPU+ncpu*N_OUTPUTS]=smp_current[CPU_USER+ncpu*N_OUTPUTS]+smp_current[CPU_NICE+ncpu*N_OUTPUTS]+smp_current[CPU_SYS+ncpu*N_OUTPUTS];
 
-       fgets(line,256,f);
+       fgets(line,256,f); /* cpu or disk or page */
       }
 
     fclose(f);
@@ -400,7 +400,7 @@ void Unload(void)
    {
     int i;
 
-    for(i=0;ncpus*N_OUTPUTS;i++)
+    for(i=0;i<ncpus*N_OUTPUTS;i++)
        free(smp_outputs[i].description);
 
     free(smp_outputs);

@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.3 1999-09-29 19:00:04 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.4 2000-12-13 17:32:49 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2.
+  ProcMeter - A system monitoring program for Linux - Version 3.2b.
 
   Interrupt statistics source file.
   ******************/ /******************
@@ -109,23 +109,22 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/stat'.\n",__FILE__);
  else
    {
-    if(!fgets(line,BUFFLEN,f))
+    if(!fgets(line,BUFFLEN,f)) /* cpu */
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
     else
       {
        int i,p,pp;
 
-       fgets(line,BUFFLEN,f);
-       while(line[0]=='c')
-          fgets(line,BUFFLEN,f);
+       while(line[0]=='c') /* kernel version > ~2.1.84 */
+          fgets(line,BUFFLEN,f); /* cpu or disk or page */
 
-       fgets(line,BUFFLEN,f);
-       while(line[0]=='d')
-          fgets(line,BUFFLEN,f);
+       while(line[0]=='d') /* kernel version < ~2.4.0-test4 */
+          fgets(line,BUFFLEN,f); /* disk_* or page */
 
-       fgets(line,BUFFLEN,f);
+       fgets(line,BUFFLEN,f); /* swap */
 
-       fgets(line,BUFFLEN,f);
+       fgets(line,BUFFLEN,f); /* intr */
+
        if(sscanf(line,"intr %lu%n",&current[0],&p)==1)
          {
           for(i=0;i<N_INTR;i++)
@@ -218,17 +217,17 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    fgets(line,BUFFLEN,f);
-    while(line[0]=='c')
-       fgets(line,BUFFLEN,f);
+    fgets(line,BUFFLEN,f); /* cpu */
 
-    fgets(line,BUFFLEN,f);
-    while(line[0]=='d')
-       fgets(line,BUFFLEN,f);
+    while(line[0]=='c') /* kernel version > ~2.1.84 */
+       fgets(line,BUFFLEN,f); /* cpu or disk or page */
 
-    fgets(line,BUFFLEN,f);
+    while(line[0]=='d') /* kernel version < ~2.4.0-test4 */
+       fgets(line,BUFFLEN,f); /* disk_* or page */
 
-    fgets(line,BUFFLEN,f);
+    fgets(line,BUFFLEN,f); /* swap */
+
+    fgets(line,BUFFLEN,f); /* intr */
 
     sscanf(line,"intr %lu%n",&current[0],&p);
     for(i=0;i<nintr;i++)
