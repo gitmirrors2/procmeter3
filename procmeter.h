@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.13 2002-12-01 11:38:46 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.14 2002-12-07 19:31:27 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.4.
 
@@ -41,21 +41,27 @@
 /*+ A scaling function for integers. +*/
 #define PROCMETER_GRAPH_INTEGER(xx)  ((long)((xx)<<10))
 
+/*+ The maximum length of a module or output name. +*/
+#define PROCMETER_NAME_LEN 24
 
-#define PROCMETER_NAME_LEN 25
+/*+ The maximum length of an output's text value. +*/
+#define PROCMETER_TEXT_LEN 24
+
+/*+ The maximum length of an output's unit value. +*/
+#define PROCMETER_UNITS_LEN 12
 
 
 /*+ The information about one of the outputs. +*/
 typedef struct _ProcMeterOutput
 {
- char  name[PROCMETER_NAME_LEN];/*+ The name of the output. +*/
- char *description;             /*+ A long description of the output. +*/
- char  type;                    /*+ The type of output. +*/
- short interval;                /*+ The interval between updates. +*/
- char  text_value[16];          /*+ The textual value (if applicable). +*/
- long  graph_value;             /*+ The graph value (if applicable). +*/
- short graph_scale;             /*+ The scaling factor for the graph (if applicable). +*/
- char  graph_units[8];          /*+ The units on the graph as a printf string (if applicable). +*/
+ char  name[PROCMETER_NAME_LEN+1];         /*+ The name of the output. +*/
+ char *description;                        /*+ A long description of the output. +*/
+ char  type;                               /*+ The type of output. +*/
+ short interval;                           /*+ The interval between updates. +*/
+ char  text_value[PROCMETER_TEXT_LEN+1];   /*+ The textual value (if applicable). +*/
+ long  graph_value;                        /*+ The graph value (if applicable). +*/
+ short graph_scale;                        /*+ The scaling factor for the graph (if applicable). +*/
+ char  graph_units[PROCMETER_UNITS_LEN+1]; /*+ The units on the graph as a printf string (if applicable). +*/
 }
 ProcMeterOutput;
 
@@ -63,8 +69,8 @@ ProcMeterOutput;
 /*+ The information about one of the modules. +*/
 typedef struct _ProcMeterModule
 {
- char name[PROCMETER_NAME_LEN]; /*+ The module's name. +*/
- char *description;             /*+ A long description of the module. +*/
+ char name[PROCMETER_NAME_LEN+1];          /*+ The module's name. +*/
+ char *description;                        /*+ A long description of the module. +*/
 }
 ProcMeterModule;
 
