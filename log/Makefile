@@ -1,6 +1,6 @@
-# $Header: /home/amb/CVS/procmeter3/log/Makefile,v 1.1 2002-06-04 12:48:24 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/log/Makefile,v 1.2 2002-11-29 19:01:10 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.3b.
+# ProcMeter - A system monitoring program for Linux - Version 3.3c.
 #
 # Makefile for non X windows parts.
 #
@@ -48,7 +48,6 @@ all : $(OBJ) \
 window.o    : window.c    ../procmeterp.h ../procmeter.h
 menu.o      : menu.c      ../procmeterp.h ../procmeter.h
 run.o       : run.c       ../procmeterp.h ../procmeter.h
-widget.o    : widget.c    ../procmeterp.h ../procmeter.h
 
 ########
 
