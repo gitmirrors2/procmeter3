@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.7 1999-02-23 19:34:34 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.8 1999-03-06 14:40:14 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.1.
 
@@ -259,13 +259,10 @@ static void add_device(char *dev)
     else /* other devices */
        pscale=50,bscale=100,nstats=3;
 
- if(proc_net_dev_format!=proc_net_dev_format1)
-    nstats*=2;
-
  outputs=(ProcMeterOutput**)realloc((void*)outputs,(ndevices+nstats+1)*sizeof(ProcMeterOutput*));
  device=(char**)realloc((void*)device,(ndevices+nstats+1)*sizeof(char*));
 
- for(i=0;nstats;i++,nstats--)
+ for(i=0;nstats;nstats--)
    {
     outputs[ndevices]=(ProcMeterOutput*)malloc(sizeof(ProcMeterOutput));
     device[ndevices]=(char*)malloc(strlen(dev)+1);
@@ -274,7 +271,7 @@ static void add_device(char *dev)
     sprintf(outputs[ndevices]->name,_outputs[i].name,dev);
     outputs[ndevices]->description=(char*)malloc(strlen(dev)+strlen(_outputs[i].description)+4);
     sprintf(outputs[ndevices]->description,_outputs[i].description,dev);
-    if(proc_net_dev_format!=proc_net_dev_format1 && i%2)
+    if(i%2)
        outputs[ndevices]->graph_scale=bscale;
     else
        outputs[ndevices]->graph_scale=pscale;
@@ -282,6 +279,11 @@ static void add_device(char *dev)
     strcpy(device[ndevices],dev);
 
     ndevices++;
+
+    if(proc_net_dev_format==proc_net_dev_format1)
+       i+=2;
+    else
+       i++;
    }
 
  outputs[ndevices]=NULL;
