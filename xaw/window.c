@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.6 1999-03-03 19:48:56 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.7 1999-08-31 18:22:18 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux (v3.0a).
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   X Windows interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997,98 Andrew M. Bishop
+  This file Copyright 1997,98,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -86,7 +86,7 @@ void StartX(int *argc,char **argv)
  char *string;
 
  if((string=GetProcMeterRC("resources","horizontal")) &&
-    *StringToBoolean(string))
+    StringToBoolean(string))
     vertical=0;
 
  /* Initialise the display */
@@ -115,6 +115,9 @@ void StartX(int *argc,char **argv)
                               XtNinternalBorderWidth,2,
                               XtNorientation,vertical?XtorientVertical:XtorientHorizontal,
                               NULL);
+
+ if((string=GetProcMeterRC("resources","background")))
+    XtVaSetValues(pane,XtNbackground,StringToPixel(string),NULL);
 
  XtAddEventHandler(pane,StructureNotifyMask,False,(XtEventHandler)ResizePaneCallback,NULL);
 
@@ -365,7 +368,6 @@ void AddRemoveOutput(Output output)
    {
     Widget w;
     char *string,str[16];
-    XtPointer resource;
     Arg args[16];
     int nargs=0;
     Output *outputp=NULL;
@@ -387,62 +389,53 @@ void AddRemoveOutput(Output output)
 
     if(((string=GetProcMeterRC2(module->module->name,output->output->name,"foreground")) ||
         (string=GetProcMeterRC(module->module->name,"foreground")) ||
-        (string=GetProcMeterRC("resources","foreground"))) &&
-       (resource=(XtPointer)StringToPixel(string)))
-      {XtSetArg(args[nargs],XtNforeground,*(Pixel*)resource);nargs++;}
+        (string=GetProcMeterRC("resources","foreground"))))
+      {XtSetArg(args[nargs],XtNforeground,StringToPixel(string));nargs++;}
 
     if(((string=GetProcMeterRC2(module->module->name,output->output->name,"background")) ||
         (string=GetProcMeterRC(module->module->name,"background")) ||
-        (string=GetProcMeterRC("resources","background"))) &&
-       (resource=(XtPointer)StringToPixel(string)))
-      {XtSetArg(args[nargs],XtNbackground,*(Pixel*)resource);nargs++;}
+        (string=GetProcMeterRC("resources","background"))))
+      {XtSetArg(args[nargs],XtNbackground,StringToPixel(string));nargs++;}
 
     if(((string=GetProcMeterRC2(module->module->name,output->output->name,"label-font")) ||
         (string=GetProcMeterRC(module->module->name,"label-font")) ||
-        (string=GetProcMeterRC("resources","label-font"))) &&
-       (resource=StringToFont(string)))
-      {XtSetArg(args[nargs],XtNlabelFont,resource);nargs++;}
+        (string=GetProcMeterRC("resources","label-font"))))
+      {XtSetArg(args[nargs],XtNlabelFont,StringToFont(string));nargs++;}
 
     if(((string=GetProcMeterRC2(module->module->name,output->output->name,"label-foreground")) ||
         (string=GetProcMeterRC(module->module->name,"label-foreground")) ||
         (string=GetProcMeterRC("resources","label-foreground")) ||
         (string=GetProcMeterRC2(module->module->name,output->output->name,"foreground")) ||
         (string=GetProcMeterRC(module->module->name,"foreground")) ||
-        (string=GetProcMeterRC("resources","foreground"))) &&
-       (resource=(XtPointer)StringToPixel(string)))
-      {XtSetArg(args[nargs],XtNlabelForeground,*(Pixel*)resource);nargs++;}
+        (string=GetProcMeterRC("resources","foreground"))))
+      {XtSetArg(args[nargs],XtNlabelForeground,StringToPixel(string));nargs++;}
 
     if(((string=GetProcMeterRC2(module->module->name,output->output->name,"label-position")) ||
         (string=GetProcMeterRC(module->module->name,"label-position")) ||
-        (string=GetProcMeterRC("resources","label-position"))) &&
-       (resource=(XtPointer)StringToLabelPosition(string)))
-      {XtSetArg(args[nargs],XtNlabelPosition,*(int*)resource);nargs++;}
+        (string=GetProcMeterRC("resources","label-position"))))
+      {XtSetArg(args[nargs],XtNlabelPosition,StringToLabelPosition(string));nargs++;}
 
     if(output->type==PROCMETER_GRAPH)
       {
        if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-foreground")) ||
            (string=GetProcMeterRC(module->module->name,"grid-foreground")) ||
-           (string=GetProcMeterRC("resources","grid-foreground"))) &&
-          (resource=(XtPointer)StringToPixel(string)))
-         {XtSetArg(args[nargs],XtNgridForeground,*(Pixel*)resource);nargs++;}
+           (string=GetProcMeterRC("resources","grid-foreground"))))
+         {XtSetArg(args[nargs],XtNgridForeground,StringToPixel(string));nargs++;}
 
        if(((string=GetProcMeterRC2(module->module->name,output->output->name,"graph-solid")) ||
            (string=GetProcMeterRC(module->module->name,"graph-solid")) ||
-           (string=GetProcMeterRC("resources","graph-solid"))) &&
-          (resource=(XtPointer)StringToBoolean(string)))
-         {XtSetArg(args[nargs],XtNsolid,*(Boolean*)resource);nargs++;}
+           (string=GetProcMeterRC("resources","graph-solid"))))
+         {XtSetArg(args[nargs],XtNsolid,StringToBoolean(string));nargs++;}
 
        if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-min")) ||
            (string=GetProcMeterRC(module->module->name,"grid-min")) ||
-           (string=GetProcMeterRC("resources","grid-min"))) &&
-          (resource=(XtPointer)StringToInt(string)))
-         {XtSetArg(args[nargs],XtNgridMin,*(int*)resource);nargs++;}
+           (string=GetProcMeterRC("resources","grid-min"))))
+         {XtSetArg(args[nargs],XtNgridMin,StringToInt(string));nargs++;}
 
        if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-max")) ||
            (string=GetProcMeterRC(module->module->name,"grid-max")) ||
-           (string=GetProcMeterRC("resources","grid-max"))) &&
-          (resource=(XtPointer)StringToInt(string)))
-         {XtSetArg(args[nargs],XtNgridMax,*(int*)resource);nargs++;}
+           (string=GetProcMeterRC("resources","grid-max"))))
+         {XtSetArg(args[nargs],XtNgridMax,StringToInt(string));nargs++;}
 
        if(vertical)
          {XtSetArg(args[nargs],XtNmin,MINHEIGHT);nargs++;}
@@ -462,9 +455,8 @@ void AddRemoveOutput(Output output)
       {
        if(((string=GetProcMeterRC2(module->module->name,output->output->name,"text-font")) ||
            (string=GetProcMeterRC(module->module->name,"text-font")) ||
-           (string=GetProcMeterRC("resources","text-font"))) &&
-          (resource=StringToFont(string)))
-         {XtSetArg(args[nargs],XtNtextFont,resource);nargs++;}
+           (string=GetProcMeterRC("resources","text-font"))))
+         {XtSetArg(args[nargs],XtNtextFont,StringToFont(string));nargs++;}
 
        XtSetArg(args[nargs],XtNlabel,output->output->name);nargs++;
        XtSetArg(args[nargs],XtNallowResize,True);nargs++;
