@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.4 1999-12-16 19:09:05 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.5 2000-10-22 14:11:52 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2a.
 
@@ -7,7 +7,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99 Andrew M. Bishop
+  This file Copyright 1998,99,2000 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -76,6 +76,7 @@ void LoadProcMeterRC(int *argc,char **argv)
       }
 
  if(!rcpath)
+   {
     if(!stat(".procmeterrc",&buf))
        rcpath=".procmeterrc";
     else if((home=getenv("HOME")))
@@ -88,6 +89,7 @@ void LoadProcMeterRC(int *argc,char **argv)
        if(stat(rcpath,&buf))
          {free(rcpath);rcpath=NULL;}
       }
+   }
  if(!rcpath)
     rcpath=RC_PATH;
 
