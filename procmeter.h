@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.1 1998-09-19 15:20:12 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.2 1998-10-24 13:12:02 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux (v3.0a).
 
   Global public header file.
   ******************/ /******************
@@ -20,7 +20,7 @@
 #include <time.h>
 
 
-#define PROCMETER_VERSION "3.0"
+#define PROCMETER_VERSION "3.0a"
 
 
 #define PROCMETER_MAJOR_VERSION 3
