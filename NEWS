@@ -1,3 +1,11 @@
+Version 3.3 of ProcMeter3 released : Fri Jan 5 20:00:00 2001
+------------------------------------------------------------
+
+Now compiles with GTK or Athena Widgets.
+
+GTK version is mostly working, not quite same configurability as Athena.
+
+
 Version 3.2b of ProcMeter3 released : Wed Dec 13 17:45:00 2000
 --------------------------------------------------------------
 
