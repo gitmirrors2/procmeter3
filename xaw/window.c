@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.13 2002-06-04 13:55:50 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.14 2002-12-07 19:34:22 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   X Windows interface.
   ******************/ /******************
@@ -83,7 +83,7 @@ void Start(int *argc,char **argv)
 {
  Atom close_atom;
  Widget toplevel;
- static char procmeter_version[16]="ProcMeter V" PROCMETER_VERSION;
+ static char procmeter_version[]="ProcMeter V" PROCMETER_VERSION;
  char *string;
 
  if((string=GetProcMeterRC("resources","horizontal")) &&
@@ -229,7 +229,7 @@ void AddRemoveOutput(Output output)
  else
    {
     Widget w=NULL;
-    char *string,str[PROCMETER_NAME_LEN];
+    char *string,str[PROCMETER_NAME_LEN+1];
     Arg args[16];
     int nargs=0;
     Output *outputp=NULL;

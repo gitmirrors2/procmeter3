@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.15 2002-06-04 12:51:44 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.16 2002-12-07 19:34:32 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   X Window menus.
   ******************/ /******************
@@ -788,8 +788,8 @@ static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *n
 
  if((*outputp)->type&(PROCMETER_GRAPH|PROCMETER_BAR))
    {
-    char str[16];
-    sprintf(str,(*outputp)->output->graph_units,(*outputp)->output->graph_scale);
+    char str[PROCMETER_UNITS_LEN+1];
+    snprintf(str,PROCMETER_UNITS_LEN+1,(*outputp)->output->graph_units,(*outputp)->output->graph_scale);
     if(*str=='(')
        strcpy(string,str+1);
     else
