@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.9 1999-12-06 20:13:47 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.10 2000-12-16 16:28:16 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -112,7 +112,7 @@ char *GetProcMeterRC(char *section,char *parameter);
 char *GetProcMeterRC2(char *module,char *output,char *parameter);
 void FreeProcMeterRC(void);
 
-/* In xwindow.c */
+/* In xaw/window.c or gtk/window.c */
 
 void StartX(int *argc,char **argv);
 void StopX(void);
@@ -122,12 +122,12 @@ void AddDefaultOutputs(int argc,char **argv);
 void AddRemoveOutput(Output);
 void MoveOutput(Output output1,Output output2,int direction);
 
-/* In xmenus.c */
+/* In xaw/menus.c or gtk/menus.c */
 
 void AddModuleToMenu(Module module);
 void RemoveModuleFromMenu(Module module);
 
-/* In run.c */
+/* In xaw/run.c or gtk/run.c */
 
 void ParseRunCommand(char *string,RunOption *run);
 void RunProgram(RunOption *run);
