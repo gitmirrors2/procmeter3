@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/lcd/window.c,v 1.2 2002-12-01 11:35:12 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/lcd/window.c,v 1.3 2002-12-08 14:24:04 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.4.
 
@@ -544,7 +544,7 @@ void UpdateText(Output output,char *value)
  int len=strlen(value);
  int x=(LCD_screen_width-len)/2;
 
- send_command("widget_set %s_t value %d %d {%s}",output->output->name,x,1+LCD_screen_height/2,value);
+ send_command("widget_set %s_t value %d %d {%s}",output->output->name,x+1,1+LCD_screen_height/2,value);
 }
 
 
@@ -616,7 +616,7 @@ void UpdateBar(Output output,short value)
    {
     length=bar->data_sum*scale1/(scale2*2*LCD_char_width);
 
-    send_command("widget_set %s_b average %d 2 v",output->output->name,length);
+    send_command("widget_set %s_b average %d 2 v",output->output->name,length+1);
    }
 }
 
