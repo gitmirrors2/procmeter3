@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.5 1999-02-16 15:15:07 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.6 1999-03-14 09:11:15 amb Exp $
 
-  ProcMeter Graph Widget Source file (for ProcMeter3 3.1).
+  ProcMeter Graph Widget Source file (for ProcMeter3 3.1a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
@@ -280,7 +280,7 @@ static void Resize(ProcMeterGraphWidget w)
 
     if(w->procmeter_graph.grid_num<w->procmeter_graph.grid_min)
        w->procmeter_graph.grid_num=w->procmeter_graph.grid_min;
-    if(w->procmeter_graph.grid_num>w->procmeter_graph.grid_max)
+    if(w->procmeter_graph.grid_max && w->procmeter_graph.grid_num>w->procmeter_graph.grid_max)
        w->procmeter_graph.grid_num=w->procmeter_graph.grid_max;
    }
 
