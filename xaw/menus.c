@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.9 1999-09-24 19:15:52 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.10 1999-09-27 19:02:08 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -33,10 +33,13 @@
 #include <X11/Xaw/AsciiText.h>
 #include <X11/cursorfont.h>
 
+#include "widgets/SubMenus.h"
+
 #include "xwindow.h"
 #include "procmeterp.h"
 
 
+/* This is already defined if using Xaw3d. */
 #ifndef XtNshadowWidth
 #define XtNshadowWidth "shadowWidth"
 #endif
@@ -48,13 +51,9 @@ extern int vertical;
 extern Widget pane;
 
 static void ModuleMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params);
-static void ModuleMenuEvent(Widget w,XEvent *event,String *params,Cardinal *num_params);
 static void OutputMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params);
 static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params);
 
-static void PopupAMenu(Widget menu,Widget w,XEvent *event);
-
-static void SelectModuleMenuCallback(Widget widget,XtPointer clientData,XtPointer callData);
 static void SelectOutputMenuCallback(Widget widget,XtPointer clientData,XtPointer callData);
 static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPointer callData);
 static void DonePropertiesDialogCallback(Widget widget,XtPointer clientData,XtPointer callData);
@@ -70,7 +69,6 @@ static Widget prop_modname,prop_moddesc,
 static Boolean properties_popped_up=False,doing_move=False;
 
 XtActionsRec MenuActions[]={{"ModuleMenuStart",ModuleMenuStart},
-                            {"ModuleMenuEvent",ModuleMenuEvent},
                             {"OutputMenuStart",OutputMenuStart},
                             {"FunctionsMenuStart",FunctionsMenuStart}};
 
@@ -102,6 +100,7 @@ void CreateMenus(Widget parent)
  /* Add the application actions. */
 
  XtAppAddActions(app_context,MenuActions,sizeof(MenuActions)/sizeof(MenuActions[0]));
+ InitialiseSubMenus(app_context);
 
  /* Sort out the resources in advance, this is required for the dialog box.
     This is horrible because Xaw3d requires that you set the background when you
@@ -142,8 +141,6 @@ void CreateMenus(Widget parent)
                                   XtVaNestedList,resources,
                                   NULL);
 
- XtOverrideTranslations(module_menu,XtParseTranslationTable("<BtnMotion>: highlight() ModuleMenuEvent()\n"
-                                                            "<BtnUp>:     MenuPopdown() notify() unhighlight() ModuleMenuEvent()\n"));
 
  menulabel=XtNameToWidget(module_menu,"menuLabel");
  XtSetValues(menulabel,args,nargs);
@@ -418,7 +415,7 @@ void AddModuleToMenu(Module module)
                                                   NULL);
  XtSetValues(module->menu_item_widget,args,nargs);
 
- XtAddCallback(module->menu_item_widget,XtNcallback,SelectModuleMenuCallback,(XtPointer)module->module);
+ AddSubMenu(module->menu_item_widget,module->submenu_widget);
 
  /* Add entries to it for each output. */
 
@@ -513,23 +510,6 @@ void RemoveModuleFromMenu(Module module)
 void DestroyMenus(void)
 {
  XtDestroyWidget(module_menu);
-}
-
-
-/*++++++++++++++++++++++++++++++++++++++
-  The callback that is called by the module being selected on the module menu.
-
-  Widget widget The widget that the callback came from.
-
-  XtPointer clientData The client data from the callback.
-
-  XtPointer callData The call data from the callback.
-
-  This function is only ever called from the Xt Intrinsics routines.
-  ++++++++++++++++++++++++++++++++++++++*/
-
-static void SelectModuleMenuCallback(Widget widget,XtPointer clientData,XtPointer callData)
-{
 }
 
 
@@ -661,73 +641,7 @@ static void AtomPropertiesDialogCloseCallback(Widget w,XtPointer va,XEvent* e,Bo
 
 static void ModuleMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params)
 {
- PopupAMenu(module_menu,w,event);
-}
-
-
-/*++++++++++++++++++++++++++++++++++++++
-  Do something with the sub-menus when there is an interesting button event.
-
-  Widget w The widget that caused the event.
-
-  XEvent *event The event that caused the callback.
-
-  String *params The parameters from the callback.
-
-  Cardinal *num_params The number of parameters.
-
-  This function is only ever called from the Xt Intrinsics routines.
-  ++++++++++++++++++++++++++++++++++++++*/
-
-static void ModuleMenuEvent(Widget w,XEvent *event,String *params,Cardinal *num_params)
-{
- static Widget lastitem=NULL,lastmenu=NULL;
- Widget sme;
- Module *module;
-
- sme=XawSimpleMenuGetActiveEntry(w);
-
- if((!sme || sme!=lastitem) && lastmenu)
-   {
-    XtPopdown(lastmenu);
-    lastmenu=lastitem=NULL;
-   }
-
- if(!sme || sme==lastitem)
-    return;
-
- lastitem=sme;
-
- for(module=Modules;*module;module++)
-    if(sme==(*module)->menu_item_widget)
-      {
-       Position root_x,root_y;
-       Dimension width,height;
-
-       lastmenu=(*module)->submenu_widget;
-
-       XtTranslateCoords(w,0,event->xbutton.y,&root_x,&root_y);
-       XtVaGetValues(lastmenu,XtNheight,&height,NULL);
-
-       root_y-=5;
-       if((DisplayHeight(display,DefaultScreen(display))-height-2)<root_y)
-          root_y=DisplayHeight(display,DefaultScreen(display))-height-2;
-       if(root_y<2)
-          root_y=2;
-
-       if(root_x<(DisplayWidth(display,DefaultScreen(display))/2))
-         {
-          XtVaGetValues(w,XtNwidth,&width,NULL);
-          XtVaSetValues(lastmenu,XtNx,root_x+width,XtNy,root_y,NULL);
-         }
-       else
-         {
-          XtVaGetValues(lastmenu,XtNwidth,&width,NULL);
-          XtVaSetValues(lastmenu,XtNx,root_x-width,XtNy,root_y,NULL);
-         }
-
-       XtPopup(lastmenu,XtGrabNone);
-      }
+ PopupMenuHere(module_menu,w,event);
 }
 
 
@@ -749,7 +663,7 @@ static void OutputMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_
 {
  Widget menu=XtNameToWidget(module_menu,params[0]);
 
- PopupAMenu(menu,w,event);
+ PopupMenuHere(menu,w,event);
 }
 
 
@@ -866,43 +780,5 @@ static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *n
    }
 
  if(!properties_popped_up)
-    PopupAMenu(functions_menu,w,event);
-}
-
-
-/*++++++++++++++++++++++++++++++++++++++
-  Popup a menu, a replacement for the main part of the XawPositionSimpleMenu() and MenuPopup() translations.
-
-  Widget menu The menu to popup.
-
-  Widget w The widget causing the event.
-
-  XEvent *event The event that causes the popup.
-  ++++++++++++++++++++++++++++++++++++++*/
-
-static void PopupAMenu(Widget menu,Widget w,XEvent *event)
-{
- Position root_x,root_y;
- Dimension width,height;
-
- XtRealizeWidget(menu);
-
- XtVaGetValues(menu,XtNwidth,&width,XtNheight,&height,NULL);
- XtTranslateCoords(w,event->xbutton.x,event->xbutton.y,&root_x,&root_y);
-
- root_y-=5;
- if((DisplayHeight(display,DefaultScreen(display))-height-2)<root_y)
-    root_y=DisplayHeight(display,DefaultScreen(display))-height-2;
- if(root_y<2)
-    root_y=2;
-
- root_x-=width/2;
- if((DisplayWidth(display,DefaultScreen(display))-width-2)<root_x)
-    root_x=DisplayWidth(display,DefaultScreen(display))-width-2;
- if(root_x<2)
-    root_x=2;
-
- XtVaSetValues(menu,XtNx,root_x,XtNy,root_y,NULL);
- XtPopupSpringLoaded(menu);
- XtGrabPointer(menu,True,ButtonReleaseMask|ButtonPressMask,GrabModeAsync,GrabModeAsync,None,None,CurrentTime);
+    PopupMenuHere(functions_menu,w,event);
 }
