@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.8 2002-07-06 10:57:56 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.9 2002-12-01 09:35:15 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Handle the .procmeterrc file.
   ******************/ /******************
@@ -98,6 +98,12 @@ void LoadProcMeterRC(int *argc,char **argv)
  if(rcpath)
    {
     FILE *rc=fopen(rcpath,"r");
+
+    if(!rc)
+      {
+       fprintf(stderr,"ProcMeter: Cannot open the configuration file %s for reading.\n",rcpath);
+       exit(1);
+      }
 
     while((line=fgets_realloc(line,rc)))
       {
