@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.2 1998-09-26 09:47:50 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.3 1998-10-24 09:02:29 amb Exp $
 
-  ProcMeter Graph Widget Source file (for ProcMeter 3.0).
+  ProcMeter Graph Widget Source file (for ProcMeter 3.0a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
@@ -290,6 +290,8 @@ static void Redisplay(ProcMeterGraphWidget w,XEvent *event,Region region)
 static void GraphResize(ProcMeterGraphWidget w)
 {
  ProcMeterGenericResize((ProcMeterGenericWidget)w);
+
+ w->procmeter_generic.label_x=2;
 
  /* The grid parts. */
 
