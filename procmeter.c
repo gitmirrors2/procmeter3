@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.1 1998-09-19 15:19:41 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.2 1998-10-24 13:10:15 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #include <unistd.h>
 #include <time.h>
@@ -25,6 +26,7 @@
 #include "procmeterp.h"
 
 
+static char *get_substring(char **start,int length);
 static void sigexit(int signum);
 
 /*+ The signal to tell us to exit. +*/
@@ -122,14 +124,33 @@ int main(int argc,char **argv)
     for(modulep=Modules;*modulep;modulep++)
       {
        ProcMeterOutput *last=NULL;
+       char *p=(*modulep)->module->description;
 
        printf("\n\n%s\n%s\n\n",(*modulep)->module->name,&underline[15-strlen((*modulep)->module->name)]);
-       printf("%s\n\n",(*modulep)->module->description);
+
+       while(p)
+          printf("%s\n",get_substring(&p,80));
+       printf("\n");
 
        for(outputp=(*modulep)->outputs;*outputp;outputp++)
-         {
+          {
           if(last!=(*outputp)->output)
-             printf("%-16s : %s\n",(*outputp)->output->name,(*outputp)->output->description);
+            {
+             char *p=(*outputp)->output->description;
+             int first=1;
+
+             while(p)
+               {
+                if(first)
+                   printf("%-16s : ",(*outputp)->output->name);
+                else
+                   printf("                   ");
+
+                printf("%s\n",get_substring(&p,61));
+
+                first=0;
+               }
+            }
           last=(*outputp)->output;
          }
       }
@@ -143,6 +164,54 @@ int main(int argc,char **argv)
     StopX();
 
  return(0);
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Make a substring copy of the specified string.
+
+  char *get_substring Returns a copy.
+
+  char **start The start position in the string.
+
+  int length The length of string to return.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+static char *get_substring(char **start,int length)
+{
+ static char string[80];
+
+ if(strlen(*start)>length)
+   {
+    char *p=*start+length;
+
+    if(!isspace(*p))
+      {
+       while(p>*start && !isspace(*p))
+          p--;
+       if(p==*start)
+          p=*start+length;
+       else
+          p++;
+      }
+
+    strncpy(string,*start,(p-*start));
+    string[p-*start]=0;
+
+    while(*p==' ')
+       p++;
+    if(!*p)
+       p=NULL;
+
+    *start=p;
+   }
+ else
+   {
+    strcpy(string,*start);
+    *start=NULL;
+   }
+
+ return(string);
 }
 
 
