@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/bitmap.c,v 1.2 1999-09-29 19:00:09 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/bitmap.c,v 1.3 2000-12-16 16:46:19 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.3.
 
   X Window Bitmaps.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,2000 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -18,7 +18,7 @@
 #include <X11/Xlib.h>
 #include <X11/Intrinsic.h>
 
-#include "xwindow.h"
+#include "window.h"
 
 
 #define circle_width  8

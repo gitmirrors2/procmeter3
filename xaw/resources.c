@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/resources.c,v 1.2 1999-08-31 18:22:33 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/resources.c,v 1.3 2000-12-16 16:46:41 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2.
+  ProcMeter - A system monitoring program for Linux - Version 3.3.
 
   X Window resource conversions.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99 Andrew M. Bishop
+  This file Copyright 1998,99,2000 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -22,7 +22,7 @@
 #include <X11/Xlib.h>
 #include <X11/Intrinsic.h>
 
-#include "xwindow.h"
+#include "window.h"
 #include "procmeterp.h"
 
 
