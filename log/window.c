@@ -1,9 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/log/window.c,v 1.1 2002-06-04 12:49:15 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/log/window.c,v 1.2 2002-11-30 19:20:07 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.3c.
 
-  No X Windows interface.
+  Log to a file output.
   ******************/ /******************
   Written by Andrew M. Bishop
 
@@ -39,7 +39,7 @@ static int initialising=1;
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  Start the No X-Windows part.
+  Start the logging to a file.
 
   int *argc The number of command line arguments.
 
@@ -49,19 +49,19 @@ static int initialising=1;
 void Start(int *argc,char **argv)
 {
 
- /* Do nothing since we have no X windows. */
+ /* Do nothing since we have nothing to initialise. */
 
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  Stop the No X-Windows part.
+  Stop the logging to a file.
   ++++++++++++++++++++++++++++++++++++++*/
 
 void Stop(void)
 {
 
- /* Do nothing since we have no X windows. */
+ /* Do nothing since we have nothing to finalise. */
 
 }
 
@@ -242,6 +242,8 @@ static void output_labels(void)
 
 /*++++++++++++++++++++++++++++++++++++++
   Output the data for the selected outputs.
+
+  time_t now The current time.
   ++++++++++++++++++++++++++++++++++++++*/
 
 static void output_data(time_t now)

@@ -1,8 +1,8 @@
-# $Header: /home/amb/CVS/procmeter3/log/Makefile,v 1.2 2002-11-29 19:01:10 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/log/Makefile,v 1.3 2002-11-30 19:20:54 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.3c.
+# ProcMeter - A system monitoring program for Linux - Version 3.4.
 #
-# Makefile for non X windows parts.
+# Makefile for logging to a file.
 #
 # Written by Andrew M. Bishop
 #
@@ -33,11 +33,11 @@ POBJ=$(foreach f,$(PSRC),$(addsuffix .o,$(basename $f)))
 ########
 
 all : $(OBJ) \
-      ../procmeter3-no-x
+      ../procmeter3-log
 
 ########
 
-../procmeter3-no-x : $(OBJ) procmeter.main
+../procmeter3-log : $(OBJ) procmeter.main
 	$(LD) $(OBJ) $(POBJ) -o $@ -ldl $(LDFLAGS)
 
 ########
