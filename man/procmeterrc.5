@@ -1,6 +1,6 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.5 1999-03-03 19:42:56 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.6 1999-06-19 12:43:31 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.1.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.1b.
 .\"
 .\"  Manual page for .procmeterrc file
 .\"
@@ -11,44 +11,59 @@
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETERRC 5 "March 3, 1999"
+.TH PROCMETERRC 5 "June 19, 1999"
+
 .SH NAME
+
 The \.procmeterrc configuration file for procmeter3.
+
 .SH SYNOPSIS
-This file contains the run-time options for the procmeter3 program.
+
+This file contains the run-time options for the procmeter3 program.  These
+include the outputs that are displayed, the colours and fonts that are used and
+other options.
+
 .SH DESCRIPTION
+
 The resources for ProcMeter version 3.0 are stored in the .procmeterrc file
-instead of in X resources
+instead of using X resources.  This gives more flexibility and allows for much
+simpler customisation.
 .LP
-When the program starts the the first .procmeterrc file found in the current
-directory, the current users home directory or the installation directory (named
-procmeterrc) is used.
+When the procmeter3 program starts the
+.B .procmeterrc
+file is searched for in the current directory, the current users home directory
+or the system default installation directory (named procmeterrc).  The file is
+used from the first one of these locations that matches.
 .LP
-The format of the .procmeterrc file is a number of sections with the section
-names marked in '[]'.  As well as the fixed sections there is a section for each
-module that is named using the name that the module reports itself to be.  There
-are then further sections for each of the possible outputs of each module.
+The format of the
+.B .procmeterrc
+file is a number of sections with the section names marked in '[]'.  As well as
+the fixed sections (described below) there is a section for each module that is
+named using the name that the module reports itself to be.  There are then
+further sections for each of the possible outputs of each module.  To find out
+the modules that are available run 'procmeter3 -h'.  Lines beginning with the
+characters ';' or '#' are comments and continuation using the '\\' character at
+the end of a line is allowed.
 .LP
-Lines beginning with ';' or '#' are comments and continuation using the '\\'
-character at the end of a line is allowed.
-.LP
-Below is listed the resource values and the sections of the .procmeterrc file
-that they can exist in.
+Below is listed the resource values and the sections of the
+.B .procmeterrc
+file that they can exist in.
 .LP
 The
 .B library
-section
+section contains the information about the procmeter modules that are available.
 .TP
 .BR path=...
 The pathname of the library that contains the compiled ProcMeter modules.
-(defaults to installed location).
+(defaults to the program's compiled-in installation location).
 .TP
 .BR others=...
-A list of other modules to be loaded. (separated by spaces).
+A list of other modules to be loaded (full pathnames separated by spaces).
 .LP
 The
 .B startup
-section
+section controls how the procmeter window ahould look when the program is
+started.
 .TP
 .BR order=...
 A list of the outputs that are to be started up in the order that they are to be
@@ -57,7 +72,8 @@ then they appear after those specified here.
 .LP
 The
 .B resources
-section
+section contains the general program resources, these are mostly the items that
+were stored as X Window resources in previous versions of procmeter.
 .TP
 .BR horizontal=...
 A Boolean to indicate that the outputs are stacked horizontally instead of
@@ -72,7 +88,7 @@ The colour to use as the default foreground for all outputs. (An X11 colour name
 or an RGB value in hex as #RRGGBB.)
 .TP
 .BR label-font=...
-The font to use for the label that describes the output.(An X11 font name.)
+The font to use for the label that describes the output. (An X11 font name.)
 .TP
 .BR label-foreground=...
 The colour to use as the foreground for the label. (An X11 colour name or an RGB
@@ -87,8 +103,8 @@ The colour to use for the grid lines. (An X11 colour name or an RGB value in hex
 as #RRGGBB.)
 .TP
 .BR graph-solid=...
-A boolean to indicate if the graph should be solid or a single line.  (yes or
-no, true or false, 0 or 1.)
+A boolean to indicate if the graph should be solid (the default) or a single
+line.  (yes or no, true or false, 0 or 1.)
 .TP
 .BR grid-min=...
 The minimum number of grid lines to display on a graph.  (An integer.)
@@ -113,11 +129,13 @@ The font to use for the menus.  (An X11 font name.)
 .LP
 The module sections e.g.
 .I ProcMeter
-These can contain any of the resource values which will then apply to all output
-of this module.
+These can contain any of the resource values which will then apply to all
+outputs of this module.  There are also extra options that can be applied to the
+module and as defaults for the all of the outputs of that module.
 .TP
 .BR options=...
-A string containing options that are passed to the module at startup.
+A string containing options that are passed to the module at startup, different
+modules have different options, see the procmeter3(1) manual page.
 .TP
 .BR update=...
 The update interval for the output in seconds (an integer).
@@ -132,7 +150,73 @@ for the left mouse button.
 .LP
 The output sections e.g.
 .I ProcMeter.Version
-These can contain any of the resource or module options which will then apply to
-the specified output.
+These can contain any of the resource or module options (except 'options') which
+will then apply only to the specified output.
+
+.SH EXAMPLE
+
+Below is an example
+.B .procmeterrc
+file, it is a much reduced version of the system default procmeterrc file.
+
+ [startup]
+
+ # Procmeter version, clock, CPU graph, load text
+ order=ProcMeter.Version Date_Time.Time_HM \\
+       Statistics.CPU-g Processes.Load-t
+
+ [resources]
+
+ # The outputs, black on white
+ foreground = black
+ background = white
+
+ # A large-medium size text font.
+ text-font = 8x13
+
+ # Solid graphs with at least 5 grid lines in grey.
+ graph-solid = yes
+ grid-min = 5
+ grid-foreground = grey50
+
+ # Black on white graph labels, small font, below the data.
+ label-font = 5x7
+ label-foreground = black
+ label-position = bottom
+
+ # Black on white menu items in a small-medium size font.
+ menu-foreground = black
+ menu-background = white
+ menu-font = 7x13
+
+ [ProcMeter.Version]
+
+ # A smaller font than normal with no label.
+ text-font = 6x10
+ label-position = none
+
+ [Statistics]
+
+ [Statistics.CPU]
+
+ # The minimum number of grid lines, they are 20% each.
+ grid-min = 5
+
+ [Network]
+
+ # To pick up extra devices not automatically recognised.
+ #options=ppp0 slip0
+
+.SH FILES
+
+.B ./.procmeterrc
+.LP
+.B ~/.procmeterrc
+.LP
+.B /usr/local/lib/X11/ProcMeter3/procmeterrc
+or
+.B /usr/lib/X11/ProcMeter3/procmeterrc
+
 .SH SEE ALSO
+
 procmeter3(1)
