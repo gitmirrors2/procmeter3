@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/SubMenus.c,v 1.2 1999-09-28 18:41:08 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/SubMenus.c,v 1.3 1999-09-29 16:37:30 amb Exp $
 
   ProcMeter Extensions for Athena SubMenus (for ProcMeter 3.2).
   ******************/ /******************
@@ -133,10 +133,10 @@ static void SubMenuEvent(Widget w,XEvent *event,String *params,Cardinal *num_par
           XtPopdown(submenus[i].submenu);
          }
 
- if(!item || item==lastitem)
-    return;
-
  lastitem=item;
+
+ if(!submenu)
+    return;
 
  for(i=0;i<nsubmenus;i++)
     if(item==submenus[i].item)
