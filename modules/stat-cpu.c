@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.1 1999-03-03 19:00:24 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.2 1999-07-06 16:34:25 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.1c.
 
   Low level system statistics for CPU usage.
   ******************/ /******************
@@ -230,7 +230,7 @@ ProcMeterOutput **Initialise(char *options)
                 ncpus++;
 
                 smp_values[0]=(long*)realloc((void*)smp_values[0],ncpus*N_OUTPUTS*sizeof(long));
-                smp_values[1]=(long*)realloc((void*)smp_values[0],ncpus*N_OUTPUTS*sizeof(long));
+                smp_values[1]=(long*)realloc((void*)smp_values[1],ncpus*N_OUTPUTS*sizeof(long));
                 smp_current=smp_values[0]; smp_previous=smp_values[1];
 
                 smp_current[CPU_USER+ncpu*N_OUTPUTS]=cpu_user;
