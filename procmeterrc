@@ -1,0 +1,73 @@
+#
+# The information about the library of modules.
+#
+
+[library]
+
+path=modules
+
+#
+# The global default resources
+#
+
+[resources]
+
+menu-foreground = black
+menu-background = white
+menu-font = 7x13
+
+label-font = 5x7
+label-foreground = black
+label-position = bottom
+
+text-font = 8x13
+
+graph-solid = yes
+grid-min = 5
+grid-foreground = grey50
+
+#
+# The resources for the 'Statistics' module.
+#
+
+[Statistics]
+
+grid-min = 5
+
+#
+# The resources for the 'CPU' output of the 'Statistics' module.
+#
+
+[Statistics.CPU]
+
+grid-min = 5
+
+#
+# The resources for the ProcMeter Version output.
+#
+
+[ProcMeter.Version]
+
+text-font = 6x10
+label-position = none
+
+#
+# The resources for the Date and Time module
+#
+
+[Date_Time]
+
+label-position = none
+
+[Date_Time.Uptime_DHM]
+
+label-position = bottom
+
+#
+# The resources for the Network module
+#
+
+[Network]
+
+# To pick up extra devices not automatically recognised.
+#options=ppp0 slip0
