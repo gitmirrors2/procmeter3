@@ -1,29 +1,34 @@
-                              PROCMETER V3.2
+                              PROCMETER V3.3
                               ==============
 
 A system monitoring program for Linux.
 
 
 Usage: procmeter3 [-h] [--rc=<filename>] [--...] ...
+       gprocmeter3 [-h] [--rc=<filename>] [--...] ...
 
--h                 Print out a help message.
---rc=<filename>    Specify an alternative .procemterrc file.
---...              Command line options to set .procmeterrc options.
-...                Options, use 'procmeter3 -h' to list them.
+-h                Print out a help message.
+--rc=<filename>   Specify an alternative .procemterrc file.
+--...             Command line options to set .procmeterrc options.
+...               Options, use 'procmeter3 -h' or 'gprocmeter3 -h' to list them.
 
 
 
 Installation
 ------------
 
-Edit the Makefile to set the paths for installation (INSTDIR), the X Windows
-directory (XINCLUDE,XLIBRARY) and the compiler options (CC,LD,CFLAGS).
+Edit the Makefile to set the paths for installation (INSTDIR).
+
+Edit the xaw/Makefile to set the X Windows compiler options if required.
 
 make all
 make install
 
-The manual pages procmeter3(1) and procmeterrc(5) gives more details on how to
-use the program.
+To compile just the Athena widgets version use 'make procmeter3', for just the
+GTK version use 'make gprocmeter3' instead of 'make all'.
+
+The manual pages procmeter3(1), gprocmeter3(1) and procmeterrc(5) give more
+details on how to use the program.
 
 
 More Information
@@ -43,11 +48,12 @@ Author & Copyright
 
 Andrew M. Bishop
 
-Procmeter Version 3.0 Written August-September 1998
-Procmeter Version 3.1 Written February-March   1999
-Procmeter Version 3.2 Written August-December  1999
+Procmeter Version 3.0 Written August - September 1998
+Procmeter Version 3.1 Written February - March   1999
+Procmeter Version 3.2 Written August - December  1999
+Procmeter Version 3.3 Written August 2000 - January 2001
 
 email: amb@gedanken.demon.co.uk [Please put procmeter in the subject line]
 
-This program is Copyright Andrew M. Bishop 1994,95,96,97,98,99
+This program is Copyright Andrew M. Bishop 1994,95,96,97,98,99,2000,01
 and distributed under GPL.
