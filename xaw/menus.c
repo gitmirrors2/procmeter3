@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.14 2000-12-16 16:50:03 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.15 2002-06-04 12:51:44 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   X Window menus.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000 Andrew M. Bishop
+  This file Copyright 1998,99,2000,01,02 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -380,6 +380,8 @@ void AddModuleToMenu(Module module)
  Arg args[3];
  int nargs=0;
 
+ /* Return if display is not initialised (e.g. procmeter3 -h). */
+
  if(!display)
     return;
 
@@ -494,6 +496,11 @@ void AddModuleToMenu(Module module)
 
 void AddMenuToOutput(Widget widget,Module module)
 {
+ /* Return if display is not initialised (e.g. procmeter3 -h). */
+
+ if(!display)
+    return;
+
  XtOverrideTranslations(widget,XtParseTranslationTable("<Btn3Down>: ModuleMenuStart()"));
 
  if(module)
@@ -517,6 +524,8 @@ void AddMenuToOutput(Widget widget,Module module)
 
 void RemoveModuleFromMenu(Module module)
 {
+ /* Return if display is not initialised (e.g. procmeter3 -h). */
+
  if(!display)
     return;
 
