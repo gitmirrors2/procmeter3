@@ -1,11 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.3 1998-10-24 09:02:29 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.4 1999-02-13 11:37:24 amb Exp $
 
-  ProcMeter Graph Widget Source file (for ProcMeter 3.0a).
+  ProcMeter Graph Widget Source file (for ProcMeter3 3.1).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98 Andrew M. Bishop
+  This file Copyright 1996,98,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -46,7 +46,9 @@ static XtResource resources[]=
  {XtNgridForeground, XtCForeground, XtRPixel, sizeof(Pixel),
   XtOffset(ProcMeterGraphWidget,procmeter_graph.grid_pixel),XtRString,XtDefaultBackground},
  {XtNgridMin, XtCGridMin, XtRInt, sizeof(int),
-  XtOffset(ProcMeterGraphWidget,procmeter_graph.grid_min), XtRString, "1" }
+  XtOffset(ProcMeterGraphWidget,procmeter_graph.grid_min), XtRString, "1" },
+ {XtNgridMax, XtCGridMax, XtRInt, sizeof(int),
+  XtOffset(ProcMeterGraphWidget,procmeter_graph.grid_max), XtRString, "0" }
 };
 
 /*+ The actual ProcMeter Graph Widget Class Record. +*/
@@ -125,6 +127,12 @@ static void Initialize(ProcMeterGraphWidget request,ProcMeterGraphWidget new)
     new->procmeter_graph.grid_drawn=1;
  if(request->procmeter_graph.grid_min==0)
     new->procmeter_graph.grid_min=1;
+
+ if(request->procmeter_graph.grid_max<0)
+    new->procmeter_graph.grid_max=0;
+
+ if(new->procmeter_graph.grid_max<new->procmeter_graph.grid_min)
+    new->procmeter_graph.grid_max=new->procmeter_graph.grid_min;
 
  new->procmeter_graph.grid_num=new->procmeter_graph.grid_min;
 
@@ -209,8 +217,22 @@ static Boolean SetValues(ProcMeterGraphWidget current,ProcMeterGraphWidget reque
     if(request->procmeter_graph.grid_min==0)
        new->procmeter_graph.grid_min=1;
 
+    if(request->procmeter_graph.grid_min>request->procmeter_graph.grid_max)
+       new->procmeter_graph.grid_min=request->procmeter_graph.grid_max;
+
     if(new->procmeter_graph.grid_min>=new->procmeter_graph.grid_num)
        new->procmeter_graph.grid_num=new->procmeter_graph.grid_min;
+
+    redraw=True;
+   }
+
+ if(request->procmeter_graph.grid_max!=current->procmeter_graph.grid_max)
+   {
+    if(request->procmeter_graph.grid_max<0)
+       new->procmeter_graph.grid_max=0;
+
+    if(request->procmeter_graph.grid_max<new->procmeter_graph.grid_min)
+       new->procmeter_graph.grid_max=new->procmeter_graph.grid_min;
 
     redraw=True;
    }
@@ -258,6 +280,8 @@ static void Resize(ProcMeterGraphWidget w)
 
     if(w->procmeter_graph.grid_num<w->procmeter_graph.grid_min)
        w->procmeter_graph.grid_num=w->procmeter_graph.grid_min;
+    if(w->procmeter_graph.grid_num>w->procmeter_graph.grid_max)
+       w->procmeter_graph.grid_num=w->procmeter_graph.grid_max;
    }
 
  GraphResize(w);
@@ -297,16 +321,16 @@ static void GraphResize(ProcMeterGraphWidget w)
 
  w->procmeter_graph.grid_units_x=w->core.width-XTextWidth(w->procmeter_generic.label_font,w->procmeter_graph.grid_units,(int)strlen(w->procmeter_graph.grid_units));
 
- w->procmeter_graph.grid_max=w->procmeter_generic.body_height/3;
+ w->procmeter_graph.grid_maxvis=w->procmeter_generic.body_height/3;
 
  if(w->procmeter_generic.label_pos==ProcMeterLabelTop)
     w->procmeter_generic.body_start=w->procmeter_generic.label_height;
  else
     w->procmeter_generic.body_start=0;
 
- if(w->procmeter_graph.grid_num>w->procmeter_graph.grid_max && w->procmeter_graph.grid_drawn)
+ if(w->procmeter_graph.grid_num>w->procmeter_graph.grid_maxvis && w->procmeter_graph.grid_drawn)
     w->procmeter_graph.grid_drawn=-1;
- if(w->procmeter_graph.grid_num<=w->procmeter_graph.grid_max && w->procmeter_graph.grid_drawn)
+ if(w->procmeter_graph.grid_num<=w->procmeter_graph.grid_maxvis && w->procmeter_graph.grid_drawn)
     w->procmeter_graph.grid_drawn=1;
 }
 
@@ -365,7 +389,7 @@ static void GraphUpdate(ProcMeterGraphWidget w,Boolean scroll)
        else
           if(w->procmeter_graph.grid_drawn==-1)
             {
-             pos=w->procmeter_graph.grid_max*w->procmeter_generic.body_height/w->procmeter_graph.grid_num;
+             pos=w->procmeter_graph.grid_maxvis*w->procmeter_generic.body_height/w->procmeter_graph.grid_num;
              XDrawPoint(XtDisplay(w),XtWindow(w),w->procmeter_graph.grid_gc,
                         w->core.width-1,w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos);
             }
@@ -410,7 +434,7 @@ static void GraphUpdate(ProcMeterGraphWidget w,Boolean scroll)
        else
           if(w->procmeter_graph.grid_drawn==-1)
             {
-             pos=w->procmeter_graph.grid_max*w->procmeter_generic.body_height/w->procmeter_graph.grid_num;
+             pos=w->procmeter_graph.grid_maxvis*w->procmeter_generic.body_height/w->procmeter_graph.grid_num;
              XDrawLine(XtDisplay(w),XtWindow(w),w->procmeter_graph.grid_gc,
                        0            ,w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos,
                        w->core.width,w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos);
@@ -453,6 +477,8 @@ void ProcMeterGraphWidgetAddDatum(Widget pmw,unsigned short datum)
 
     if(new_grid_num<w->procmeter_graph.grid_min)
        new_grid_num=w->procmeter_graph.grid_min;
+    if(w->procmeter_graph.grid_max && new_grid_num>w->procmeter_graph.grid_max)
+       new_grid_num=w->procmeter_graph.grid_max;
 
     w->procmeter_graph.data_max=new_data_max;
 
@@ -460,9 +486,9 @@ void ProcMeterGraphWidgetAddDatum(Widget pmw,unsigned short datum)
       {
        w->procmeter_graph.grid_num=new_grid_num;
 
-       if(w->procmeter_graph.grid_num>w->procmeter_graph.grid_max && w->procmeter_graph.grid_drawn)
+       if(w->procmeter_graph.grid_num>w->procmeter_graph.grid_maxvis && w->procmeter_graph.grid_drawn)
           w->procmeter_graph.grid_drawn=-1;
-       if(w->procmeter_graph.grid_num<=w->procmeter_graph.grid_max && w->procmeter_graph.grid_drawn)
+       if(w->procmeter_graph.grid_num<=w->procmeter_graph.grid_maxvis && w->procmeter_graph.grid_drawn)
           w->procmeter_graph.grid_drawn=1;
 
        GraphUpdate(w,False);
