@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.6 1999-02-13 11:38:57 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.7 1999-08-31 18:22:09 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   X Window menus.
   ******************/ /******************
@@ -37,6 +37,10 @@
 #include "procmeterp.h"
 
 
+#ifndef XtNshadowWidth
+#define XtNshadowWidth "shadowWidth"
+#endif
+
 /*+ The orientation of the windows. +*/
 extern int vertical;
 
@@ -59,7 +63,7 @@ static void AtomPropertiesDialogCloseCallback(Widget w,XtPointer va,XEvent* e,Bo
 
 static Widget module_menu;
 static Widget functions_menu,properties_dialog;
-static Widget sme_run;
+static Widget func_run;
 static Widget prop_modname,prop_moddesc,prop_outname,prop_outdesc,prop_type,prop_interval,prop_scale;
 static Boolean properties_popped_up=False,doing_move=False;
 
@@ -79,239 +83,241 @@ static Output function_output;
 
 void CreateMenus(Widget parent)
 {
- Widget menulabel1,smeline1;
- Widget menulabel2,smeline2,sme_prop,sme_above,sme_below;
+ Widget menulabel;
+ Widget menuline;
+ Widget func_prop,func_above,func_below;
  Widget prop_form,prop_modlabel,prop_outlabel,prop_typlabel,prop_intlabel,prop_scllabel,prop_done;
  Dimension width,height;
  char *string;
- XtPointer resource;
+ Arg args[3];
+ int nargs=0;
+ XtVarArgsList resources=NULL;
  Atom close_atom;
 
+ /* Add the application actions. */
+
  XtAppAddActions(app_context,MenuActions,sizeof(MenuActions)/sizeof(MenuActions[0]));
+
+ /* Sort out the resources in advance, this is required for the dialog box.
+    This is horrible because Xaw3d requires that you set the background when you
+    create the widget because the shadows don't update if you do it later. */
+
+ if((string=GetProcMeterRC("resources","menu-foreground")))
+   {XtSetArg(args[nargs],XtNforeground,StringToPixel(string));nargs++;}
+
+ if((string=GetProcMeterRC("resources","menu-background")))
+   {XtSetArg(args[nargs],XtNbackground,StringToPixel(string));nargs++;}
+
+ if((string=GetProcMeterRC("resources","menu-font")))
+   {XtSetArg(args[nargs],XtNfont,StringToFont(string));nargs++;}
+
+ if(nargs==1)
+    resources=XtVaCreateArgsList(NULL,
+                                 args[0].name,args[0].value,
+                                 NULL);
+ else if(nargs==2)
+    resources=XtVaCreateArgsList(NULL,
+                                 args[0].name,args[0].value,
+                                 args[1].name,args[1].value,
+                                 NULL);
+ else if(nargs==3)
+    resources=XtVaCreateArgsList(NULL,
+                                 args[0].name,args[0].value,
+                                 args[1].name,args[1].value,
+                                 args[2].name,args[2].value,
+                                 NULL);
+ else
+    resources=XtVaCreateArgsList(NULL,
+                                 NULL);
 
  /* The module menu */
 
  module_menu=XtVaCreatePopupShell("ModuleMenu",simpleMenuWidgetClass,parent,
                                   XtNlabel,"Modules",
+                                  XtVaNestedList,resources,
                                   NULL);
 
  XtOverrideTranslations(module_menu,XtParseTranslationTable("<BtnMotion>: highlight() ModuleMenuEvent()\n"
                                                             "<BtnUp>:     MenuPopdown() notify() unhighlight() ModuleMenuEvent()\n"));
 
- menulabel1=XtNameToWidget(module_menu,"menuLabel");
+ menulabel=XtNameToWidget(module_menu,"menuLabel");
+ XtSetValues(menulabel,args,nargs);
 
- smeline1=XtVaCreateManagedWidget("line",smeLineObjectClass,module_menu,NULL);
+ menuline=XtVaCreateManagedWidget("line",smeLineObjectClass,module_menu,
+                                  XtVaNestedList,resources,
+                                  NULL);
 
  /* The functions menu */
 
  functions_menu=XtVaCreatePopupShell("FunctionsMenu",simpleMenuWidgetClass,parent,
                                      XtNlabel,"Functions",
+                                     XtVaNestedList,resources,
                                      NULL);
 
- menulabel2=XtNameToWidget(functions_menu,"menuLabel");
+ menulabel=XtNameToWidget(functions_menu,"menuLabel");
+ XtSetValues(menulabel,args,nargs);
 
- smeline2=XtVaCreateManagedWidget("line",smeLineObjectClass,functions_menu,NULL);
-
- sme_prop=XtVaCreateManagedWidget("Properties",smeBSBObjectClass,functions_menu,
-                                  XtNlabel,"Properties",
-                                  XtNheight,10,
+ menuline=XtVaCreateManagedWidget("line",smeLineObjectClass,functions_menu,
+                                  XtVaNestedList,resources,
                                   NULL);
 
- XtAddCallback(sme_prop,XtNcallback,SelectFunctionsMenuCallback,0);
+ /* The functions menu items */
 
- sme_above=XtVaCreateManagedWidget("AboveOrLeft",smeBSBObjectClass,functions_menu,
-                                   XtNlabel,vertical?"Move To Above":"Move To Left Of",
+ func_prop=XtVaCreateManagedWidget("Properties",smeBSBObjectClass,functions_menu,
+                                   XtNlabel,"Properties",
                                    XtNheight,10,
+                                   XtVaNestedList,resources,
                                    NULL);
 
- XtAddCallback(sme_above,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)1);
+ XtAddCallback(func_prop,XtNcallback,SelectFunctionsMenuCallback,0);
 
- sme_below=XtVaCreateManagedWidget("BelowOrRight",smeBSBObjectClass,functions_menu,
-                                   XtNlabel,vertical?"Move To Below":"Move To Right Of",
-                                   XtNheight,10,
-                                   NULL);
+ func_above=XtVaCreateManagedWidget("AboveOrLeft",smeBSBObjectClass,functions_menu,
+                                    XtNlabel,vertical?"Move To Above":"Move To Left Of",
+                                    XtNheight,10,
+                                    XtVaNestedList,resources,
+                                    NULL);
 
- XtAddCallback(sme_below,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)2);
+ XtAddCallback(func_above,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)1);
 
- sme_run=XtVaCreateManagedWidget("Run",smeBSBObjectClass,functions_menu,
-                                 XtNlabel,"Run",
-                                 XtNheight,10,
-                                 NULL);
+ func_below=XtVaCreateManagedWidget("BelowOrRight",smeBSBObjectClass,functions_menu,
+                                    XtNlabel,vertical?"Move To Below":"Move To Right Of",
+                                    XtNheight,10,
+                                    XtVaNestedList,resources,
+                                    NULL);
 
- XtAddCallback(sme_run,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)3);
+ XtAddCallback(func_below,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)2);
+
+ func_run=XtVaCreateManagedWidget("Run",smeBSBObjectClass,functions_menu,
+                                  XtNlabel,"Run",
+                                  XtNheight,10,
+                                  XtVaNestedList,resources,
+                                  NULL);
+
+ XtAddCallback(func_run,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)3);
 
  /* The properties_dialog */
 
  properties_dialog=XtVaCreatePopupShell("PropertiesDialog",topLevelShellWidgetClass,parent,
                                         XtNtitle,"ProcMeter Properties",XtNiconName,"ProcMeter Properties",
+                                        XtVaNestedList,resources,
                                         NULL);
 
  prop_form=XtVaCreateManagedWidget("PropertiesForm",formWidgetClass,properties_dialog,
-                                   XtNwidth,200,XtNheight,200,
+                                   XtNwidth,300,XtNheight,200,
+                                   XtVaNestedList,resources,
                                    NULL);
+
+ /* The properties dialog elements. */
 
  prop_modlabel=XtVaCreateManagedWidget("ModuleLabel",labelWidgetClass,prop_form,
                                        XtNlabel,"Module:",
-                                       XtNwidth,100,XtNresizable,True,
                                        XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
-                                       XtNborderWidth,0,
+                                       XtNborderWidth,0,XtNshadowWidth,0,
+                                       XtVaNestedList,resources,
                                        NULL);
+
  prop_modname=XtVaCreateManagedWidget("ModuleName",labelWidgetClass,prop_form,
                                       XtNlabel,"NNNNNNNNNNNNNNN",XtNjustify,XtJustifyLeft,
-                                      XtNwidth,100,XtNresizable,True,
                                       XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                       XtNfromHoriz,prop_modlabel,
+                                      XtNborderWidth,0,XtNshadowWidth,0,
+                                      XtVaNestedList,resources,
                                       NULL);
 
  prop_moddesc=XtVaCreateManagedWidget("ModuleDesc",asciiTextWidgetClass,prop_form,
-                                      XtNheight,100,XtNwidth,200,XtNresizable,True,
+                                      XtNheight,80,XtNwidth,240,XtNresizable,True,
                                       XtNleft,XawChainLeft,XtNright,XawChainRight,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                       XtNfromVert,prop_modlabel,
                                       XtNtype,XawAsciiString,XtNstring,"NNNNNNNNNNNNNNN",
                                       XtNwrap,XawtextWrapWord,XtNeditType,XawtextRead,XtNdisplayCaret,False,
                                       XtNscrollVertical,XawtextScrollAlways,
+                                      XtVaNestedList,resources,
                                       NULL);
 
  prop_outlabel=XtVaCreateManagedWidget("OutputLabel",labelWidgetClass,prop_form,
                                        XtNlabel,"Output:",
                                        XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                        XtNfromVert,prop_moddesc,
-                                       XtNborderWidth,0,
+                                       XtNborderWidth,0,XtNshadowWidth,0,
+                                       XtVaNestedList,resources,
                                        NULL);
+
  prop_outname=XtVaCreateManagedWidget("OutputName",labelWidgetClass,prop_form,
                                       XtNlabel,"NNNNNNNNNNNNNNN",XtNjustify,XtJustifyLeft,
                                       XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                       XtNfromHoriz,prop_outlabel,XtNfromVert,prop_moddesc,
+                                      XtNborderWidth,0,XtNshadowWidth,0,
+                                      XtVaNestedList,resources,
                                       NULL);
 
  prop_outdesc=XtVaCreateManagedWidget("OutputDesc",asciiTextWidgetClass,prop_form,
-                                      XtNheight,100,XtNwidth,200,XtNresizable,True,
+                                      XtNheight,80,XtNwidth,240,XtNresizable,True,
                                       XtNleft,XawChainLeft,XtNright,XawChainRight,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                       XtNfromVert,prop_outlabel,
                                       XtNtype,XawAsciiString,XtNstring,"NNNNNNNNNNNNNNN",
                                       XtNwrap,XawtextWrapWord,XtNeditType,XawtextRead,XtNdisplayCaret,False,
                                       XtNscrollVertical,XawtextScrollAlways,
+                                      XtVaNestedList,resources,
                                       NULL);
 
  prop_typlabel=XtVaCreateManagedWidget("TypeLabel",labelWidgetClass,prop_form,
                                        XtNlabel,"Type:",
                                        XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                        XtNfromVert,prop_outdesc,
-                                       XtNborderWidth,0,
+                                       XtNborderWidth,0,XtNshadowWidth,0,
+                                       XtVaNestedList,resources,
                                        NULL);
- prop_type=XtVaCreateManagedWidget("Type",labelWidgetClass,prop_form,
-                                   XtNlabel,"NNNNNNN",XtNjustify,XtJustifyLeft,
-                                   XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
-                                   XtNfromHoriz,prop_typlabel,XtNfromVert,prop_outdesc,
-                                   NULL);
 
  prop_intlabel=XtVaCreateManagedWidget("IntervalLabel",labelWidgetClass,prop_form,
                                        XtNlabel,"Interval:",
                                        XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                        XtNfromVert,prop_typlabel,
-                                       XtNborderWidth,0,
-                                       NULL);
- prop_interval=XtVaCreateManagedWidget("Interval",labelWidgetClass,prop_form,
-                                       XtNlabel,"NNNNNNN",XtNjustify,XtJustifyLeft,
-                                       XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
-                                       XtNfromHoriz,prop_intlabel,XtNfromVert,prop_typlabel,
+                                       XtNborderWidth,0,XtNshadowWidth,0,
+                                       XtVaNestedList,resources,
                                        NULL);
 
  prop_scllabel=XtVaCreateManagedWidget("ScaleLabel",labelWidgetClass,prop_form,
                                        XtNlabel,"Grid Spacing:",
                                        XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                        XtNfromVert,prop_intlabel,
-                                       XtNborderWidth,0,
+                                       XtNborderWidth,0,XtNshadowWidth,0,
+                                       XtVaNestedList,resources,
                                        NULL);
+
+ prop_type=XtVaCreateManagedWidget("Type",labelWidgetClass,prop_form,
+                                   XtNlabel,"NNNNNNN",XtNjustify,XtJustifyLeft,
+                                   XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                   XtNfromHoriz,prop_scllabel,XtNfromVert,prop_outdesc,
+                                   XtNborderWidth,0,XtNshadowWidth,0,
+                                   XtVaNestedList,resources,
+                                   NULL);
+
+ prop_interval=XtVaCreateManagedWidget("Interval",labelWidgetClass,prop_form,
+                                       XtNlabel,"NNNNNNN",XtNjustify,XtJustifyLeft,
+                                       XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                       XtNfromHoriz,prop_scllabel,XtNfromVert,prop_typlabel,
+                                       XtNborderWidth,0,XtNshadowWidth,0,
+                                       XtVaNestedList,resources,
+                                       NULL);
+
  prop_scale=XtVaCreateManagedWidget("Scale",labelWidgetClass,prop_form,
                                     XtNlabel,"NNNNNNN",XtNjustify,XtJustifyLeft,
                                     XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                     XtNfromHoriz,prop_scllabel,XtNfromVert,prop_intlabel,
+                                    XtNborderWidth,0,XtNshadowWidth,0,
+                                    XtVaNestedList,resources,
                                     NULL);
 
  prop_done=XtVaCreateManagedWidget("Done",commandWidgetClass,prop_form,
-                                   XtNwidth,200,XtNresizable,False,
-                                   XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                   XtNwidth,240,XtNresizable,True,
+                                   XtNleft,XawChainLeft,XtNright,XawChainRight,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                    XtNfromVert,prop_scllabel,
+                                   XtVaNestedList,resources,
                                    NULL);
+
  XtAddCallback(prop_done,XtNcallback,DonePropertiesDialogCallback,0);
 
- /* Add the resources. */
-
- if(((string=GetProcMeterRC("resources","menu-foreground"))) &&
-    (resource=(XtPointer)StringToPixel(string)))
-   {
-    XtVaSetValues(menulabel1,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(menulabel2,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(smeline1,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(smeline2,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(sme_prop,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(sme_above,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(sme_below,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(sme_run,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(properties_dialog,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_form,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_modlabel,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_modname,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_moddesc,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_outlabel,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_outname,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_outdesc,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_typlabel,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_type,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_intlabel,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_interval,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_scllabel,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_scale,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_done,XtNforeground,*(Pixel*)resource,NULL);
-   }
-
- if(((string=GetProcMeterRC("resources","menu-background"))) &&
-    (resource=(XtPointer)StringToPixel(string)))
-   {
-    XtVaSetValues(module_menu,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(functions_menu,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(properties_dialog,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_form,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_modlabel,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_modname,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_moddesc,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_outlabel,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_outname,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_outdesc,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_typlabel,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_type,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_intlabel,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_interval,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_scllabel,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_scale,XtNbackground,*(Pixel*)resource,NULL);
-    XtVaSetValues(prop_done,XtNbackground,*(Pixel*)resource,NULL);
-   }
-
- if(((string=GetProcMeterRC("resources","menu-font"))) &&
-    (resource=(XtPointer)StringToFont(string)))
-   {
-    XtVaSetValues(menulabel1,XtNfont,resource,NULL);
-    XtVaSetValues(menulabel2,XtNfont,resource,NULL);
-    XtVaSetValues(sme_prop,XtNfont,resource,NULL);
-    XtVaSetValues(sme_above,XtNfont,resource,NULL);
-    XtVaSetValues(sme_below,XtNfont,resource,NULL);
-    XtVaSetValues(sme_run,XtNfont,resource,NULL);
-    XtVaSetValues(prop_form,XtNfont,resource,NULL);
-    XtVaSetValues(prop_modlabel,XtNfont,resource,NULL);
-    XtVaSetValues(prop_modname,XtNfont,resource,NULL);
-    XtVaSetValues(prop_moddesc,XtNfont,resource,NULL);
-    XtVaSetValues(prop_outlabel,XtNfont,resource,NULL);
-    XtVaSetValues(prop_outname,XtNfont,resource,NULL);
-    XtVaSetValues(prop_outdesc,XtNfont,resource,NULL);
-    XtVaSetValues(prop_typlabel,XtNfont,resource,NULL);
-    XtVaSetValues(prop_type,XtNfont,resource,NULL);
-    XtVaSetValues(prop_intlabel,XtNfont,resource,NULL);
-    XtVaSetValues(prop_interval,XtNfont,resource,NULL);
-    XtVaSetValues(prop_scllabel,XtNfont,resource,NULL);
-    XtVaSetValues(prop_scale,XtNfont,resource,NULL);
-    XtVaSetValues(prop_done,XtNfont,resource,NULL);
-   }
+ XtFree(resources);
 
  /* Fixup the properties dialog box */
 
@@ -337,13 +343,28 @@ void CreateMenus(Widget parent)
 void AddModuleToMenu(Module module)
 {
  int i;
- Widget menulabel,smeline;
+ Widget menulabel,menuline;
  char *string;
- XtPointer resource;
  char menuname[32];
+ Arg args[3];
+ int nargs=0;
 
  if(!display)
     return;
+
+ /* Sort out the resources in advance. */
+
+ if(((string=GetProcMeterRC(module->module->name,"menu-foreground")) ||
+     (string=GetProcMeterRC("resources","menu-foreground"))))
+   {XtSetArg(args[nargs],XtNforeground,StringToPixel(string));nargs++;}
+
+ if(((string=GetProcMeterRC(module->module->name,"menu-background")) ||
+     (string=GetProcMeterRC("resources","menu-background"))))
+   {XtSetArg(args[nargs],XtNbackground,StringToPixel(string));nargs++;}
+
+ if(((string=GetProcMeterRC(module->module->name,"menu-font")) ||
+     (string=GetProcMeterRC("resources","menu-font"))))
+   {XtSetArg(args[nargs],XtNfont,StringToFont(string));nargs++;}
 
  /* Create a new menu. */
 
@@ -351,11 +372,14 @@ void AddModuleToMenu(Module module)
  module->submenu_widget=XtVaCreatePopupShell(menuname,simpleMenuWidgetClass,module_menu,
                                              XtNlabel,module->module->name,
                                              NULL);
+ XtSetValues(module->submenu_widget,args,nargs);
 
  menulabel=XtNameToWidget(module->submenu_widget,"menuLabel");
+ XtSetValues(menulabel,args,nargs);
 
- smeline=XtVaCreateManagedWidget("line",smeLineObjectClass,module->submenu_widget,
-                                 NULL);
+ menuline=XtVaCreateManagedWidget("line",smeLineObjectClass,module->submenu_widget,
+                                  NULL);
+ XtSetValues(menuline,args,nargs);
 
  /* Add an entry to the module menu */
 
@@ -363,32 +387,9 @@ void AddModuleToMenu(Module module)
                                                   XtNlabel,module->module->name,
                                                   XtNheight,10,
                                                   NULL);
+ XtSetValues(module->menu_item_widget,args,nargs);
 
  XtAddCallback(module->menu_item_widget,XtNcallback,SelectModuleMenuCallback,(XtPointer)module->module);
-
- /* Add the resources. */
-
- if(((string=GetProcMeterRC(module->module->name,"menu-foreground")) ||
-     (string=GetProcMeterRC("resources","menu-foreground"))) &&
-    (resource=(XtPointer)StringToPixel(string)))
-   {
-    XtVaSetValues(menulabel,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(smeline,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(module->menu_item_widget,XtNforeground,*(Pixel*)resource,NULL);
-   }
-
- if(((string=GetProcMeterRC(module->module->name,"menu-background")) ||
-     (string=GetProcMeterRC("resources","menu-background"))) &&
-    (resource=(XtPointer)StringToPixel(string)))
-    XtVaSetValues(module->submenu_widget,XtNbackground,*(Pixel*)resource,NULL);
-
- if(((string=GetProcMeterRC(module->module->name,"menu-font")) ||
-     (string=GetProcMeterRC("resources","menu-font"))) &&
-    (resource=(XtPointer)StringToFont(string)))
-   {
-    XtVaSetValues(menulabel,XtNfont,resource,NULL);
-    XtVaSetValues(module->menu_item_widget,XtNfont,resource,NULL);
-   }
 
  /* Add entries to it for each output. */
 
@@ -413,15 +414,13 @@ void AddModuleToMenu(Module module)
 
     if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-foreground")) ||
         (string=GetProcMeterRC(module->module->name,"menu-foreground")) ||
-        (string=GetProcMeterRC("resources","menu-foreground"))) &&
-       (resource=(XtPointer)StringToPixel(string)))
-       XtVaSetValues(sme,XtNforeground,*(Pixel*)resource,NULL);
+        (string=GetProcMeterRC("resources","menu-foreground"))))
+       XtVaSetValues(sme,XtNforeground,StringToPixel(string),NULL);
 
     if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-font")) ||
         (string=GetProcMeterRC(module->module->name,"menu-font")) ||
-        (string=GetProcMeterRC("resources","menu-font"))) &&
-       (resource=(XtPointer)StringToFont(string)))
-       XtVaSetValues(sme,XtNfont,resource,NULL);
+        (string=GetProcMeterRC("resources","menu-font"))))
+       XtVaSetValues(sme,XtNfont,StringToFont(string),NULL);
 
     module->outputs[i]->menu_item_widget=sme;
     module->outputs[i]->output_widget=NULL;
@@ -784,13 +783,13 @@ static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *n
     else
        strcat(string,"'");
  
-    XtVaSetValues(sme_run,XtNlabel,string,NULL);
-    XtSetSensitive(sme_run,True);
+    XtVaSetValues(func_run,XtNlabel,string,NULL);
+    XtSetSensitive(func_run,True);
    }
  else
    {
-    XtVaSetValues(sme_run,XtNlabel,"Run",NULL);
-    XtSetSensitive(sme_run,False);
+    XtVaSetValues(func_run,XtNlabel,"Run",NULL);
+    XtSetSensitive(func_run,False);
    }
 
  /* Set up the properties window. */
