@@ -1,3 +1,27 @@
+Version 3.4b of ProcMeter3 released : Sun Apr 25 09:10:00 2004
+--------------------------------------------------------------
+
+New or changed modules:
+ The stat-disk module can display individual disk partitions for kernel 2.6.x.
+ The modules stat, stat-disk, sensors and meminfo now work with kernel 2.6.x.
+ Handle different header line for hostap wireless driver.
+
+Bug fixes:
+ Modules that didn't work with kernel 2.6.x now do (see above).
+ Improved some module initialisation functions.
+
+
+**** IMPORTANT ****
+
+For kernel version 2.6.x the disk statistics are in /proc/diskstats and not
+/proc/stat.  All configuration references to Statistics.Disk need to be changed
+to Stat-Disk.Disk.
+
+Statistics.Disk -> Stat-Disk.Disk
+
+**** IMPORTANT ****
+
+
 Version 3.4a of ProcMeter3 released : Sat Jun 28 20:00:00 2003
 --------------------------------------------------------------
 
