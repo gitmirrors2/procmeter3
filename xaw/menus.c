@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.8 1999-09-24 19:02:24 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.9 1999-09-24 19:15:52 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -87,7 +87,7 @@ void CreateMenus(Widget parent)
 {
  Widget menulabel;
  Widget menuline;
- Widget func_prop,func_above,func_below;
+ Widget func_prop,func_above,func_below,func_delete;
  Widget prop_form,
         prop_modlabel,prop_outlabel,
         prop_lbllabel,prop_typlabel,prop_intlabel,prop_scllabel,
@@ -192,13 +192,21 @@ void CreateMenus(Widget parent)
 
  XtAddCallback(func_below,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)2);
 
+ func_delete=XtVaCreateManagedWidget("Delete",smeBSBObjectClass,functions_menu,
+                                     XtNlabel,"Delete",
+                                     XtNheight,10,
+                                     XtVaNestedList,resources,
+                                     NULL);
+
+ XtAddCallback(func_delete,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)3);
+
  func_run=XtVaCreateManagedWidget("Run",smeBSBObjectClass,functions_menu,
                                   XtNlabel,"Run",
                                   XtNheight,10,
                                   XtVaNestedList,resources,
                                   NULL);
 
- XtAddCallback(func_run,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)3);
+ XtAddCallback(func_run,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)4);
 
  /* The properties_dialog */
 
@@ -582,7 +590,11 @@ static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPoi
 
     XtGrabPointer(pane,True,ButtonPressMask|ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,XCreateFontCursor(XtDisplay(pane),XC_hand1),CurrentTime);
    }
- else if((int)clientData==3)    /* Run */
+ else if((int)clientData==3)    /* Delete */
+   {
+    AddRemoveOutput(function_output);
+   }
+ else if((int)clientData==4)    /* Run */
    {
     if(fork()==0)
       {
