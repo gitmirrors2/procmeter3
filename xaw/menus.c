@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.4 1999-02-07 14:20:27 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.5 1999-02-09 19:56:18 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.1.
 
@@ -16,6 +16,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -58,6 +59,7 @@ static void AtomPropertiesDialogCloseCallback(Widget w,XtPointer va,XEvent* e,Bo
 
 static Widget module_menu;
 static Widget functions_menu,properties_dialog;
+static Widget sme_run;
 static Widget prop_modname,prop_moddesc,prop_outname,prop_outdesc,prop_type,prop_interval,prop_scale;
 static Boolean properties_popped_up=False,doing_move=False;
 
@@ -66,6 +68,8 @@ XtActionsRec MenuActions[]={{"ModuleMenuStart",ModuleMenuStart},
                             {"OutputMenuStart",OutputMenuStart},
                             {"FunctionsMenuStart",FunctionsMenuStart}};
 
+/*+ The output that was used for the Functions menu. +*/
+static Output function_output;
 
 /*++++++++++++++++++++++++++++++++++++++
   Initialise the menus.
@@ -76,7 +80,7 @@ XtActionsRec MenuActions[]={{"ModuleMenuStart",ModuleMenuStart},
 void CreateMenus(Widget parent)
 {
  Widget menulabel1,smeline1;
- Widget menulabel2,smeline2,sme_prop,sme_up,sme_down;
+ Widget menulabel2,smeline2,sme_prop,sme_above,sme_below;
  Widget prop_form,prop_modlabel,prop_outlabel,prop_typlabel,prop_intlabel,prop_scllabel,prop_done;
  Dimension width,height;
  char *string;
@@ -115,19 +119,26 @@ void CreateMenus(Widget parent)
 
  XtAddCallback(sme_prop,XtNcallback,SelectFunctionsMenuCallback,0);
 
- sme_up=XtVaCreateManagedWidget("AboveOrLeft",smeBSBObjectClass,functions_menu,
-                                XtNlabel,vertical?"Move To Above":"Move To Left Of",
-                                XtNheight,10,
-                                NULL);
+ sme_above=XtVaCreateManagedWidget("AboveOrLeft",smeBSBObjectClass,functions_menu,
+                                   XtNlabel,vertical?"Move To Above":"Move To Left Of",
+                                   XtNheight,10,
+                                   NULL);
 
- XtAddCallback(sme_up,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)1);
+ XtAddCallback(sme_above,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)1);
 
- sme_down=XtVaCreateManagedWidget("BelowOrRight",smeBSBObjectClass,functions_menu,
-                                  XtNlabel,vertical?"Move To Below":"Move To Right Of",
-                                  XtNheight,10,
-                                  NULL);
+ sme_below=XtVaCreateManagedWidget("BelowOrRight",smeBSBObjectClass,functions_menu,
+                                   XtNlabel,vertical?"Move To Below":"Move To Right Of",
+                                   XtNheight,10,
+                                   NULL);
 
- XtAddCallback(sme_down,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)2);
+ XtAddCallback(sme_below,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)2);
+
+ sme_run=XtVaCreateManagedWidget("Run",smeBSBObjectClass,functions_menu,
+                                 XtNlabel,"Run",
+                                 XtNheight,10,
+                                 NULL);
+
+ XtAddCallback(sme_run,XtNcallback,SelectFunctionsMenuCallback,(XtPointer)3);
 
  /* The properties_dialog */
 
@@ -142,13 +153,13 @@ void CreateMenus(Widget parent)
  prop_modlabel=XtVaCreateManagedWidget("ModuleLabel",labelWidgetClass,prop_form,
                                        XtNlabel,"Module:",
                                        XtNwidth,100,XtNresizable,True,
-                                       XtNleft,XawChainLeft,XtNright,XawRubber,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                       XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                        XtNborderWidth,0,
                                        NULL);
  prop_modname=XtVaCreateManagedWidget("ModuleName",labelWidgetClass,prop_form,
                                       XtNlabel,"NNNNNNNNNNNNNNN",XtNjustify,XtJustifyLeft,
                                       XtNwidth,100,XtNresizable,True,
-                                      XtNleft,XawRubber,XtNright,XawChainRight,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                      XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                       XtNfromHoriz,prop_modlabel,
                                       NULL);
 
@@ -220,7 +231,7 @@ void CreateMenus(Widget parent)
 
  prop_done=XtVaCreateManagedWidget("Done",commandWidgetClass,prop_form,
                                    XtNwidth,200,XtNresizable,False,
-                                   XtNleft,XawChainLeft,XtNright,XawChainRight,XtNtop,XawChainTop,XtNbottom,XawChainTop,
+                                   XtNleft,XawChainLeft,XtNright,XawChainLeft,XtNtop,XawChainTop,XtNbottom,XawChainTop,
                                    XtNfromVert,prop_scllabel,
                                    NULL);
  XtAddCallback(prop_done,XtNcallback,DonePropertiesDialogCallback,0);
@@ -235,8 +246,9 @@ void CreateMenus(Widget parent)
     XtVaSetValues(smeline1,XtNforeground,*(Pixel*)resource,NULL);
     XtVaSetValues(smeline2,XtNforeground,*(Pixel*)resource,NULL);
     XtVaSetValues(sme_prop,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(sme_up,XtNforeground,*(Pixel*)resource,NULL);
-    XtVaSetValues(sme_down,XtNforeground,*(Pixel*)resource,NULL);
+    XtVaSetValues(sme_above,XtNforeground,*(Pixel*)resource,NULL);
+    XtVaSetValues(sme_below,XtNforeground,*(Pixel*)resource,NULL);
+    XtVaSetValues(sme_run,XtNforeground,*(Pixel*)resource,NULL);
     XtVaSetValues(properties_dialog,XtNforeground,*(Pixel*)resource,NULL);
     XtVaSetValues(prop_form,XtNforeground,*(Pixel*)resource,NULL);
     XtVaSetValues(prop_modlabel,XtNforeground,*(Pixel*)resource,NULL);
@@ -282,8 +294,9 @@ void CreateMenus(Widget parent)
     XtVaSetValues(menulabel1,XtNfont,resource,NULL);
     XtVaSetValues(menulabel2,XtNfont,resource,NULL);
     XtVaSetValues(sme_prop,XtNfont,resource,NULL);
-    XtVaSetValues(sme_up,XtNfont,resource,NULL);
-    XtVaSetValues(sme_down,XtNfont,resource,NULL);
+    XtVaSetValues(sme_above,XtNfont,resource,NULL);
+    XtVaSetValues(sme_below,XtNfont,resource,NULL);
+    XtVaSetValues(sme_run,XtNfont,resource,NULL);
     XtVaSetValues(prop_form,XtNfont,resource,NULL);
     XtVaSetValues(prop_modlabel,XtNfont,resource,NULL);
     XtVaSetValues(prop_modname,XtNfont,resource,NULL);
@@ -526,7 +539,7 @@ static void SelectOutputMenuCallback(Widget widget,XtPointer clientData,XtPointe
 
 static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPointer callData)
 {
- if((int)clientData==0)
+ if((int)clientData==0)         /* Properties */
    {
     Window root_return, child_return;
     int root_x_return, root_y_return;
@@ -543,11 +556,19 @@ static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPoi
     XtPopup(properties_dialog,XtGrabNone);
     properties_popped_up=True;
    }
- else if((int)clientData==1 || (int)clientData==2)
+ else if((int)clientData==1 || (int)clientData==2) /* Above / Below */
    {
     doing_move=(int)clientData;
 
     XtGrabPointer(pane,True,ButtonPressMask|ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,XCreateFontCursor(XtDisplay(pane),XC_hand1),CurrentTime);
+   }
+ else if((int)clientData==3)    /* Run */
+   {
+    if(fork()==0)
+      {
+       execl("/bin/sh","/bin/sh","-c",function_output->run,NULL);
+       exit(1);
+      }
    }
 }
 
@@ -657,10 +678,10 @@ static void ModuleMenuEvent(Widget w,XEvent *event,String *params,Cardinal *num_
        XtVaGetValues(lastmenu,XtNheight,&height,NULL);
 
        root_y-=5;
-       if((DisplayHeight(display,DefaultScreen(display))-height)<root_y)
-          root_y=DisplayHeight(display,DefaultScreen(display))-height;
-       if(root_y<0)
-          root_y=0;
+       if((DisplayHeight(display,DefaultScreen(display))-height-2)<root_y)
+          root_y=DisplayHeight(display,DefaultScreen(display))-height-2;
+       if(root_y<2)
+          root_y=2;
 
        if(root_x<(DisplayWidth(display,DefaultScreen(display))/2))
          {
@@ -672,6 +693,7 @@ static void ModuleMenuEvent(Widget w,XEvent *event,String *params,Cardinal *num_
           XtVaGetValues(lastmenu,XtNwidth,&width,NULL);
           XtVaSetValues(lastmenu,XtNx,root_x-width,XtNy,root_y,NULL);
          }
+
        XtPopup(lastmenu,XtGrabNone);
       }
 }
@@ -717,28 +739,7 @@ static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *n
 {
  static Output *outputp=NULL;
  static Module *modulep=NULL;
- char string[16];
-
- if(doing_move)
-   {
-    Module *newmodulep;
-    Output *newoutputp;
-
-    for(newmodulep=Modules;*newmodulep;newmodulep++)
-       if(!strcmp((*newmodulep)->module->name,params[0]))
-         {
-          for(newoutputp=(*newmodulep)->outputs;*newoutputp;newoutputp++)
-             if(w==(*newoutputp)->output_widget)
-                break;
-          break;
-         }
-
-    XtUngrabPointer(pane,CurrentTime);
-
-    MoveOutput(*outputp,*newoutputp,doing_move);
-    doing_move=0;
-    return;
-   }
+ char string[24];
 
  for(modulep=Modules;*modulep;modulep++)
     if(!strcmp((*modulep)->module->name,params[0]))
@@ -749,8 +750,50 @@ static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *n
        break;
       }
 
+ if(doing_move)
+   {
+    XtUngrabPointer(pane,CurrentTime);
+
+    MoveOutput(function_output,*outputp,doing_move);
+    doing_move=0;
+    return;
+   }
+
  if(!*modulep || !*outputp)
     return;
+
+ function_output=*outputp;
+
+ if((*outputp)->run)
+   {
+    char *r=(*outputp)->run;
+
+    if(!strncmp(r,"xterm -e ",9) && r[9])
+       r+=9;
+    if(!strncmp(r,"sh -c ",6) && r[6])
+       r+=6;
+    if(*r=='\'')
+       r++;
+
+    strncpy(string,"Run '",16);
+    strncpy(string+5,r,8);
+    if(string[strlen(string)-1]=='\'')
+       string[strlen(string)-1]=0;
+    if(strlen(r)>16)
+       strcat(string," ...'");
+    else
+       strcat(string,"'");
+ 
+    XtVaSetValues(sme_run,XtNlabel,string,NULL);
+    XtSetSensitive(sme_run,True);
+   }
+ else
+   {
+    XtVaSetValues(sme_run,XtNlabel,"Run",NULL);
+    XtSetSensitive(sme_run,False);
+   }
+
+ /* Set up the properties window. */
 
  XtVaSetValues(prop_modname,XtNlabel,(*modulep)->module->name,NULL);
  XtVaSetValues(prop_moddesc,XtNstring,(*modulep)->module->description,NULL);
@@ -812,12 +855,18 @@ static void PopupAMenu(Widget menu,Widget w,XEvent *event)
  XtTranslateCoords(w,event->xbutton.x,event->xbutton.y,&root_x,&root_y);
 
  root_y-=5;
- if((DisplayHeight(display,DefaultScreen(display))-height)<root_y)
-    root_y=DisplayHeight(display,DefaultScreen(display))-height;
- if(root_y<0)
-    root_y=0;
+ if((DisplayHeight(display,DefaultScreen(display))-height-2)<root_y)
+    root_y=DisplayHeight(display,DefaultScreen(display))-height-2;
+ if(root_y<2)
+    root_y=2;
 
- XtVaSetValues(menu,XtNx,root_x-width/2,XtNy,root_y,NULL);
+ root_x-=width/2;
+ if((DisplayWidth(display,DefaultScreen(display))-width-2)<root_x)
+    root_x=DisplayWidth(display,DefaultScreen(display))-width-2;
+ if(root_x<2)
+    root_x=2;
+
+ XtVaSetValues(menu,XtNx,root_x,XtNy,root_y,NULL);
  XtPopupSpringLoaded(menu);
  XtGrabPointer(menu,True,ButtonReleaseMask|ButtonPressMask,GrabModeAsync,GrabModeAsync,None,None,CurrentTime);
 }
