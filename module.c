@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.4 1999-02-13 11:38:56 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/module.c,v 1.5 1999-09-24 18:02:57 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Module handling functions.
   ******************/ /******************
@@ -39,7 +39,8 @@ void LoadAllModules(void)
 {
  DIR *dir;
  struct dirent* ent;
- char pwd[257],lib[257],*libp;
+ struct stat buf;
+ char lib[PATH_MAX+1],*libp;
  char *library;
 
  Modules=(Module*)malloc(16*sizeof(Module));
@@ -50,40 +51,39 @@ void LoadAllModules(void)
  if(!(library=GetProcMeterRC("library","path")))
     library=MOD_PATH;
 
- getcwd(pwd,256);
-
- if(chdir(library))
-   {
-    fprintf(stderr,"Cannot change to library directory '%s'\n",library);
-    exit(1);
-   }
-
- getcwd(lib,256);
-
+ strcpy(lib,library);
  libp=lib+strlen(lib)-1;
  if(*libp!='/')
     *++libp='/';
  *++libp=0;
 
- dir=opendir(".");
+ if(stat(library,&buf) || !S_ISDIR(buf.st_mode))
+   {
+    fprintf(stderr,"The library directory '%s' does not exist or is not a directory.\n",library);
+    exit(1);
+   }
+
+ dir=opendir(library);
  if(!dir)
-    return;
+   {
+    fprintf(stderr,"The library directory '%s' cannot be opened.\n",library);
+    exit(1);
+   }
 
  ent=readdir(dir);  /* skip .  */
- if(!ent)
-   {closedir(dir);return;}
- ent=readdir(dir);  /* skip .. */
+ if(ent)
+   {
+    ent=readdir(dir);  /* skip .. */
 
- while((ent=readdir(dir)))
-    if(!strcmp(ent->d_name+strlen(ent->d_name)-3,".so"))
-      {
-       strcpy(libp,ent->d_name);
-       LoadModule(lib);
-      }
+    while((ent=readdir(dir)))
+       if(!strcmp(ent->d_name+strlen(ent->d_name)-3,".so"))
+         {
+          strcpy(libp,ent->d_name);
+          LoadModule(lib);
+         }
+   }
 
  closedir(dir);
-
- chdir(pwd);
 
  /* Load the other modules. */
 
@@ -91,7 +91,7 @@ void LoadAllModules(void)
    {
     char *l=library;
 
-    strcpy(lib,pwd);
+    getcwd(lib,PATH_MAX);
 
     libp=lib+strlen(lib)-1;
     if(*libp!='/')
