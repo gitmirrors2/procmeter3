@@ -1,4 +1,4 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.4 1999-02-07 16:12:55 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.5 1999-02-13 11:34:37 amb Exp $
 #
 # ProcMeter - A system monitoring program for Linux - Version 3.1.
 #
@@ -24,7 +24,7 @@ LIB_PATH=$(INSTDIR)/lib/X11/ProcMeter3
 MOD_PATH=$(LIB_PATH)/modules
 
 # RC_PATH - file the procmeterrc is stored in
-RC_PATH=$(LIB_PATH)/.procmeterrc
+RC_PATH=$(LIB_PATH)/procmeterrc
 
 CC=gcc
 LD=gcc
@@ -42,7 +42,7 @@ WOBJ=widgets/PMGeneric.o widgets/PMGraph.o widgets/PMText.o
 
 ########
 
-all : procmeter.modules procmeter.widgets procmeter3 .procmeterrc.install
+all : procmeter.modules procmeter.widgets procmeter3 procmeterrc.install
 
 ########
 
@@ -79,14 +79,16 @@ procmeter.widgets :
 
 ########
 
-.procmeterrc.install: .procmeterrc Makefile
-	sed -e "s%path=modules%path=$(MOD_PATH)%" < .procmeterrc > .procmeterrc.install
+.PHONY: procmeterrc
+
+procmeterrc.install: procmeterrc Makefile
+	sed -e "s%path=modules%path=$(MOD_PATH)%" < procmeterrc > procmeterrc.install
 
 ########
 
 
 clean :
-	-rm -f *.o *~ core .procmeterrc.install
+	-rm -f *.o *~ core procmeterrc.install
 	$(MAKE) -C modules clean
 	$(MAKE) -C widgets clean
 
@@ -102,7 +104,9 @@ install : all
 	install -d $(INSTDIR)/man/man5
 	install -m 644 procmeter.1 $(INSTDIR)/man/man1/procmeter3.1
 	install -m 644 procmeterrc.5 $(INSTDIR)/man/man5/procmeterrc.5
-	install -m 644 .procmeterrc.install $(RC_PATH)
+	[ ! -f $(LIB_PATH)/.procmeterrc ] || mv $(LIB_PATH)/.procmeterrc $(LIB_PATH)/procmeterrc
+	[ ! -f $(RC_PATH) ] || mv $(RC_PATH) $(RC_PATH).bak
+	install -m 644 procmeterrc.install $(RC_PATH)
 	install -d $(LIB_PATH)/include
 	install -m 644 procmeter.h $(LIB_PATH)/include
 
