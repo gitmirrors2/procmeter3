@@ -1,4 +1,4 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.9 1999-09-30 17:46:01 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.10 1999-10-05 17:55:44 amb Exp $
 .\"
 .\"  ProcMeter - A system monitoring program for Linux - Version 3.1b.
 .\"
@@ -109,7 +109,9 @@ line.  (yes or no, true or false, 0 or 1.)
 .TP
 .BR grid-min=...
 The minimum number of grid lines to display on a graph or bar chart.  (An
-integer.)
+integer.)  This is particularly important with the bar chart because with this
+set too low the bar will always be the same length on screen and the number of
+grid lines will change with the data.
 .TP
 .BR grid-max=...
 The maximum number of grid lines to display on a graph or bar chart.  (An
