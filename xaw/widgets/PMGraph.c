@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.1 1998-09-19 15:28:51 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.2 1998-09-26 09:47:50 amb Exp $
 
   ProcMeter Graph Widget Source file (for ProcMeter 3.0).
   ******************/ /******************
@@ -372,9 +372,10 @@ static void GraphUpdate(ProcMeterGraphWidget w,Boolean scroll)
       {
        ProcMeterGenericUpdate((ProcMeterGenericWidget)w);
 
-       XDrawString(XtDisplay(w),XtWindow(w),w->procmeter_generic.label_gc,
-                   w->procmeter_graph.grid_units_x,w->procmeter_generic.label_y,
-                   w->procmeter_graph.grid_units,(int)strlen(w->procmeter_graph.grid_units));
+       if(w->procmeter_generic.label_pos!=ProcMeterLabelNone)
+          XDrawString(XtDisplay(w),XtWindow(w),w->procmeter_generic.label_gc,
+                      w->procmeter_graph.grid_units_x,w->procmeter_generic.label_y,
+                      w->procmeter_graph.grid_units,(int)strlen(w->procmeter_graph.grid_units));
 
        for(i=0;i<w->procmeter_graph.data_num;i++)
          {
