@@ -1,9 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/loadavg.c,v 1.1 1998-09-19 15:25:14 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/loadavg.c,v 1.2 1998-09-22 18:45:32 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
-  Module template source file.
+  Load average and number of processes module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 

@@ -1,9 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.1 1998-09-19 15:25:34 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.2 1998-09-22 18:45:32 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
-  Module template source file.
+  Network devices traffic source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
@@ -214,18 +214,22 @@ static void add_device(char *dev)
        scale=50,nstats=3;
 
  outputs=(ProcMeterOutput**)realloc((void*)outputs,(ndevices+nstats+1)*sizeof(ProcMeterOutput*));
- device=(char **)realloc((void*)device,(ndevices+nstats+1)*sizeof(char*));
+ device=(char**)realloc((void*)device,(ndevices+nstats+1)*sizeof(char*));
+
  for(i=0;nstats;i++,nstats--)
    {
     outputs[ndevices]=(ProcMeterOutput*)malloc(sizeof(ProcMeterOutput));
     device[ndevices]=(char*)malloc(strlen(dev)+1);
-    strcpy(device[ndevices],dev);
+
     *outputs[ndevices]=_outputs[i];
     sprintf(outputs[ndevices]->name,_outputs[i].name,dev);
     outputs[ndevices]->description=(char*)malloc(strlen(dev)+strlen(_outputs[i].description)+4);
     sprintf(outputs[ndevices]->description,_outputs[i].description,dev);
     outputs[ndevices]->graph_scale=scale;
     sprintf(outputs[ndevices]->graph_units,_outputs[i].graph_units,scale);
+
+    strcpy(device[ndevices],dev);
+
     ndevices++;
    }
 
@@ -335,5 +339,9 @@ void Unload(void)
  if(previous)
     free(previous);
  if(device)
+   {
+    for(i=0;i<ndevices;i++)
+       free(device[i]);
     free(device);
+   }
 }

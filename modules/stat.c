@@ -1,9 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.1 1998-09-19 15:25:57 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.2 1998-09-22 18:45:34 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
-  Module template source file.
+  Low level system statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
