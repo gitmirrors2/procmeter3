@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/apm.c,v 1.3 2002-06-04 13:53:39 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/apm.c,v 1.4 2002-11-03 09:18:32 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.3c.
 
   Advanced Power Management module source file.
   ******************/ /******************
@@ -117,7 +117,7 @@ ProcMeterOutput **Initialise(char *options)
        long status,life,remain;
        char remainunits[8];
 
-       if(sscanf(line,"%*f %*f %*x %*x %*x %lx %ld%% %ld %7s",&status,&life,&remain,remainunits)==4)
+       if(sscanf(line,"%*s %*f %*x %*x %*x %lx %ld%% %ld %7s",&status,&life,&remain,remainunits)==4)
          {
           outputs[0]=&batt_status_output;
           outputs[1]=&batt_life_output;
@@ -160,7 +160,7 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    fscanf(f,"%*f %*f %*x %*x %*x %lx %ld%% %ld %7s",&status,&life,&remain,remainunits);
+    fscanf(f,"%*s %*f %*x %*x %*x %lx %ld%% %ld %7s",&status,&life,&remain,remainunits);
 
     fclose(f);
 
