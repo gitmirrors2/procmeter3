@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.8 1999-12-04 16:57:07 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.9 1999-12-06 20:13:47 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -107,9 +107,9 @@ void UnloadModule(Module module);
 
 /* In procmeterrc.c */
 
-void LoadProcMeterRC(void);
-char *GetProcMeterRC(char *section,char *item);
-char *GetProcMeterRC2(char *module,char *output,char *item);
+void LoadProcMeterRC(int *argc,char **argv);
+char *GetProcMeterRC(char *section,char *parameter);
+char *GetProcMeterRC2(char *module,char *output,char *parameter);
 void FreeProcMeterRC(void);
 
 /* In xwindow.c */

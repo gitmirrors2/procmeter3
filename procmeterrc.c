@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.2 1999-12-04 16:56:51 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.3 1999-12-06 20:13:47 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -50,35 +50,54 @@ static char *fgets_realloc(char *buffer,FILE *file);
 
 /*++++++++++++++++++++++++++++++++++++++
   Load in the configuration file.
+
+  int *argc The number of command line arguments.
+
+  char **argv The command line arguments.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void LoadProcMeterRC(void)
+void LoadProcMeterRC(int *argc,char **argv)
 {
- FILE *rc=NULL;
+ char *rcpath=NULL;
+ FILE *rc;
  struct stat buf;
  char *home,*line=NULL;
  Section *next_section=&FirstSection;
  Parameter *next_parameter=NULL,prev_parameter=NULL;
- int continued=0;
+ int continued=0,i;
 
- if(!stat(".procmeterrc",&buf))
-    rc=fopen(".procmeterrc","r");
- else if((home=getenv("HOME")))
+ /* Find the .procmeterrc file. */
+
+ for(i=1;i<*argc;i++)
+    if(!strncmp(argv[i],"--rc=",5))
+      {
+       rcpath=argv[i]+5;
+       for((*argc)--;i<*argc;i++)
+          argv[i]=argv[i+1];
+      }
+
+ if(!rcpath)
+    if(!stat(".procmeterrc",&buf))
+       rcpath=".procmeterrc";
+    else if((home=getenv("HOME")))
+      {
+       rcpath=(char*)malloc(strlen(home)+16);
+
+       strcpy(rcpath,home);
+       strcat(rcpath,"/.procmeterrc");
+
+       if(stat(rcpath,&buf))
+         {free(rcpath);rcpath=NULL;}
+      }
+ if(!rcpath)
+    rcpath=RC_PATH;
+
+ /* Read the .procmeterrc file. */
+
+ if(rcpath)
    {
-    char *procrc=(char*)malloc(strlen(home)+16);
+    rc=fopen(rcpath,"r");
 
-    strcpy(procrc,home);
-    strcat(procrc,"/.procmeterrc");
-
-    if(!stat(procrc,&buf))
-       rc=fopen(procrc,"r");
-
-    free(procrc);
-   }
- if(!rc)
-    rc=fopen(RC_PATH,"r");
-
- if(rc)
     while((line=fgets_realloc(line,rc)))
       {
        char *l=line,*r=line+strlen(line)-1;
@@ -151,6 +170,96 @@ void LoadProcMeterRC(void)
           next_parameter=&(*next_parameter)->next;
          }
       }
+   }
+
+ /* Add in extra command line options. */
+
+ for(i=1;i<*argc;i++)
+    if(!strncmp(argv[i],"--",2))
+      {
+       int j;
+       char *equal=strchr(argv[i],'='),*dot;
+
+       if(equal)
+         {
+          char *section=argv[i]+2,*parameter,*value=equal+1;
+          Section this_section=FirstSection;
+
+          *equal=0;
+          dot=strchr(section,'.');
+
+          if(dot)
+            {
+             char *dot2=strchr(dot+1,'.');
+
+             if(dot2) /* 2 dots => (module.output).parameter */
+               {
+                parameter=dot2+1;
+                *dot2=0;
+               }
+             else     /* 1 dot => section.parameter */
+               {
+                parameter=dot+1;
+                *dot=0;
+               }
+
+             while(this_section)
+               {
+                if(!strcasecmp(section,this_section->name))
+                  {
+                   Parameter this_parameter=this_section->first;
+
+                   while(this_parameter)
+                     {
+                      if(!strcasecmp(parameter,this_parameter->name))
+                        {
+                         strcpy(this_parameter->value=(char*)realloc((void*)this_parameter->value,strlen(value)+1),value);
+                         break;
+                        }
+                      this_parameter=this_parameter->next;
+                     }
+
+                   if(!this_parameter)
+                     {
+                      Parameter new_parameter=(Parameter)malloc(sizeof(struct _Parameter));
+                      strcpy(new_parameter->name=(char*)malloc(strlen(parameter)+1),parameter);
+                      if(value)
+                         strcpy(new_parameter->value=(char*)malloc(strlen(value)+1),value);
+                      else
+                         new_parameter->value=NULL;
+
+                      new_parameter->next=this_section->first;
+                      this_section->first=new_parameter;
+                     }
+
+                   break;
+                  }
+
+                this_section=this_section->next;
+               }
+
+             if(!this_section)
+               {
+                Section new_section=(Section)malloc(sizeof(struct _Section));
+                strcpy(new_section->name=(char*)malloc(strlen(section)+1),section);
+
+                new_section->first=(Parameter)malloc(sizeof(struct _Parameter));
+                strcpy(new_section->first->name=(char*)malloc(strlen(parameter)+1),parameter);
+                if(value)
+                   strcpy(new_section->first->value=(char*)malloc(strlen(value)+1),value);
+                else
+                   new_section->first->value=NULL;
+                new_section->first->next=NULL;
+
+                new_section->next=FirstSection;
+                FirstSection=new_section;
+               }
+            }
+         }
+
+       for(j=i,i--,(*argc)--;j<*argc;j++)
+          argv[j]=argv[j+1];
+      }
 }
 
 
@@ -161,22 +270,22 @@ void LoadProcMeterRC(void)
 
   char *section The section of the config file.
 
-  char *item The item in the section of the config file.
+  char *parameter The parameter in the section of the config file.
   ++++++++++++++++++++++++++++++++++++++*/
 
-char *GetProcMeterRC(char *section,char *item)
+char *GetProcMeterRC(char *section,char *parameter)
 {
  Section this_section=FirstSection;
 
  while(this_section)
    {
-    if(!strcmp(section,this_section->name))
+    if(!strcasecmp(section,this_section->name))
       {
        Parameter this_parameter=this_section->first;
 
        while(this_parameter)
          {
-          if(!strcmp(item,this_parameter->name))
+          if(!strcasecmp(parameter,this_parameter->name))
              return(this_parameter->value);
           this_parameter=this_parameter->next;
          }
@@ -198,10 +307,10 @@ char *GetProcMeterRC(char *section,char *item)
 
   char *output The output name (part of section name).
 
-  char *item The item to search for.
+  char *parameter The parameter to search for.
   ++++++++++++++++++++++++++++++++++++++*/
 
-char *GetProcMeterRC2(char *module,char *output,char *item)
+char *GetProcMeterRC2(char *module,char *output,char *parameter)
 {
  ProcMeterModule m;
  ProcMeterOutput o;
@@ -211,7 +320,7 @@ char *GetProcMeterRC2(char *module,char *output,char *item)
  strcat(section,".");
  strcat(section,output);
 
- return(GetProcMeterRC(section,item));
+ return(GetProcMeterRC(section,parameter));
 }
 
 

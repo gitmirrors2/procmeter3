@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.6 1999-12-04 16:56:45 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.7 1999-12-06 20:13:46 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -75,11 +75,15 @@ int main(int argc,char **argv)
 
  for(i=1;i<argc;i++)
     if(!strcmp(argv[i],"-h") || !strcmp(argv[i],"--help"))
+      {
+       for(argc--;i<argc;i++)
+          argv[i]=argv[i+1];
        help=1;
+      }
 
  /* Initialise things */
 
- LoadProcMeterRC();
+ LoadProcMeterRC(&argc,argv);
 
  if(!help)
     StartX(&argc,argv);

@@ -1,4 +1,4 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.11 1999-11-30 19:48:28 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.12 1999-12-06 20:13:47 amb Exp $
 .\"
 .\"  ProcMeter - A system monitoring program for Linux - Version 3.2.
 .\"
@@ -11,7 +11,7 @@
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETERRC 5 "October 5, 1999"
+.TH PROCMETERRC 5 "December 6, 1999"
 
 .SH NAME
 
@@ -40,10 +40,10 @@ The format of the
 file is a number of sections with the section names marked in '[]'.  As well as
 the fixed sections (described below) there is a section for each module that is
 named using the name that the module reports itself to be.  There are then
-further sections for each of the possible outputs of each module.  To find out
-the modules that are available run 'procmeter3 -h'.  Lines beginning with the
-characters ';' or '#' are comments and continuation using the '\\' character at
-the end of a line is allowed.
+further sections for each of the possible outputs of each module.  The names of
+the sections and parameters are not case sensitive although the values that they
+are given may be.  Lines beginning with the characters ';' or '#' are comments
+and continuation using the '\\' character at the end of a line is allowed.
 .LP
 Below is listed the resource values and the sections of the
 .B .procmeterrc
