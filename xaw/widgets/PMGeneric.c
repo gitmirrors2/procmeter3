@@ -1,11 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGeneric.c,v 1.1 1998-09-19 15:28:19 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGeneric.c,v 1.2 2000-01-23 13:47:16 amb Exp $
 
-  ProcMeter Generic Widget Source file (for ProcMeter 3.0).
+  ProcMeter Generic Widget Source file (for ProcMeter 3.2a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98 Andrew M. Bishop
+  This file Copyright 1996,98,2000 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -125,6 +125,9 @@ static void Initialize(ProcMeterGenericWidget request,ProcMeterGenericWidget new
     new->procmeter_generic.label_pos=ProcMeterLabelNone;
 
  new->procmeter_generic.label_string=XtNewString(request->procmeter_generic.label_string);
+
+ if(!new->procmeter_generic.label_font)
+    new->procmeter_generic.label_font=XLoadQueryFont(XtDisplay(new),"-*-*-*-r-normal-sans-8-*-*-*-p-*-*-*");
 
  values.font=new->procmeter_generic.label_font->fid;
  values.foreground=new->procmeter_generic.label_pixel;
