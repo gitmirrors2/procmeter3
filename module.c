@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.2 1998-09-26 09:35:27 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/module.c,v 1.3 1999-02-09 18:35:30 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.1.
 
   Module handling functions.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -292,6 +292,9 @@ Module LoadModule(char* filename)
           new->outputs[noutputs]->output=output;
           new->outputs[noutputs]->type=t;
           new->outputs[noutputs]->first=0;
+          if(!(new->outputs[noutputs]->run=GetProcMeterRC2(new->module->name,output->name,"run")))
+             new->outputs[noutputs]->run=GetProcMeterRC(new->module->name,"run");
+
           noutputs++;
          }
        t<<=1;

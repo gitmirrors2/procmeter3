@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.2 1998-10-24 13:10:15 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.3 1999-02-09 18:35:30 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.1.
 
   Main program.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 #include "procmeter.h"
 #include "procmeterp.h"
@@ -28,6 +29,7 @@
 
 static char *get_substring(char **start,int length);
 static void sigexit(int signum);
+static void sigchild(int signum);
 
 /*+ The signal to tell us to exit. +*/
 int quit=0;
@@ -50,6 +52,7 @@ int main(int argc,char **argv)
  sigaddset(&action.sa_mask, SIGINT);           /* Block all of them */
  sigaddset(&action.sa_mask, SIGQUIT);
  sigaddset(&action.sa_mask, SIGTERM);
+ sigaddset(&action.sa_mask, SIGCHLD);
  action.sa_flags = 0;
  if(sigaction(SIGINT, &action, NULL) != 0)
     fprintf(stderr,"ProcMeter: Cannot install SIGINT handler.\n");
@@ -57,6 +60,16 @@ int main(int argc,char **argv)
     fprintf(stderr,"ProcMeter: Cannot install SIGQUIT handler.\n");
  if(sigaction(SIGTERM, &action, NULL) != 0)
     fprintf(stderr,"ProcMeter: Cannot install SIGTERM handler.\n");
+
+ /* SIGCHILD */
+ action.sa_handler = sigchild;
+ sigemptyset(&action.sa_mask);
+ sigaddset(&action.sa_mask, SIGINT);           /* Block all of them */
+ sigaddset(&action.sa_mask, SIGQUIT);
+ sigaddset(&action.sa_mask, SIGTERM);
+ action.sa_flags = 0;
+ if(sigaction(SIGCHLD, &action, NULL) != 0)
+    fprintf(stderr,"ProcMeter: Cannot install SIGCHLD handler.\n");
 
  /* Parse the command line. */
 
@@ -224,4 +237,20 @@ static char *get_substring(char **start,int length)
 static void sigexit(int signum)
 {
  quit=1;
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  The signal handler for the child processes terminating.
+
+  int signum The signal number.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+static void sigchild(int signum)
+{
+ pid_t pid;
+ int status;
+
+ while((pid=waitpid(-1,&status,WNOHANG))>0)
+    ;
 }
