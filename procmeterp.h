@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.7 1999-11-30 19:48:28 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.8 1999-12-04 16:57:07 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Global private header file.
   ******************/ /******************
@@ -110,6 +110,7 @@ void UnloadModule(Module module);
 void LoadProcMeterRC(void);
 char *GetProcMeterRC(char *section,char *item);
 char *GetProcMeterRC2(char *module,char *output,char *item);
+void FreeProcMeterRC(void);
 
 /* In xwindow.c */
 

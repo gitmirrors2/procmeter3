@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.5 1999-09-29 19:00:08 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.6 1999-12-04 16:56:45 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1b.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Main program.
   ******************/ /******************
@@ -176,6 +176,8 @@ int main(int argc,char **argv)
  /* Tidy up and exit. */
 
  UnloadAllModules();
+
+ FreeProcMeterRC();
 
  if(!help)
     StopX();

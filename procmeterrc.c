@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.1 1998-09-19 15:21:15 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.2 1999-12-04 16:56:51 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Handle the .procmeterrc file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -167,13 +167,13 @@ void LoadProcMeterRC(void)
 char *GetProcMeterRC(char *section,char *item)
 {
  Section this_section=FirstSection;
- Parameter this_parameter=NULL;
 
  while(this_section)
    {
     if(!strcmp(section,this_section->name))
       {
-       this_parameter=this_section->first;
+       Parameter this_parameter=this_section->first;
+
        while(this_parameter)
          {
           if(!strcmp(item,this_parameter->name))
@@ -181,6 +181,7 @@ char *GetProcMeterRC(char *section,char *item)
           this_parameter=this_parameter->next;
          }
       }
+
     this_section=this_section->next;
    }
 
@@ -211,6 +212,40 @@ char *GetProcMeterRC2(char *module,char *output,char *item)
  strcat(section,output);
 
  return(GetProcMeterRC(section,item));
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Free up the memory that is used in this module.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+void FreeProcMeterRC(void)
+{
+ Section this_section=FirstSection;
+
+ while(this_section)
+   {
+    Section last_section=this_section;
+    Parameter this_parameter=this_section->first;
+
+    while(this_parameter)
+      {
+       Parameter last_parameter=this_parameter;
+
+       if(this_parameter->name)
+          free(this_parameter->name);
+       if(this_parameter->value)
+          free(this_parameter->value);
+       this_parameter=this_parameter->next;
+
+       free(last_parameter);
+      }
+
+    this_section=this_section->next;
+
+    free(last_section->name);
+    free(last_section);
+   }
 }
 
 
