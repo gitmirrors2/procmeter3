@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.3 2002-01-20 16:40:45 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.4 2002-01-26 12:13:18 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -262,17 +262,20 @@ int Update(time_t now,ProcMeterOutput *output)
     while(fgets(line,256,f))
       {
        int i;
-       int link=0, level=0, noise=0;
+       signed int link=0;
+       int level=0, noise=0;
        char *dev=line;
 
        for(;*dev==' ';dev++) ;
        for(i=strlen(line);i>6 && line[i]!=':';i--); line[i++]=0;
        sscanf(&line[i],proc_net_wireless_format,&link,&level,&noise);
 
-       /* I have observed bogus 255 and 254 values for link with my avaya card
-	* when it should have been 0. Maybe this is really a kernel bug? */
-       if (link >= 254)
-          link = 0;
+       /* The kernel (2.4.17) misreports negative link values due to
+	* underflow, so ignore what it reports for now, and calculate
+	* link from level and noise. */
+       link = level - noise;
+       if (link < 0)
+	       link = 0;
        
        for(j=0;outputs[j];j++)
           if(!strcmp(device[j],dev))
