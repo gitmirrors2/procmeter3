@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/log/window.c,v 1.2 2002-11-30 19:20:07 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/log/window.c,v 1.3 2003-04-12 13:05:41 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3c.
 
@@ -237,6 +237,8 @@ static void output_labels(void)
    }
 
  printf("\n");
+
+ fflush(stdout);
 }
 
 
@@ -265,4 +267,6 @@ static void output_data(time_t now)
    }
 
  printf("\n");
+
+ fflush(stdout);
 }
