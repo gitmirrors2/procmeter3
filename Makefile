@@ -1,6 +1,6 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.18 2002-06-30 13:59:08 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.19 2002-08-24 16:01:24 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.3b.
+# ProcMeter - A system monitoring program for Linux - Version 3.3c.
 #
 # Makefile.
 #
@@ -16,6 +16,9 @@
 
 # INSTDIR - the default root directory for the package
 INSTDIR=/usr/local
+
+# MANDIR - the directory to install man pages to
+MANDIR=$(INSTDIR)/man
 
 # LIB_PATH - the root dir for library files
 LIB_PATH=$(INSTDIR)/lib/X11/ProcMeter3
@@ -129,17 +132,17 @@ install :
 	[ ! -f procmeter3-no-x ] || install -m 755 procmeter3-no-x $(INSTDIR)/bin
 	@[ -f procmeter3-no-x ] || (echo "" ; echo "*** The procmeter3-no-x program has not been installed (it does not exist)." ; echo "")
 #
-	install -d $(INSTDIR)/man/man1
-	install -d $(INSTDIR)/man/man5
-	[ ! -f procmeter3 ]      || install -m 644 man/procmeter3.1      $(INSTDIR)/man/man1
-	[ ! -f procmeter3-no-x ] || install -m 644 man/procmeter3-no-x.1 $(INSTDIR)/man/man1
-	[ ! -f gprocmeter3 ]     || install -m 644 man/gprocmeter3.1     $(INSTDIR)/man/man1
-	install -m 644 man/procmeterrc.5 $(INSTDIR)/man/man5/procmeterrc.5
+	install -d $(MANDIR)/man1
+	install -d $(MANDIR)/man5
+	[ ! -f procmeter3 ]      || install -m 644 man/procmeter3.1      $(MANDIR)/man1
+	[ ! -f procmeter3-no-x ] || install -m 644 man/procmeter3-no-x.1 $(MANDIR)/man1
+	[ ! -f gprocmeter3 ]     || install -m 644 man/gprocmeter3.1     $(MANDIR)/man1
+	install -m 644 man/procmeterrc.5 $(MANDIR)/man5/procmeterrc.5
 #
 	[ ! -f $(RC_PATH)/.procmeterrc ] || mv $(RC_PATH)/.procmeterrc $(RC_PATH)/procmeterrc
 	@[ ! -f $(RC_PATH)/procmeterrc ] || (echo "" ; echo "*** The $(RC_PATH)/procmeterrc file has not been installed (it already exists)." ; echo "")
 	[ -f $(RC_PATH)/procmeterrc ] || install -m 644 procmeterrc.install $(RC_PATH)/procmeterrc
-	install -m 644 procmeterrc.install $(RC_PATH)
+	install -m 644 procmeterrc.install $(RC_PATH)/procmeterrc
 #
 	install -d $(LIB_PATH)/include
 	install -m 644 procmeter.h $(LIB_PATH)/include
