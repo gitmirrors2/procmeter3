@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.10 2002-06-04 12:56:53 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.11 2002-12-07 19:32:00 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Main program.
   ******************/ /******************
@@ -124,8 +124,8 @@ int main(int argc,char **argv)
    }
  else
    {
-    static char double_underline[32]="===============================";
-    static char underline[16]="---------------";
+    static char double_underline[]="===============================";
+    static char underline[]="-------------------------------";
     Module *modulep;
     Output *outputp;
 
@@ -148,10 +148,12 @@ int main(int argc,char **argv)
 
        while(p)
           printf("%s\n",get_substring(&p,80));
-       printf("\n");
+
+       if(*(*modulep)->outputs)
+          printf("\n");
 
        for(outputp=(*modulep)->outputs;*outputp;outputp++)
-          {
+         {
           if(last!=(*outputp)->output)
             {
              char *p=(*outputp)->output->description;
@@ -160,14 +162,14 @@ int main(int argc,char **argv)
              while(p)
                {
                 if(first)
-                   printf("%-16s (%c%c%c) : ",(*outputp)->output->name,
+                   printf("%-*s (%c%c%c) : ",PROCMETER_NAME_LEN,(*outputp)->output->name,
                           (*outputp)->output->type&PROCMETER_GRAPH?'G':' ',
                           (*outputp)->output->type&PROCMETER_TEXT?'T':' ',
                           (*outputp)->output->type&PROCMETER_BAR?'B':' ');
                 else
-                   printf("                         ");
+                   printf("%-*s         ",PROCMETER_NAME_LEN," ");
 
-                printf("%s\n",get_substring(&p,55));
+                printf("%s\n",get_substring(&p,80-PROCMETER_NAME_LEN-9));
 
                 first=0;
                }
