@@ -1,8 +1,15 @@
-                                ProcMeter - Version 3.0 - Modules
+                                ProcMeter - Version 3.1 - Modules
                                 =================================
 
-In version 3.0 of ProcMeter the different outputs (graphs or text) are
+In version 3.x of ProcMeter the different outputs (graphs or text) are
 implemented as loadable modules.
+
+
+Version 3.1 changes
+-------------------
+
+The graph_units field is now a printf string that is filled in at run time with
+the value of the graph_scale field.
 
 
 Interface
@@ -82,4 +89,4 @@ present.
 
 
 Andrew M. Bishop
-21th Sept 1998
+12th Feb 1999

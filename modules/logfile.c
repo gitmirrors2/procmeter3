@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/logfile.c,v 1.2 1998-10-24 09:01:39 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/logfile.c,v 1.3 1999-02-13 11:38:00 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux (v3.0a).
+  ProcMeter - A system monitoring program for Linux - Version 3.1.
 
   A log file monitoring source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -37,7 +37,7 @@ ProcMeterOutput _outputs[4]=
   /* char  text_value[16];   */ "0 KB",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 100,
-  /* char  graph_units[8];   */ "(100 KB)"
+  /* char  graph_units[8];   */ "(%dKB)"
  },
  /*+ The rate of change of size in bytes +*/
  {
@@ -48,7 +48,7 @@ ProcMeterOutput _outputs[4]=
   /* char  text_value[16];   */ "0 KB/s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 1,
-  /* char  graph_units[8];   */ "(1 KB/s)"
+  /* char  graph_units[8];   */ "(%dK/s)"
  },
  /*+ The number of lines +*/
  {
@@ -59,7 +59,7 @@ ProcMeterOutput _outputs[4]=
   /* char  text_value[16];   */ "0 lines",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 100,
-  /* char  graph_units[8];   */ "(100)"
+  /* char  graph_units[8];   */ "(%d)"
  },
  /*+ The rate of change of number of lines +*/
  {
@@ -70,7 +70,7 @@ ProcMeterOutput _outputs[4]=
   /* char  text_value[16];   */ "0 lines/s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 10,
-  /* char  graph_units[8];   */ "(10/s)"
+  /* char  graph_units[8];   */ "(%d/s)"
  }
 };
 
@@ -195,12 +195,12 @@ static void add_file(char *fil)
    }
 
  file =(char**)realloc((void*)file ,(nfiles+1)*sizeof(char*));
- last =(long *)realloc((void*)last ,(nfiles+1)*sizeof(char*));
- mtime=(long *)realloc((void*)mtime,(nfiles+1)*sizeof(char*));
- size =(long *)realloc((void*)size ,(nfiles+1)*sizeof(char*));
- grow =(long *)realloc((void*)grow ,(nfiles+1)*sizeof(char*));
- line =(long *)realloc((void*)line ,(nfiles+1)*sizeof(char*));
- rate =(long *)realloc((void*)rate ,(nfiles+1)*sizeof(char*));
+ last =(long *)realloc((void*)last ,(nfiles+1)*sizeof(long));
+ mtime=(long *)realloc((void*)mtime,(nfiles+1)*sizeof(long));
+ size =(long *)realloc((void*)size ,(nfiles+1)*sizeof(long));
+ grow =(long *)realloc((void*)grow ,(nfiles+1)*sizeof(long));
+ line =(long *)realloc((void*)line ,(nfiles+1)*sizeof(long));
+ rate =(long *)realloc((void*)rate ,(nfiles+1)*sizeof(long));
 
  file[nfiles]=(char*)malloc(strlen(fil)+1);
  strcpy(file[nfiles],fil);

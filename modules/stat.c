@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.2 1998-09-22 18:45:34 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.3 1999-02-13 11:38:02 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.1.
 
   Low level system statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -50,7 +50,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 %",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(20%)"
+  /* char  graph_units[8];   */ "(%d%%)"
  },
  /*+ The user cpu output +*/
  {
@@ -61,7 +61,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 %",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(20%)"
+  /* char  graph_units[8];   */ "(%d%%)"
  },
  /*+ The nice cpu output +*/
  {
@@ -72,7 +72,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 %",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(20%)"
+  /* char  graph_units[8];   */ "(%d%%)"
  },
  /*+ The system cpu output +*/
  {
@@ -83,7 +83,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 %",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(20%)"
+  /* char  graph_units[8];   */ "(%d%%)"
  },
  /*+ The idle cpu output +*/
  {
@@ -94,7 +94,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 %",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 20,
-  /* char  graph_units[8];   */ "(20%)"
+  /* char  graph_units[8];   */ "(%d%%)"
  },
  /*+ The disk blocks accessed per second +*/
  {
@@ -105,7 +105,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 25,
-  /* char  graph_units[8];   */ "(25/s)"
+  /* char  graph_units[8];   */ "(%d/s)"
  },
  /*+ The disk blocks read per second +*/
  {
@@ -116,7 +116,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 25,
-  /* char  graph_units[8];   */ "(25/s)"
+  /* char  graph_units[8];   */ "(%d/s)"
  },
  /*+ The disk blocks write per second +*/
  {
@@ -127,7 +127,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 25,
-  /* char  graph_units[8];   */ "(25/s)"
+  /* char  graph_units[8];   */ "(%d/s)"
  },
  /*+ The swap blocks accessed per second +*/
  {
@@ -138,7 +138,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 50,
-  /* char  graph_units[8];   */ "(50/s)"
+  /* char  graph_units[8];   */ "(%d/s)"
  },
  /*+ The swap blocks in per second +*/
  {
@@ -149,7 +149,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 50,
-  /* char  graph_units[8];   */ "(50/s)"
+  /* char  graph_units[8];   */ "(%d/s)"
  },
  /*+ The swap blocks out per second +*/
  {
@@ -160,7 +160,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 50,
-  /* char  graph_units[8];   */ "(50/s)"
+  /* char  graph_units[8];   */ "(%d/s)"
  },
  /*+ The page blocks accessed per second +*/
  {
@@ -171,7 +171,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 50,
-  /* char  graph_units[8];   */ "(50/s)"
+  /* char  graph_units[8];   */ "(%d/s)"
  },
  /*+ The page blocks in per second +*/
  {
@@ -182,7 +182,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 50,
-  /* char  graph_units[8];   */ "(50/s)"
+  /* char  graph_units[8];   */ "(%d/s)"
  },
  /*+ The page blocks out per second +*/
  {
@@ -193,7 +193,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 50,
-  /* char  graph_units[8];   */ "(50/s)"
+  /* char  graph_units[8];   */ "(%d/s)"
  },
  /*+ The number of context switches per second +*/
  {
@@ -204,7 +204,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 100,
-  /* char  graph_units[8];   */ "(100/s)"
+  /* char  graph_units[8];   */ "(%d/s)"
  },
  /*+ The number of interrupts per second +*/
  {
@@ -215,7 +215,7 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
   /* short graph_scale;      */ 100,
-  /* char  graph_units[8];   */ "(100/s)"
+  /* char  graph_units[8];   */ "(%d/s)"
  }
 };
 

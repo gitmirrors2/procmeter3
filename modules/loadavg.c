@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/loadavg.c,v 1.2 1998-09-22 18:45:32 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/loadavg.c,v 1.3 1999-02-13 11:38:00 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.1.
 
   Load average and number of processes module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -31,7 +31,7 @@ ProcMeterOutput loadavg_output=
  /* char  text_value[16];   */ "unknown",
  /* long  graph_value;      */ 0,
  /* short graph_scale;      */ 1,
- /* char  graph_units[8];   */ "(1)"
+ /* char  graph_units[8];   */ "(%d)"
 };
 
 /*+ The number of processes output. +*/
@@ -44,7 +44,7 @@ ProcMeterOutput processes_output=
  /* char  text_value[16];   */ "unknown",
  /* long  graph_value;      */ 0,
  /* short graph_scale;      */ 10,
- /* char  graph_units[8];   */ "(10)"
+ /* char  graph_units[8];   */ "(%d)"
 };
 
 /*+ The number of forks per second output. +*/
@@ -57,7 +57,7 @@ ProcMeterOutput forks_output=
  /* char  text_value[16];   */ "unknown",
  /* long  graph_value;      */ 0,
  /* short graph_scale;      */ 5,
- /* char  graph_units[8];   */ "(5/s)"
+ /* char  graph_units[8];   */ "(%d/s)"
 };
 
 /*+ The outputs. +*/

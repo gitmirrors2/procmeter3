@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/template.c,v 1.1 1998-09-19 15:26:04 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/template.c,v 1.2 1999-02-13 11:38:03 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.1.
 
   Module template source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -31,7 +31,7 @@ ProcMeterOutput graph_output=
  /* char  text_value[16];   */ "n/a",
  /* long  graph_value;      */ 0,
  /* short graph_scale;      */ 10,
- /* char  graph_units[8];   */ "(10)"
+ /* char  graph_units[8];   */ "(%d)"
 };
 
 /*+ The text output. +*/

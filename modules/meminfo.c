@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.3 1998-10-24 09:01:59 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.4 1999-02-13 11:38:01 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux (v3.0a).
+  ProcMeter - A system monitoring program for Linux - Version 3.1.
 
   Memory status module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -40,8 +40,8 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 1,
-  /* char  graph_units[8];   */ "(%s MB)"
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%dMB)"
  },
  /*+ The mem used output +*/
  {
@@ -51,8 +51,8 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 1,
-  /* char  graph_units[8];   */ "(%s MB)"
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%dMB)"
  },
  /*+ The mem buff output +*/
  {
@@ -62,8 +62,8 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 1,
-  /* char  graph_units[8];   */ "(%s MB)"
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%dMB)"
  },
  /*+ The mem cache output +*/
  {
@@ -73,8 +73,8 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 1,
-  /* char  graph_units[8];   */ "(%s MB)"
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%dMB)"
  },
  /*+ The mem swap free output +*/
  {
@@ -84,8 +84,8 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 1,
-  /* char  graph_units[8];   */ "(%s MB)"
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%dMB)"
  },
  /*+ The mem swap used output +*/
  {
@@ -95,8 +95,8 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
   /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 1,
-  /* char  graph_units[8];   */ "(%s MB)"
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%dMB)"
  }
 };
 
@@ -113,7 +113,6 @@ ProcMeterModule module=
 
 
 static int proc_meminfo_V2_1_41=0;
-static long mem_shift=0;
 
 static int available[N_OUTPUTS];
 
@@ -219,19 +218,13 @@ ProcMeterOutput **Initialise(char *options)
           if(available[MEM_FREE])
             {
              long mem_scale=1;
-             char str[8];
 
              mem_tot>>=14;
              while(mem_tot)
-               {mem_tot>>=1; mem_scale<<=1; mem_shift++;}
-
-             sprintf(str,"(%ld MB)",mem_scale);
+               {mem_tot>>=1; mem_scale<<=1;}
 
              for(i=0;i<N_OUTPUTS;i++)
-               {
                 _outputs[i].graph_scale=mem_scale;
-                strcpy(_outputs[i].graph_units,str);
-               }
             }
 
           for(i=0;i<N_OUTPUTS;i++)
@@ -324,37 +317,37 @@ int Update(time_t now,ProcMeterOutput *output)
  if(output==&_outputs[MEM_FREE])
    {
     sprintf(output->text_value,"%.3f MB",(double)mem_free/1024.0);
-    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(mem_free>>mem_shift)/1024.0);
+    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(mem_free>>10)/output->graph_scale);
     return(0);
    }
  else if(output==&_outputs[MEM_USED])
    {
     sprintf(output->text_value,"%.3f MB",(double)mem_used/1024.0);
-    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(mem_used>>mem_shift)/1024.0);
+    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(mem_used>>10)/output->graph_scale);
     return(0);
    }
  else if(output==&_outputs[MEM_BUFF])
    {
     sprintf(output->text_value,"%.3f MB",(double)mem_buff/1024.0);
-    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(mem_buff>>mem_shift)/1024.0);
+    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(mem_buff>>10)/output->graph_scale);
     return(0);
    }
  else if(output==&_outputs[MEM_CACHE])
    {
     sprintf(output->text_value,"%.3f MB",(double)mem_cache/1024.0);
-    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(mem_cache>>mem_shift)/1024.0);
+    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(mem_cache>>10)/output->graph_scale);
     return(0);
    }
  else if(output==&_outputs[SWAP_FREE])
    {
     sprintf(output->text_value,"%.3f MB",(double)swap_free/1024.0);
-    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(swap_free>>mem_shift)/1024.0);
+    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(swap_free>>10)/output->graph_scale);
     return(0);
    }
  else if(output==&_outputs[SWAP_USED])
    {
     sprintf(output->text_value,"%.3f MB",(double)swap_used/1024.0);
-    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(swap_used>>mem_shift)/1024.0);
+    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(swap_used>>10)/output->graph_scale);
     return(0);
    }
 

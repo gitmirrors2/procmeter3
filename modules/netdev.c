@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.5 1998-10-24 09:01:41 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.6 1999-02-13 11:38:01 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux (v3.0a).
+  ProcMeter - A system monitoring program for Linux - Version 3.1.
 
   Network devices traffic source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -33,8 +33,8 @@ ProcMeterOutput _outputs[3]=
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 0,
-  /* char  graph_units[8];   */ "(%d)"
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%d/s)"
  },
  /*+ The transmitted packets +*/
  {
@@ -44,8 +44,8 @@ ProcMeterOutput _outputs[3]=
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 0,
-  /* char  graph_units[8];   */ "(%d)"
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%d/s)"
  },
  /*+ The received packets +*/
  {
@@ -55,8 +55,8 @@ ProcMeterOutput _outputs[3]=
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 /s",
   /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 0,
-  /* char  graph_units[8];   */ "(%d)"
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%d/s)"
  }
 };
 
@@ -233,7 +233,6 @@ static void add_device(char *dev)
     outputs[ndevices]->description=(char*)malloc(strlen(dev)+strlen(_outputs[i].description)+4);
     sprintf(outputs[ndevices]->description,_outputs[i].description,dev);
     outputs[ndevices]->graph_scale=scale;
-    sprintf(outputs[ndevices]->graph_units,_outputs[i].graph_units,scale);
 
     strcpy(device[ndevices],dev);
 

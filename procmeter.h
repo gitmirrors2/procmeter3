@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.2 1998-10-24 13:12:02 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.3 1999-02-13 11:38:16 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux (v3.0a).
+  ProcMeter - A system monitoring program for Linux - Version 3.1.
 
   Global public header file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -20,11 +20,11 @@
 #include <time.h>
 
 
-#define PROCMETER_VERSION "3.0a"
+#define PROCMETER_VERSION "3.1"
 
 
 #define PROCMETER_MAJOR_VERSION 3
-#define PROCMETER_MINOR_VERSION 0
+#define PROCMETER_MINOR_VERSION 1
 
 
 #define PROCMETER_GRAPH 1
@@ -50,7 +50,7 @@ typedef struct _ProcMeterOutput
  char  text_value[16];          /*+ The textual value (if applicable). +*/
  long  graph_value;             /*+ The graph value (if applicable). +*/
  short graph_scale;             /*+ The scaling factor for the graph (if applicable). +*/
- char  graph_units[8];          /*+ The units on the graph (if applicable). +*/
+ char  graph_units[8];          /*+ The units on the graph as a printf string (if applicable). +*/
 }
 ProcMeterOutput;
 
