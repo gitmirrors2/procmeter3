@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGeneric.c,v 1.3 2000-12-16 17:02:24 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGeneric.c,v 1.4 2001-01-04 19:26:46 amb Exp $
 
   ProcMeter Generic Widget Source file (for ProcMeter 3.3).
   ******************/ /******************
@@ -22,10 +22,12 @@
 #include "PMGenericP.h"
 
 static void Initialize(ProcMeterGenericWidget request,ProcMeterGenericWidget new);
-static void Destroy(ProcMeterGenericWidget w);
+static void Destroy(ProcMeterGenericWidget pmw);
 static Boolean SetValues(ProcMeterGenericWidget current,ProcMeterGenericWidget request,ProcMeterGenericWidget new);
-static void Resize(ProcMeterGenericWidget w);
-static void Redisplay(ProcMeterGenericWidget w,XEvent *event,Region region);
+static void Resize(ProcMeterGenericWidget pmw);
+static void Redisplay(ProcMeterGenericWidget pmw,XEvent *event,Region region);
+static void GenericResize(ProcMeterGenericWidget pmw);
+static void GenericUpdate(ProcMeterGenericWidget pmw);
 
 static XtResource resources[]=
 {
@@ -84,7 +86,8 @@ ProcMeterGenericClassRec procMeterGenericClassRec=
   NULL,
  },
  {
-  0
+  GenericResize,
+  GenericUpdate
  }
 };
 
@@ -136,21 +139,21 @@ static void Initialize(ProcMeterGenericWidget request,ProcMeterGenericWidget new
 
  /* The rest of the sizing. */
 
- ProcMeterGenericResize(new);
+ GenericResize(new);
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Destroy a ProcMeter Generic Widget.
 
-  ProcMeterGenericWidget w The Widget to destroy.
+  ProcMeterGenericWidget pmw The Widget to destroy.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void Destroy(ProcMeterGenericWidget w)
+static void Destroy(ProcMeterGenericWidget pmw)
 {
- XtFree((XtPointer)w->procmeter_generic.label_string);
- XtReleaseGC((Widget)w,w->procmeter_generic.body_gc);
- XtReleaseGC((Widget)w,w->procmeter_generic.label_gc);
+ XtFree((XtPointer)pmw->procmeter_generic.label_string);
+ XtReleaseGC((Widget)pmw,pmw->procmeter_generic.body_gc);
+ XtReleaseGC((Widget)pmw,pmw->procmeter_generic.label_gc);
 }
 
 
@@ -223,7 +226,7 @@ static Boolean SetValues(ProcMeterGenericWidget current,ProcMeterGenericWidget r
  /* Resize if needed */
 
  if(redraw)
-    ProcMeterGenericResize(new);
+    GenericResize(new);
 
  return(redraw);
 }
@@ -232,95 +235,95 @@ static Boolean SetValues(ProcMeterGenericWidget current,ProcMeterGenericWidget r
 /*++++++++++++++++++++++++++++++++++++++
   Resize the ProcMeter Generic Widget.
 
-  ProcMeterGenericWidget w The Widget that is resized.
+  ProcMeterGenericWidget pmw The Widget that is resized.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void Resize(ProcMeterGenericWidget w)
+static void Resize(ProcMeterGenericWidget pmw)
 {
- ProcMeterGenericResize(w);
+ GenericResize(pmw);
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Redisplay the ProcMeter Generic Widget.
 
-  ProcMeterGenericWidget w The Widget to redisplay.
+  ProcMeterGenericWidget pmw The Widget to redisplay.
 
   XEvent *event The event that caused the redisplay.
 
   Region region The region that was exposed.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void Redisplay(ProcMeterGenericWidget w,XEvent *event,Region region)
+static void Redisplay(ProcMeterGenericWidget pmw,XEvent *event,Region region)
 {
- if(w->core.visible)
-    ProcMeterGenericUpdate(w);
+ if(pmw->core.visible)
+    GenericUpdate(pmw);
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Perform all of the sizing on the Widget when it is created/resized.
 
-  ProcMeterGenericWidget w The Widget to resize.
+  ProcMeterGenericWidget pmw The Widget to resize.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void ProcMeterGenericResize(ProcMeterGenericWidget w)
+static void GenericResize(ProcMeterGenericWidget pmw)
 {
  /* The label parts. */
 
- if(w->procmeter_generic.label_pos)
+ if(pmw->procmeter_generic.label_pos)
    {
-    w->procmeter_generic.label_height=w->procmeter_generic.label_font->ascent+w->procmeter_generic.label_font->descent+2;
-    w->procmeter_generic.label_x=(w->core.width-XTextWidth(w->procmeter_generic.label_font,w->procmeter_generic.label_string,(int)strlen(w->procmeter_generic.label_string)))/2;
-    if(w->procmeter_generic.label_pos==ProcMeterLabelTop)
-       w->procmeter_generic.label_y=w->procmeter_generic.label_height-1-w->procmeter_generic.label_font->descent;
+    pmw->procmeter_generic.label_height=pmw->procmeter_generic.label_font->ascent+pmw->procmeter_generic.label_font->descent+2;
+    pmw->procmeter_generic.label_x=(pmw->core.width-XTextWidth(pmw->procmeter_generic.label_font,pmw->procmeter_generic.label_string,(int)strlen(pmw->procmeter_generic.label_string)))/2;
+    if(pmw->procmeter_generic.label_pos==ProcMeterLabelTop)
+       pmw->procmeter_generic.label_y=pmw->procmeter_generic.label_height-1-pmw->procmeter_generic.label_font->descent;
     else
-       w->procmeter_generic.label_y=w->core.height-w->procmeter_generic.label_font->descent;
+       pmw->procmeter_generic.label_y=pmw->core.height-pmw->procmeter_generic.label_font->descent;
    }
  else
    {
-    w->procmeter_generic.label_height=0;
-    w->procmeter_generic.label_x=0;
-    w->procmeter_generic.label_y=0;
+    pmw->procmeter_generic.label_height=0;
+    pmw->procmeter_generic.label_x=0;
+    pmw->procmeter_generic.label_y=0;
    }
 
  /* The body parts. */
 
- w->procmeter_generic.body_height=w->core.height-w->procmeter_generic.label_height;
+ pmw->procmeter_generic.body_height=pmw->core.height-pmw->procmeter_generic.label_height;
 
- if(w->procmeter_generic.label_pos==ProcMeterLabelTop)
-    w->procmeter_generic.body_start=w->procmeter_generic.label_height;
+ if(pmw->procmeter_generic.label_pos==ProcMeterLabelTop)
+    pmw->procmeter_generic.body_start=pmw->procmeter_generic.label_height;
  else
-    w->procmeter_generic.body_start=0;
+    pmw->procmeter_generic.body_start=0;
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Update the display of the generic part of the widget.
 
-  ProcMeterGenericWidget w The Widget to update.
+  ProcMeterGenericWidget pmw The Widget to update.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void ProcMeterGenericUpdate(ProcMeterGenericWidget w)
+static void GenericUpdate(ProcMeterGenericWidget pmw)
 {
- if(w->core.visible)
+ if(pmw->core.visible)
    {
-    XClearWindow(XtDisplay(w),XtWindow(w));
+    XClearWindow(XtDisplay(pmw),XtWindow(pmw));
 
-    if(w->procmeter_generic.label_pos)
+    if(pmw->procmeter_generic.label_pos)
       {
-       XDrawString(XtDisplay(w),XtWindow(w),w->procmeter_generic.label_gc,
-                   w->procmeter_generic.label_x,w->procmeter_generic.label_y,
-                   w->procmeter_generic.label_string,(int)strlen(w->procmeter_generic.label_string));
+       XDrawString(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_generic.label_gc,
+                   pmw->procmeter_generic.label_x,pmw->procmeter_generic.label_y,
+                   pmw->procmeter_generic.label_string,(int)strlen(pmw->procmeter_generic.label_string));
 
-       if(w->procmeter_generic.label_pos==ProcMeterLabelTop)
-          XDrawLine(XtDisplay(w),XtWindow(w),w->procmeter_generic.label_gc,
-                    0            ,w->procmeter_generic.label_height-1,
-                    w->core.width,w->procmeter_generic.label_height-1);
+       if(pmw->procmeter_generic.label_pos==ProcMeterLabelTop)
+          XDrawLine(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_generic.label_gc,
+                    0              ,pmw->procmeter_generic.label_height-1,
+                    pmw->core.width,pmw->procmeter_generic.label_height-1);
        else
-          XDrawLine(XtDisplay(w),XtWindow(w),w->procmeter_generic.label_gc,
-                    0            ,w->procmeter_generic.body_height,
-                    w->core.width,w->procmeter_generic.body_height);
+          XDrawLine(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_generic.label_gc,
+                    0              ,pmw->procmeter_generic.body_height,
+                    pmw->core.width,pmw->procmeter_generic.body_height);
       }
    }
 }

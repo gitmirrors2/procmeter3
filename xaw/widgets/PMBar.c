@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMBar.c,v 1.3 2000-12-16 17:02:03 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMBar.c,v 1.4 2001-01-04 19:26:45 amb Exp $
 
   ProcMeter Bar Widget Source file (for ProcMeter3 3.3).
   ******************/ /******************
@@ -25,12 +25,12 @@
 #include "procmeter.h"
 
 static void Initialize(ProcMeterBarWidget request,ProcMeterBarWidget new);
-static void Destroy(ProcMeterBarWidget w);
+static void Destroy(ProcMeterBarWidget pmw);
 static Boolean SetValues(ProcMeterBarWidget current,ProcMeterBarWidget request,ProcMeterBarWidget new);
-static void Resize(ProcMeterBarWidget w);
-static void Redisplay(ProcMeterBarWidget w,XEvent *event,Region region);
-static void BarResize(ProcMeterBarWidget w);
-static void BarUpdate(ProcMeterBarWidget w,Boolean all);
+static void Resize(ProcMeterBarWidget pmw);
+static void Redisplay(ProcMeterBarWidget pmw,XEvent *event,Region region);
+static void BarResize(ProcMeterBarWidget pmw);
+static void BarUpdate(ProcMeterBarWidget pmw,Boolean all);
 
 static XtResource resources[]=
 {
@@ -84,7 +84,8 @@ ProcMeterBarClassRec procMeterBarClassRec=
   NULL,
  },
  {
-  0
+  NULL,
+  NULL
  },
  {
   0
@@ -152,13 +153,13 @@ static void Initialize(ProcMeterBarWidget request,ProcMeterBarWidget new)
 /*++++++++++++++++++++++++++++++++++++++
   Destroy a ProcMeter Bar Widget.
 
-  ProcMeterBarWidget w The Widget to destroy.
+  ProcMeterBarWidget pmw The Widget to destroy.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void Destroy(ProcMeterBarWidget w)
+static void Destroy(ProcMeterBarWidget pmw)
 {
- XtReleaseGC((Widget)w,w->procmeter_bar.grid_gc);
- XtFree((XtPointer)w->procmeter_bar.grid_units);
+ XtReleaseGC((Widget)pmw,pmw->procmeter_bar.grid_gc);
+ XtFree((XtPointer)pmw->procmeter_bar.grid_units);
 }
 
 
@@ -243,129 +244,129 @@ static Boolean SetValues(ProcMeterBarWidget current,ProcMeterBarWidget request,P
 /*++++++++++++++++++++++++++++++++++++++
   Resize the ProcMeter Bar Widget.
 
-  ProcMeterBarWidget w The Widget that is resized.
+  ProcMeterBarWidget pmw The Widget that is resized.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void Resize(ProcMeterBarWidget w)
+static void Resize(ProcMeterBarWidget pmw)
 {
- BarResize(w);
+ BarResize(pmw);
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Redisplay the ProcMeter Widget.
 
-  ProcMeterBarWidget w The Widget to redisplay.
+  ProcMeterBarWidget pmw The Widget to redisplay.
 
   XEvent *event The event that caused the redisplay.
 
   Region region The region that was exposed.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void Redisplay(ProcMeterBarWidget w,XEvent *event,Region region)
+static void Redisplay(ProcMeterBarWidget pmw,XEvent *event,Region region)
 {
- if(w->core.visible)
-    BarUpdate(w,True);
+ if(pmw->core.visible)
+    BarUpdate(pmw,True);
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Perform all of the sizing on the Widget when it is created/resized.
 
-  ProcMeterBarWidget w The Widget to resize.
+  ProcMeterBarWidget pmw The Widget to resize.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void BarResize(ProcMeterBarWidget w)
+static void BarResize(ProcMeterBarWidget pmw)
 {
- ProcMeterGenericResize((ProcMeterGenericWidget)w);
+ (*procMeterGenericClassRec.procmeter_generic_class.resize)((ProcMeterGenericWidget)pmw);
 
- w->procmeter_generic.label_x=2;
+ pmw->procmeter_generic.label_x=2;
 
  /* The grid parts. */
 
- w->procmeter_bar.grid_units_x=w->core.width-XTextWidth(w->procmeter_generic.label_font,w->procmeter_bar.grid_units,(int)strlen(w->procmeter_bar.grid_units));
+ pmw->procmeter_bar.grid_units_x=pmw->core.width-XTextWidth(pmw->procmeter_generic.label_font,pmw->procmeter_bar.grid_units,(int)strlen(pmw->procmeter_bar.grid_units));
 
- w->procmeter_bar.grid_maxvis=w->core.width/3;
+ pmw->procmeter_bar.grid_maxvis=pmw->core.width/3;
 
- if(w->procmeter_generic.label_pos==ProcMeterLabelTop)
-    w->procmeter_generic.body_start=w->procmeter_generic.label_height;
+ if(pmw->procmeter_generic.label_pos==ProcMeterLabelTop)
+    pmw->procmeter_generic.body_start=pmw->procmeter_generic.label_height;
  else
-    w->procmeter_generic.body_start=0;
+    pmw->procmeter_generic.body_start=0;
 
- if(w->procmeter_bar.grid_num>w->procmeter_bar.grid_maxvis && w->procmeter_bar.grid_drawn)
-    w->procmeter_bar.grid_drawn=-1;
- if(w->procmeter_bar.grid_num<=w->procmeter_bar.grid_maxvis && w->procmeter_bar.grid_drawn)
-    w->procmeter_bar.grid_drawn=1;
+ if(pmw->procmeter_bar.grid_num>pmw->procmeter_bar.grid_maxvis && pmw->procmeter_bar.grid_drawn)
+    pmw->procmeter_bar.grid_drawn=-1;
+ if(pmw->procmeter_bar.grid_num<=pmw->procmeter_bar.grid_maxvis && pmw->procmeter_bar.grid_drawn)
+    pmw->procmeter_bar.grid_drawn=1;
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Update the display.
 
-  ProcMeterBarWidget w The Widget to update.
+  ProcMeterBarWidget pmw The Widget to update.
 
   Boolean all Indicates if it all is to be updated including the generic parts.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void BarUpdate(ProcMeterBarWidget w,Boolean all)
+static void BarUpdate(ProcMeterBarWidget pmw,Boolean all)
 {
- if(w->core.visible)
+ if(pmw->core.visible)
    {
     int i;
-    int scale=PROCMETER_GRAPH_SCALE*w->procmeter_bar.grid_num;
+    int scale=PROCMETER_GRAPH_SCALE*pmw->procmeter_bar.grid_num;
     Position pos;
     Position top_average_bottom,bottom_average_top,average_size;
 
     if(all)
       {
-       ProcMeterGenericUpdate((ProcMeterGenericWidget)w);
+       (*procMeterGenericClassRec.procmeter_generic_class.update)((ProcMeterGenericWidget)pmw);
 
-       if(w->procmeter_generic.label_pos!=ProcMeterLabelNone)
-          XDrawString(XtDisplay(w),XtWindow(w),w->procmeter_generic.label_gc,
-                      w->procmeter_bar.grid_units_x,w->procmeter_generic.label_y,
-                      w->procmeter_bar.grid_units,(int)strlen(w->procmeter_bar.grid_units));
+       if(pmw->procmeter_generic.label_pos!=ProcMeterLabelNone)
+          XDrawString(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_generic.label_gc,
+                      pmw->procmeter_bar.grid_units_x,pmw->procmeter_generic.label_y,
+                      pmw->procmeter_bar.grid_units,(int)strlen(pmw->procmeter_bar.grid_units));
 
       }
     else
-       XClearArea(XtDisplay(w),XtWindow(w),
-                  0,w->procmeter_generic.body_start,
-                  w->core.width,w->procmeter_generic.body_height,False);
+       XClearArea(XtDisplay(pmw),XtWindow(pmw),
+                  0              ,pmw->procmeter_generic.body_start,
+                  pmw->core.width,pmw->procmeter_generic.body_height,False);
 
-    pos=w->procmeter_bar.data_sum*w->core.width/(scale*2);
+    pos=pmw->procmeter_bar.data_sum*pmw->core.width/(scale*2);
 
-    top_average_bottom=w->procmeter_generic.body_start+2*(w->procmeter_generic.body_height>>3);
-    bottom_average_top=w->procmeter_generic.body_start+w->procmeter_generic.body_height-2*(w->procmeter_generic.body_height>>3);
-    average_size=w->procmeter_generic.body_height>>3;
+    top_average_bottom=pmw->procmeter_generic.body_start+2*(pmw->procmeter_generic.body_height>>3);
+    bottom_average_top=pmw->procmeter_generic.body_start+pmw->procmeter_generic.body_height-2*(pmw->procmeter_generic.body_height>>3);
+    average_size=pmw->procmeter_generic.body_height>>3;
 
-    XFillRectangle(XtDisplay(w),XtWindow(w),w->procmeter_generic.body_gc,
+    XFillRectangle(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_generic.body_gc,
                    pos-average_size,top_average_bottom-average_size,
                    average_size    ,average_size);
 
-    XFillRectangle(XtDisplay(w),XtWindow(w),w->procmeter_generic.body_gc,
+    XFillRectangle(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_generic.body_gc,
                    pos-average_size,bottom_average_top,
                    average_size    ,average_size);
 
-    pos=w->procmeter_bar.data[w->procmeter_bar.data_index]*w->core.width/scale;
+    pos=pmw->procmeter_bar.data[pmw->procmeter_bar.data_index]*pmw->core.width/scale;
 
-    XFillRectangle(XtDisplay(w),XtWindow(w),w->procmeter_generic.body_gc,
+    XFillRectangle(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_generic.body_gc,
                    0  ,top_average_bottom+1,
                    pos,bottom_average_top-top_average_bottom-2);
 
-    if(w->procmeter_bar.grid_drawn==1)
-       for(i=1;i<w->procmeter_bar.grid_num;i++)
+    if(pmw->procmeter_bar.grid_drawn==1)
+       for(i=1;i<pmw->procmeter_bar.grid_num;i++)
          {
-          pos=i*w->core.width/w->procmeter_bar.grid_num;
-          XDrawLine(XtDisplay(w),XtWindow(w),w->procmeter_bar.grid_gc,
-                    pos,w->procmeter_generic.body_start,
-                    pos,w->procmeter_generic.body_height+w->procmeter_generic.body_start);
+          pos=i*pmw->core.width/pmw->procmeter_bar.grid_num;
+          XDrawLine(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_bar.grid_gc,
+                    pos,pmw->procmeter_generic.body_start,
+                    pos,pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start);
          }
     else
-       if(w->procmeter_bar.grid_drawn==-1)
+       if(pmw->procmeter_bar.grid_drawn==-1)
          {
-          pos=w->procmeter_bar.grid_maxvis*w->core.width/w->procmeter_bar.grid_num;
-          XDrawLine(XtDisplay(w),XtWindow(w),w->procmeter_bar.grid_gc,
-                    pos,w->procmeter_generic.body_start,
-                    pos,w->procmeter_generic.body_height+w->procmeter_generic.body_start);
+          pos=pmw->procmeter_bar.grid_maxvis*pmw->core.width/pmw->procmeter_bar.grid_num;
+          XDrawLine(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_bar.grid_gc,
+                    pos,pmw->procmeter_generic.body_start,
+                    pos,pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start);
          }
    }
 }
@@ -374,45 +375,45 @@ static void BarUpdate(ProcMeterBarWidget w,Boolean all)
 /*++++++++++++++++++++++++++++++++++++++
   Add a data point to the ProcMeter Bar Widget.
 
-  Widget pmw The ProcMeter Bar Widget.
+  Widget w The ProcMeter Bar Widget.
 
   unsigned short datum The data point to add.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void ProcMeterBarAddDatum(Widget pmw,unsigned short datum)
+void ProcMeterBarAddDatum(Widget w,unsigned short datum)
 {
- ProcMeterBarWidget w=(ProcMeterBarWidget)pmw;
+ ProcMeterBarWidget pmw=(ProcMeterBarWidget)w;
  int new_grid_num;
  unsigned short old_datum;
 
- w->procmeter_bar.data_index++;
- if(w->procmeter_bar.data_index==8)
-    w->procmeter_bar.data_index=0;
+ pmw->procmeter_bar.data_index++;
+ if(pmw->procmeter_bar.data_index==8)
+    pmw->procmeter_bar.data_index=0;
 
- old_datum=w->procmeter_bar.data[w->procmeter_bar.data_index];
- w->procmeter_bar.data[w->procmeter_bar.data_index]=datum;
+ old_datum=pmw->procmeter_bar.data[pmw->procmeter_bar.data_index];
+ pmw->procmeter_bar.data[pmw->procmeter_bar.data_index]=datum;
 
- w->procmeter_bar.data_sum=(w->procmeter_bar.data_sum>>1)+datum-(old_datum>>8);
+ pmw->procmeter_bar.data_sum=(pmw->procmeter_bar.data_sum>>1)+datum-(old_datum>>8);
 
- if((w->procmeter_bar.data_sum/2)>datum)
-    new_grid_num=((w->procmeter_bar.data_sum/2)+(PROCMETER_GRAPH_SCALE-1))/PROCMETER_GRAPH_SCALE;
+ if((pmw->procmeter_bar.data_sum/2)>datum)
+    new_grid_num=((pmw->procmeter_bar.data_sum/2)+(PROCMETER_GRAPH_SCALE-1))/PROCMETER_GRAPH_SCALE;
  else
     new_grid_num=(datum+(PROCMETER_GRAPH_SCALE-1))/PROCMETER_GRAPH_SCALE;
 
- if(new_grid_num<w->procmeter_bar.grid_min)
-    new_grid_num=w->procmeter_bar.grid_min;
- if(w->procmeter_bar.grid_max && new_grid_num>w->procmeter_bar.grid_max)
-    new_grid_num=w->procmeter_bar.grid_max;
+ if(new_grid_num<pmw->procmeter_bar.grid_min)
+    new_grid_num=pmw->procmeter_bar.grid_min;
+ if(pmw->procmeter_bar.grid_max && new_grid_num>pmw->procmeter_bar.grid_max)
+    new_grid_num=pmw->procmeter_bar.grid_max;
 
- if(new_grid_num!=w->procmeter_bar.grid_num)
+ if(new_grid_num!=pmw->procmeter_bar.grid_num)
    {
-    w->procmeter_bar.grid_num=new_grid_num;
+    pmw->procmeter_bar.grid_num=new_grid_num;
 
-    if(w->procmeter_bar.grid_num>w->procmeter_bar.grid_maxvis && w->procmeter_bar.grid_drawn)
-       w->procmeter_bar.grid_drawn=-1;
-    if(w->procmeter_bar.grid_num<=w->procmeter_bar.grid_maxvis && w->procmeter_bar.grid_drawn)
-       w->procmeter_bar.grid_drawn=1;
+    if(pmw->procmeter_bar.grid_num>pmw->procmeter_bar.grid_maxvis && pmw->procmeter_bar.grid_drawn)
+       pmw->procmeter_bar.grid_drawn=-1;
+    if(pmw->procmeter_bar.grid_num<=pmw->procmeter_bar.grid_maxvis && pmw->procmeter_bar.grid_drawn)
+       pmw->procmeter_bar.grid_drawn=1;
    }
 
- BarUpdate(w,False);
+ BarUpdate(pmw,False);
 }

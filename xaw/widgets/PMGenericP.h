@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGenericP.h,v 1.1 1998-09-19 15:28:40 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGenericP.h,v 1.2 2001-01-04 19:26:46 amb Exp $
 
-  ProcMeter Generic Widget Private header file (for ProcMeter 3.0).
+  ProcMeter Generic Widget Private header file (for ProcMeter 3.3).
   ******************/ /******************
   Written by Andrew M. Bishop
 
@@ -20,7 +20,8 @@
 /*+ The Class Part of the Widget, shared among all instances of the ProcMeter Generic Widget. +*/
 typedef struct _ProcMeterGenericClassPart
 {
- int unused;                    /*+ Not used. +*/
+ void (*resize)(ProcMeterGenericWidget pmw);
+ void (*update)(ProcMeterGenericWidget pmw);
 }
 ProcMeterGenericClassPart;
 
@@ -60,10 +61,5 @@ typedef struct _ProcMeterGenericRec
  ProcMeterGenericPart procmeter_generic; /*+ The ProcMeter Generic Widget Part. +*/
 }
 ProcMeterGenericRec;
-
-/* Generic functions */
-
-void ProcMeterGenericResize(ProcMeterGenericWidget w);
-void ProcMeterGenericUpdate(ProcMeterGenericWidget w);
 
 #endif /* PMGENERICP_H */

@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.7 2000-12-16 17:02:43 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.8 2001-01-04 19:26:46 amb Exp $
 
   ProcMeter Graph Widget Source file (for ProcMeter3 3.3).
   ******************/ /******************
@@ -25,12 +25,12 @@
 #include "procmeter.h"
 
 static void Initialize(ProcMeterGraphWidget request,ProcMeterGraphWidget new);
-static void Destroy(ProcMeterGraphWidget w);
+static void Destroy(ProcMeterGraphWidget pmw);
 static Boolean SetValues(ProcMeterGraphWidget current,ProcMeterGraphWidget request,ProcMeterGraphWidget new);
-static void Resize(ProcMeterGraphWidget w);
-static void Redisplay(ProcMeterGraphWidget w,XEvent *event,Region region);
-static void GraphResize(ProcMeterGraphWidget w);
-static void GraphUpdate(ProcMeterGraphWidget w,Boolean all);
+static void Resize(ProcMeterGraphWidget pmw);
+static void Redisplay(ProcMeterGraphWidget pmw,XEvent *event,Region region);
+static void GraphResize(ProcMeterGraphWidget pmw);
+static void GraphUpdate(ProcMeterGraphWidget pmw,Boolean all);
 
 static XtResource resources[]=
 {
@@ -89,7 +89,8 @@ ProcMeterGraphClassRec procMeterGraphClassRec=
   NULL,
  },
  {
-  0
+  NULL,
+  NULL
  },
  {
   0
@@ -154,14 +155,14 @@ static void Initialize(ProcMeterGraphWidget request,ProcMeterGraphWidget new)
 /*++++++++++++++++++++++++++++++++++++++
   Destroy a ProcMeter Graph Widget.
 
-  ProcMeterGraphWidget w The Widget to destroy.
+  ProcMeterGraphWidget pmw The Widget to destroy.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void Destroy(ProcMeterGraphWidget w)
+static void Destroy(ProcMeterGraphWidget pmw)
 {
- XtReleaseGC((Widget)w,w->procmeter_graph.grid_gc);
- XtFree((XtPointer)w->procmeter_graph.grid_units);
- XtFree((XtPointer)w->procmeter_graph.data);
+ XtReleaseGC((Widget)pmw,pmw->procmeter_graph.grid_gc);
+ XtFree((XtPointer)pmw->procmeter_graph.grid_units);
+ XtFree((XtPointer)pmw->procmeter_graph.data);
 }
 
 
@@ -251,197 +252,197 @@ static Boolean SetValues(ProcMeterGraphWidget current,ProcMeterGraphWidget reque
 /*++++++++++++++++++++++++++++++++++++++
   Resize the ProcMeter Graph Widget.
 
-  ProcMeterGraphWidget w The Widget that is resized.
+  ProcMeterGraphWidget pmw The Widget that is resized.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void Resize(ProcMeterGraphWidget w)
+static void Resize(ProcMeterGraphWidget pmw)
 {
- if(w->procmeter_graph.data_num!=w->core.width)
+ if(pmw->procmeter_graph.data_num!=pmw->core.width)
    {
-    int i,old_num=w->procmeter_graph.data_num;
-    unsigned short* old_data=w->procmeter_graph.data;
+    int i,old_num=pmw->procmeter_graph.data_num;
+    unsigned short* old_data=pmw->procmeter_graph.data;
 
-    w->procmeter_graph.data_num=w->core.width;
-    w->procmeter_graph.data=(unsigned short*)XtCalloc(w->procmeter_graph.data_num,sizeof(unsigned short));
+    pmw->procmeter_graph.data_num=pmw->core.width;
+    pmw->procmeter_graph.data=(unsigned short*)XtCalloc(pmw->procmeter_graph.data_num,sizeof(unsigned short));
 
-    if(w->procmeter_graph.data_num<old_num)
-       i=w->procmeter_graph.data_num;
+    if(pmw->procmeter_graph.data_num<old_num)
+       i=pmw->procmeter_graph.data_num;
     else
        i=old_num;
 
     for(;i>0;i--)
-       w->procmeter_graph.data[(-i+w->procmeter_graph.data_num)%w->procmeter_graph.data_num]=old_data[(w->procmeter_graph.data_index-i+old_num)%old_num];
+       pmw->procmeter_graph.data[(-i+pmw->procmeter_graph.data_num)%pmw->procmeter_graph.data_num]=old_data[(pmw->procmeter_graph.data_index-i+old_num)%old_num];
 
-    w->procmeter_graph.data_index=0;
+    pmw->procmeter_graph.data_index=0;
 
     XtFree((XtPointer)old_data);
 
-    for(i=w->procmeter_graph.data_max=0;i<w->procmeter_graph.data_num;i++)
-       if(w->procmeter_graph.data[i]>w->procmeter_graph.data_max)
-          w->procmeter_graph.data_max=w->procmeter_graph.data[i];
+    for(i=pmw->procmeter_graph.data_max=0;i<pmw->procmeter_graph.data_num;i++)
+       if(pmw->procmeter_graph.data[i]>pmw->procmeter_graph.data_max)
+          pmw->procmeter_graph.data_max=pmw->procmeter_graph.data[i];
 
-    w->procmeter_graph.grid_num=(w->procmeter_graph.data_max+(PROCMETER_GRAPH_SCALE-1))/PROCMETER_GRAPH_SCALE;
+    pmw->procmeter_graph.grid_num=(pmw->procmeter_graph.data_max+(PROCMETER_GRAPH_SCALE-1))/PROCMETER_GRAPH_SCALE;
 
-    if(w->procmeter_graph.grid_num<w->procmeter_graph.grid_min)
-       w->procmeter_graph.grid_num=w->procmeter_graph.grid_min;
-    if(w->procmeter_graph.grid_max && w->procmeter_graph.grid_num>w->procmeter_graph.grid_max)
-       w->procmeter_graph.grid_num=w->procmeter_graph.grid_max;
+    if(pmw->procmeter_graph.grid_num<pmw->procmeter_graph.grid_min)
+       pmw->procmeter_graph.grid_num=pmw->procmeter_graph.grid_min;
+    if(pmw->procmeter_graph.grid_max && pmw->procmeter_graph.grid_num>pmw->procmeter_graph.grid_max)
+       pmw->procmeter_graph.grid_num=pmw->procmeter_graph.grid_max;
    }
 
- GraphResize(w);
+ GraphResize(pmw);
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Redisplay the ProcMeter Widget.
 
-  ProcMeterGraphWidget w The Widget to redisplay.
+  ProcMeterGraphWidget pmw The Widget to redisplay.
 
   XEvent *event The event that caused the redisplay.
 
   Region region The region that was exposed.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void Redisplay(ProcMeterGraphWidget w,XEvent *event,Region region)
+static void Redisplay(ProcMeterGraphWidget pmw,XEvent *event,Region region)
 {
- if(w->core.visible)
-    GraphUpdate(w,True);
+ if(pmw->core.visible)
+    GraphUpdate(pmw,True);
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Perform all of the sizing on the Widget when it is created/resized.
 
-  ProcMeterGraphWidget w The Widget to resize.
+  ProcMeterGraphWidget pmw The Widget to resize.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void GraphResize(ProcMeterGraphWidget w)
+static void GraphResize(ProcMeterGraphWidget pmw)
 {
- ProcMeterGenericResize((ProcMeterGenericWidget)w);
+ (*procMeterGenericClassRec.procmeter_generic_class.resize)((ProcMeterGenericWidget)pmw);
 
- w->procmeter_generic.label_x=2;
+ pmw->procmeter_generic.label_x=2;
 
  /* The grid parts. */
 
- w->procmeter_graph.grid_units_x=w->core.width-XTextWidth(w->procmeter_generic.label_font,w->procmeter_graph.grid_units,(int)strlen(w->procmeter_graph.grid_units));
+ pmw->procmeter_graph.grid_units_x=pmw->core.width-XTextWidth(pmw->procmeter_generic.label_font,pmw->procmeter_graph.grid_units,(int)strlen(pmw->procmeter_graph.grid_units));
 
- w->procmeter_graph.grid_maxvis=w->procmeter_generic.body_height/3;
+ pmw->procmeter_graph.grid_maxvis=pmw->procmeter_generic.body_height/3;
 
- if(w->procmeter_generic.label_pos==ProcMeterLabelTop)
-    w->procmeter_generic.body_start=w->procmeter_generic.label_height;
+ if(pmw->procmeter_generic.label_pos==ProcMeterLabelTop)
+    pmw->procmeter_generic.body_start=pmw->procmeter_generic.label_height;
  else
-    w->procmeter_generic.body_start=0;
+    pmw->procmeter_generic.body_start=0;
 
- if(w->procmeter_graph.grid_num>w->procmeter_graph.grid_maxvis && w->procmeter_graph.grid_drawn)
-    w->procmeter_graph.grid_drawn=-1;
- if(w->procmeter_graph.grid_num<=w->procmeter_graph.grid_maxvis && w->procmeter_graph.grid_drawn)
-    w->procmeter_graph.grid_drawn=1;
+ if(pmw->procmeter_graph.grid_num>pmw->procmeter_graph.grid_maxvis && pmw->procmeter_graph.grid_drawn)
+    pmw->procmeter_graph.grid_drawn=-1;
+ if(pmw->procmeter_graph.grid_num<=pmw->procmeter_graph.grid_maxvis && pmw->procmeter_graph.grid_drawn)
+    pmw->procmeter_graph.grid_drawn=1;
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Update the display.
 
-  ProcMeterGraphWidget w The Widget to update.
+  ProcMeterGraphWidget pmw The Widget to update.
 
   Boolean all Indicates if the whole widget is to be updated.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void GraphUpdate(ProcMeterGraphWidget w,Boolean all)
+static void GraphUpdate(ProcMeterGraphWidget pmw,Boolean all)
 {
- if(w->core.visible)
+ if(pmw->core.visible)
    {
     int i;
-    int scale=PROCMETER_GRAPH_SCALE*w->procmeter_graph.grid_num;
+    int scale=PROCMETER_GRAPH_SCALE*pmw->procmeter_graph.grid_num;
     unsigned short val;
     Position pos;
 
     if(all)
       {
-       ProcMeterGenericUpdate((ProcMeterGenericWidget)w);
+       (*procMeterGenericClassRec.procmeter_generic_class.update)((ProcMeterGenericWidget)pmw);
 
-       if(w->procmeter_generic.label_pos!=ProcMeterLabelNone)
-          XDrawString(XtDisplay(w),XtWindow(w),w->procmeter_generic.label_gc,
-                      w->procmeter_graph.grid_units_x,w->procmeter_generic.label_y,
-                      w->procmeter_graph.grid_units,(int)strlen(w->procmeter_graph.grid_units));
+       if(pmw->procmeter_generic.label_pos!=ProcMeterLabelNone)
+          XDrawString(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_generic.label_gc,
+                      pmw->procmeter_graph.grid_units_x,pmw->procmeter_generic.label_y,
+                      pmw->procmeter_graph.grid_units,(int)strlen(pmw->procmeter_graph.grid_units));
 
-       for(i=0;i<w->procmeter_graph.data_num;i++)
+       for(i=0;i<pmw->procmeter_graph.data_num;i++)
          {
-          val=w->procmeter_graph.data[(i+w->procmeter_graph.data_index)%w->procmeter_graph.data_num];
-          pos=val*w->procmeter_generic.body_height/scale;
+          val=pmw->procmeter_graph.data[(i+pmw->procmeter_graph.data_index)%pmw->procmeter_graph.data_num];
+          pos=val*pmw->procmeter_generic.body_height/scale;
 
-          if(w->procmeter_graph.line_solid)
-             XDrawLine(XtDisplay(w),XtWindow(w),w->procmeter_generic.body_gc,
-                       i,w->procmeter_generic.body_height+w->procmeter_generic.body_start,
-                       i,w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos);
+          if(pmw->procmeter_graph.line_solid)
+             XDrawLine(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_generic.body_gc,
+                       i,pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start,
+                       i,pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start-pos);
           else if(i)
             {
-             unsigned short oldval=w->procmeter_graph.data[(i-1+w->procmeter_graph.data_index)%w->procmeter_graph.data_num];
-             Position oldpos=oldval*w->procmeter_generic.body_height/scale;
+             unsigned short oldval=pmw->procmeter_graph.data[(i-1+pmw->procmeter_graph.data_index)%pmw->procmeter_graph.data_num];
+             Position oldpos=oldval*pmw->procmeter_generic.body_height/scale;
 
-             XDrawLine(XtDisplay(w),XtWindow(w),w->procmeter_generic.body_gc,
-                       i,w->procmeter_generic.body_height+w->procmeter_generic.body_start-oldpos,
-                       i,w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos);
+             XDrawLine(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_generic.body_gc,
+                       i,pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start-oldpos,
+                       i,pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start-pos);
             }
          }
 
-       if(w->procmeter_graph.grid_drawn==1)
-          for(i=1;i<w->procmeter_graph.grid_num;i++)
+       if(pmw->procmeter_graph.grid_drawn==1)
+          for(i=1;i<pmw->procmeter_graph.grid_num;i++)
             {
-             pos=i*w->procmeter_generic.body_height/w->procmeter_graph.grid_num;
-             XDrawLine(XtDisplay(w),XtWindow(w),w->procmeter_graph.grid_gc,
-                       0            ,w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos,
-                       w->core.width,w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos);
+             pos=i*pmw->procmeter_generic.body_height/pmw->procmeter_graph.grid_num;
+             XDrawLine(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_graph.grid_gc,
+                       0              ,pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start-pos,
+                       pmw->core.width,pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start-pos);
             }
        else
-          if(w->procmeter_graph.grid_drawn==-1)
+          if(pmw->procmeter_graph.grid_drawn==-1)
             {
-             pos=w->procmeter_graph.grid_maxvis*w->procmeter_generic.body_height/w->procmeter_graph.grid_num;
-             XDrawLine(XtDisplay(w),XtWindow(w),w->procmeter_graph.grid_gc,
-                       0            ,w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos,
-                       w->core.width,w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos);
+             pos=pmw->procmeter_graph.grid_maxvis*pmw->procmeter_generic.body_height/pmw->procmeter_graph.grid_num;
+             XDrawLine(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_graph.grid_gc,
+                       0              ,pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start-pos,
+                       pmw->core.width,pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start-pos);
             }
       }
     else
       {
-       val=w->procmeter_graph.data[(w->procmeter_graph.data_num-1+w->procmeter_graph.data_index)%w->procmeter_graph.data_num];
-       pos=val*w->procmeter_generic.body_height/scale;
+       val=pmw->procmeter_graph.data[(pmw->procmeter_graph.data_num-1+pmw->procmeter_graph.data_index)%pmw->procmeter_graph.data_num];
+       pos=val*pmw->procmeter_generic.body_height/scale;
 
-       XCopyArea(XtDisplay(w),XtWindow(w),XtWindow(w),w->procmeter_graph.grid_gc,
-                 1,w->procmeter_generic.body_start,(unsigned)(w->core.width-1),w->procmeter_generic.body_height,
-                 0,w->procmeter_generic.body_start);
+       XCopyArea(XtDisplay(pmw),XtWindow(pmw),XtWindow(pmw),pmw->procmeter_graph.grid_gc,
+                 1,pmw->procmeter_generic.body_start,(unsigned)(pmw->core.width-1),pmw->procmeter_generic.body_height,
+                 0,pmw->procmeter_generic.body_start);
 
-       XClearArea(XtDisplay(w),XtWindow(w),
-                  w->core.width-1,w->procmeter_generic.body_start,1,w->procmeter_generic.body_height,
+       XClearArea(XtDisplay(pmw),XtWindow(pmw),
+                  pmw->core.width-1,pmw->procmeter_generic.body_start,1,pmw->procmeter_generic.body_height,
                   False);
 
-       if(w->procmeter_graph.line_solid)
-          XDrawLine(XtDisplay(w),XtWindow(w),w->procmeter_generic.body_gc,
-                    (signed)(w->procmeter_graph.data_num-1),w->procmeter_generic.body_height+w->procmeter_generic.body_start,
-                    (signed)(w->procmeter_graph.data_num-1),w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos);
+       if(pmw->procmeter_graph.line_solid)
+          XDrawLine(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_generic.body_gc,
+                    (signed)(pmw->procmeter_graph.data_num-1),pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start,
+                    (signed)(pmw->procmeter_graph.data_num-1),pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start-pos);
        else
          {
-          unsigned short oldval=w->procmeter_graph.data[(w->procmeter_graph.data_num-2+w->procmeter_graph.data_index)%w->procmeter_graph.data_num];
-          Position oldpos=oldval*w->procmeter_generic.body_height/scale;
+          unsigned short oldval=pmw->procmeter_graph.data[(pmw->procmeter_graph.data_num-2+pmw->procmeter_graph.data_index)%pmw->procmeter_graph.data_num];
+          Position oldpos=oldval*pmw->procmeter_generic.body_height/scale;
 
-          XDrawLine(XtDisplay(w),XtWindow(w),w->procmeter_generic.body_gc,
-                    (signed)(w->procmeter_graph.data_num-1),w->procmeter_generic.body_height+w->procmeter_generic.body_start-oldpos,
-                    (signed)(w->procmeter_graph.data_num-1),w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos);
+          XDrawLine(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_generic.body_gc,
+                    (signed)(pmw->procmeter_graph.data_num-1),pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start-oldpos,
+                    (signed)(pmw->procmeter_graph.data_num-1),pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start-pos);
          }
 
-       if(w->procmeter_graph.grid_drawn==1)
-          for(i=1;i<w->procmeter_graph.grid_num;i++)
+       if(pmw->procmeter_graph.grid_drawn==1)
+          for(i=1;i<pmw->procmeter_graph.grid_num;i++)
             {
-             pos=i*w->procmeter_generic.body_height/w->procmeter_graph.grid_num;
-             XDrawPoint(XtDisplay(w),XtWindow(w),w->procmeter_graph.grid_gc,
-                        w->core.width-1,w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos);
+             pos=i*pmw->procmeter_generic.body_height/pmw->procmeter_graph.grid_num;
+             XDrawPoint(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_graph.grid_gc,
+                        pmw->core.width-1,pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start-pos);
             }
        else
-          if(w->procmeter_graph.grid_drawn==-1)
+          if(pmw->procmeter_graph.grid_drawn==-1)
             {
-             pos=w->procmeter_graph.grid_maxvis*w->procmeter_generic.body_height/w->procmeter_graph.grid_num;
-             XDrawPoint(XtDisplay(w),XtWindow(w),w->procmeter_graph.grid_gc,
-                        w->core.width-1,w->procmeter_generic.body_height+w->procmeter_generic.body_start-pos);
+             pos=pmw->procmeter_graph.grid_maxvis*pmw->procmeter_generic.body_height/pmw->procmeter_graph.grid_num;
+             XDrawPoint(XtDisplay(pmw),XtWindow(pmw),pmw->procmeter_graph.grid_gc,
+                        pmw->core.width-1,pmw->procmeter_generic.body_height+pmw->procmeter_generic.body_start-pos);
             }
       }
    }
@@ -451,53 +452,53 @@ static void GraphUpdate(ProcMeterGraphWidget w,Boolean all)
 /*++++++++++++++++++++++++++++++++++++++
   Add a data point to the ProcMeter Graph Widget.
 
-  Widget pmw The ProcMeter Graph Widget.
+  Widget w The ProcMeter Graph Widget.
 
   unsigned short datum The data point to add.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void ProcMeterGraphAddDatum(Widget pmw,unsigned short datum)
+void ProcMeterGraphAddDatum(Widget w,unsigned short datum)
 {
- ProcMeterGraphWidget w=(ProcMeterGraphWidget)pmw;
- unsigned short old_datum,new_data_max=w->procmeter_graph.data_max;
+ ProcMeterGraphWidget pmw=(ProcMeterGraphWidget)w;
+ unsigned short old_datum,new_data_max=pmw->procmeter_graph.data_max;
  int i;
 
- old_datum=w->procmeter_graph.data[w->procmeter_graph.data_index];
- w->procmeter_graph.data[w->procmeter_graph.data_index]=datum;
+ old_datum=pmw->procmeter_graph.data[pmw->procmeter_graph.data_index];
+ pmw->procmeter_graph.data[pmw->procmeter_graph.data_index]=datum;
 
- w->procmeter_graph.data_index=(w->procmeter_graph.data_index+1)%w->procmeter_graph.data_num;
+ pmw->procmeter_graph.data_index=(pmw->procmeter_graph.data_index+1)%pmw->procmeter_graph.data_num;
 
  if(datum>new_data_max)
     new_data_max=datum;
  else
     if(old_datum==new_data_max)
-       for(i=new_data_max=0;i<w->procmeter_graph.data_num;i++)
-          if(w->procmeter_graph.data[i]>new_data_max)
-             new_data_max=w->procmeter_graph.data[i];
+       for(i=new_data_max=0;i<pmw->procmeter_graph.data_num;i++)
+          if(pmw->procmeter_graph.data[i]>new_data_max)
+             new_data_max=pmw->procmeter_graph.data[i];
 
- if(new_data_max!=w->procmeter_graph.data_max)
+ if(new_data_max!=pmw->procmeter_graph.data_max)
    {
     int new_grid_num=(new_data_max+(PROCMETER_GRAPH_SCALE-1))/PROCMETER_GRAPH_SCALE;
 
-    if(new_grid_num<w->procmeter_graph.grid_min)
-       new_grid_num=w->procmeter_graph.grid_min;
-    if(w->procmeter_graph.grid_max && new_grid_num>w->procmeter_graph.grid_max)
-       new_grid_num=w->procmeter_graph.grid_max;
+    if(new_grid_num<pmw->procmeter_graph.grid_min)
+       new_grid_num=pmw->procmeter_graph.grid_min;
+    if(pmw->procmeter_graph.grid_max && new_grid_num>pmw->procmeter_graph.grid_max)
+       new_grid_num=pmw->procmeter_graph.grid_max;
 
-    w->procmeter_graph.data_max=new_data_max;
+    pmw->procmeter_graph.data_max=new_data_max;
 
-    if(new_grid_num!=w->procmeter_graph.grid_num)
+    if(new_grid_num!=pmw->procmeter_graph.grid_num)
       {
-       w->procmeter_graph.grid_num=new_grid_num;
+       pmw->procmeter_graph.grid_num=new_grid_num;
 
-       if(w->procmeter_graph.grid_num>w->procmeter_graph.grid_maxvis && w->procmeter_graph.grid_drawn)
-          w->procmeter_graph.grid_drawn=-1;
-       if(w->procmeter_graph.grid_num<=w->procmeter_graph.grid_maxvis && w->procmeter_graph.grid_drawn)
-          w->procmeter_graph.grid_drawn=1;
+       if(pmw->procmeter_graph.grid_num>pmw->procmeter_graph.grid_maxvis && pmw->procmeter_graph.grid_drawn)
+          pmw->procmeter_graph.grid_drawn=-1;
+       if(pmw->procmeter_graph.grid_num<=pmw->procmeter_graph.grid_maxvis && pmw->procmeter_graph.grid_drawn)
+          pmw->procmeter_graph.grid_drawn=1;
 
-       GraphUpdate(w,True);
+       GraphUpdate(pmw,True);
       }
    }
 
- GraphUpdate(w,False);
+ GraphUpdate(pmw,False);
 }
