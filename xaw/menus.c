@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.13 1999-11-30 19:48:28 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.14 2000-12-16 16:50:03 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2.
+  ProcMeter - A system monitoring program for Linux - Version 3.3.
 
   X Window menus.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99 Andrew M. Bishop
+  This file Copyright 1998,99,2000 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -35,7 +35,7 @@
 
 #include "widgets/SubMenus.h"
 
-#include "xwindow.h"
+#include "window.h"
 #include "procmeterp.h"
 
 
@@ -59,8 +59,8 @@ static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *n
 static void SelectOutputMenuCallback(Widget widget,XtPointer clientData,XtPointer callData);
 static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPointer callData);
 
-static void DonePropertiesDialogCallback(Widget widget,XtPointer clientData,XtPointer callData);
-static void AtomPropertiesDialogCloseCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb);
+static void PropertiesDialogDoneCallback(Widget widget,XtPointer clientData,XtPointer callData);
+static void PropertiesDialogCloseCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb);
 
 /* Menu widgets */
 
@@ -145,7 +145,6 @@ void CreateMenus(Widget parent)
                                   XtNlabel,"Modules",
                                   XtVaNestedList,resources,
                                   NULL);
-
 
  menulabel=XtNameToWidget(module_menu,"menuLabel");
  XtSetValues(menulabel,args,nargs);
@@ -346,7 +345,7 @@ void CreateMenus(Widget parent)
                                    XtVaNestedList,resources,
                                    NULL);
 
- XtAddCallback(prop_done,XtNcallback,DonePropertiesDialogCallback,0);
+ XtAddCallback(prop_done,XtNcallback,PropertiesDialogDoneCallback,0);
 
  XtFree(resources);
 
@@ -361,7 +360,7 @@ void CreateMenus(Widget parent)
 
  XSetWMProtocols(display,XtWindow(properties_dialog),&close_atom,1);
 
- XtAddEventHandler(properties_dialog,0,True,AtomPropertiesDialogCloseCallback,NULL);
+ XtAddEventHandler(properties_dialog,0,True,PropertiesDialogCloseCallback,NULL);
 }
 
 
@@ -491,24 +490,19 @@ void AddModuleToMenu(Module module)
   Widget widget The widget itself.
 
   Module module The module that this widget belongs to.
-
-  Output output The output that this widget belongs to.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void AddMenuToOutput(Widget widget,Module module,Output output)
+void AddMenuToOutput(Widget widget,Module module)
 {
  XtOverrideTranslations(widget,XtParseTranslationTable("<Btn3Down>: ModuleMenuStart()"));
 
  if(module)
    {
     char string[64];
-    sprintf(string,"<Btn2Down>: OutputMenuStart(%sMenu)",module->module->name);
-    XtOverrideTranslations(widget,XtParseTranslationTable(string));
-   }
 
- if(output)
-   {
-    char string[80];
+    sprintf(string,"<Btn2Down>: OutputMenuStart(%s)",module->module->name);
+    XtOverrideTranslations(widget,XtParseTranslationTable(string));
+
     sprintf(string,"<Btn1Down>: FunctionsMenuStart(%s)",module->module->name);
     XtOverrideTranslations(widget,XtParseTranslationTable(string));
    }
@@ -526,9 +520,9 @@ void RemoveModuleFromMenu(Module module)
  if(!display)
     return;
 
- XtDestroyWidget(module->menu_item_widget);
-
  XtDestroyWidget(module->submenu_widget);
+
+ XtDestroyWidget(module->menu_item_widget);
 }
 
 
@@ -539,6 +533,8 @@ void RemoveModuleFromMenu(Module module)
 void DestroyMenus(void)
 {
  XtDestroyWidget(module_menu);
+ XtDestroyWidget(functions_menu);
+ XtDestroyWidget(properties_dialog);
 }
 
 
@@ -623,7 +619,7 @@ static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPoi
   This function is only ever called from the Xt Intrinsics routines.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void DonePropertiesDialogCallback(Widget widget,XtPointer clientData,XtPointer callData)
+static void PropertiesDialogDoneCallback(Widget widget,XtPointer clientData,XtPointer callData)
 {
  XtPopdown(properties_dialog);
  properties_popped_up=False;
@@ -644,7 +640,7 @@ static void DonePropertiesDialogCallback(Widget widget,XtPointer clientData,XtPo
   This function is only ever called from the Xt Intrinsics routines.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void AtomPropertiesDialogCloseCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb)
+static void PropertiesDialogCloseCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb)
 {
  XtPopdown(properties_dialog);
  properties_popped_up=False;
@@ -687,9 +683,11 @@ static void ModuleMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_
 
 static void OutputMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params)
 {
- Widget menu=XtNameToWidget(module_menu,params[0]);
+ Module *modulep=NULL;
 
- PopupMenuHere(menu,w,event);
+ for(modulep=Modules;*modulep;modulep++)
+    if(!strcmp((*modulep)->module->name,params[0]))
+       PopupMenuHere((*modulep)->submenu_widget,w,event);
 }
 
 
