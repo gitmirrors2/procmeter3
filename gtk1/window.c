@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/window.c,v 1.4 2002-12-07 19:33:51 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/window.c,v 1.5 2004-09-05 13:16:01 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4c.
 
   X Windows interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997,98,99,2000,01,02 Andrew M. Bishop
+  This file Copyright 1997,98,99,2000,01,02,04 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -275,16 +275,16 @@ void AddRemoveOutput(Output output)
            (string=GetProcMeterRC("resources","graph-solid"))))
           ProcMeterGraphSetSolid(GTK_PROCMETERGRAPH(w),StringToBoolean(string));
 
-       if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-min")) ||
-           (string=GetProcMeterRC(module->module->name,"grid-min")) ||
-           (string=GetProcMeterRC("resources","grid-min"))))
-          ProcMeterGraphSetGridMin(GTK_PROCMETERGRAPH(w),StringToInt(string));
- 
        if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-max")) ||
            (string=GetProcMeterRC(module->module->name,"grid-max")) ||
            (string=GetProcMeterRC("resources","grid-max"))))
           ProcMeterGraphSetGridMax(GTK_PROCMETERGRAPH(w),StringToInt(string));
 
+       if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-min")) ||
+           (string=GetProcMeterRC(module->module->name,"grid-min")) ||
+           (string=GetProcMeterRC("resources","grid-min"))))
+          ProcMeterGraphSetGridMin(GTK_PROCMETERGRAPH(w),StringToInt(string));
+ 
 //       if(vertical)
 //         {XtSetArg(args[nargs],XtNmin,MINHEIGHT);nargs++;}
 //       else
