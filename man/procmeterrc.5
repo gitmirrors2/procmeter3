@@ -1,4 +1,4 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.8 1999-09-24 19:06:19 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.9 1999-09-30 17:46:01 amb Exp $
 .\"
 .\"  ProcMeter - A system monitoring program for Linux - Version 3.1b.
 .\"
@@ -108,10 +108,12 @@ A boolean to indicate if the graph should be solid (the default) or a single
 line.  (yes or no, true or false, 0 or 1.)
 .TP
 .BR grid-min=...
-The minimum number of grid lines to display on a graph.  (An integer.)
+The minimum number of grid lines to display on a graph or bar chart.  (An
+integer.)
 .TP
 .BR grid-max=...
-The maximum number of grid lines to display on a graph.  (An integer.)
+The maximum number of grid lines to display on a graph or bar chart.  (An
+integer.)
 .TP
 .BR text-font=...
 The font to use for the textual outputs.  (An X11 font name.)
@@ -142,8 +144,8 @@ A string containing options that are passed to the module at startup, different
 modules have different options, see the procmeter3(1) manual page.
 .TP
 .BR graph-scale=...
-The scaling of the graph, the number of units between each of the grid lines (an
-integer).
+The scaling of the graph or bar chart, the number of units between each of the
+grid lines (an integer).
 .TP
 .BR run=...
 A string that specifies a program that can be run by selecting it from the menu
@@ -184,7 +186,7 @@ file, it is a much reduced version of the system default procmeterrc file.
  grid-min = 5
  grid-foreground = grey50
 
- # Black on white graph labels, small font, below the data.
+ # Black on white output labels, small font, below the data.
  label-font = 5x7
  label-foreground = black
  label-position = bottom
