@@ -1,4 +1,4 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.2 1998-09-19 15:43:51 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.3 1998-09-26 09:35:16 amb Exp $
 #
 # ProcMeter - A system monitoring program for Linux.
 #
@@ -30,11 +30,11 @@ WOBJ=widgets/PMGeneric.o widgets/PMGraph.o widgets/PMText.o
 
 ########
 
-all : procmeter3 procmeter.modules procmeter.widgets
+all : procmeter.modules procmeter.widgets procmeter3
 
 ########
 
-procmeter3 : $(OBJ) procmeter.widgets procmeter.modules
+procmeter3 : $(OBJ) $(WOBJ)
 	$(LD) $(OBJ) $(WOBJ) -o $@ -ldl $(XLIBRARY)
 
 ########
