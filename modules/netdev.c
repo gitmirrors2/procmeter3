@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.13 2001-04-15 15:50:25 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.14 2002-04-20 11:35:55 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -381,8 +381,10 @@ int Update(time_t now,ProcMeterOutput *output)
       {
        double value;
 
-       if(previous[j]>current[j])
+       if(current[j]==0) /* stopped ppp0 device */
           value=0.0;
+       else if(previous[j]>current[j]) /* wrap around of 32 bit counter */
+          value=(4.294967296e9-(double)(previous[j]-current[j]))/output->interval;
        else
           value=(double)(current[j]-previous[j])/output->interval;
 
