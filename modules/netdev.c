@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.11 1999-09-29 19:00:02 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.12 1999-12-03 19:50:07 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -407,14 +407,15 @@ void Unload(void)
 {
  int i;
 
- for(i=0;outputs[i];i++)
-   {
-    free(outputs[i]->description);
-    free(outputs[i]);
-   }
-
  if(outputs)
+   {
+    for(i=0;outputs[i];i++)
+      {
+       free(outputs[i]->description);
+       free(outputs[i]);
+      }
     free(outputs);
+   }
  if(current)
     free(current);
  if(previous)

@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.3 1999-09-29 19:00:03 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.4 1999-12-03 19:53:02 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -400,7 +400,7 @@ void Unload(void)
    {
     int i;
 
-    for(i=0;i<ncpus*N_OUTPUTS;i++)
+    for(i=0;ncpus*N_OUTPUTS;i++)
        free(smp_outputs[i].description);
 
     free(smp_outputs);

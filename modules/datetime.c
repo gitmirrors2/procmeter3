@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.2 1999-02-09 19:03:21 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.3 1999-12-03 19:50:06 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.1.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Date and Time Information module source file.
   ******************/ /******************
@@ -254,4 +254,13 @@ int Update(time_t now,ProcMeterOutput* output)
    }
 
  return(-1);
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Tidy up and prepare to have the module unloaded.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+void Unload(void)
+{
 }
