@@ -1,4 +1,4 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.7 1999-09-24 19:02:24 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.8 1999-09-24 19:06:19 amb Exp $
 .\"
 .\"  ProcMeter - A system monitoring program for Linux - Version 3.1b.
 .\"
@@ -73,7 +73,8 @@ then they appear after those specified here.
 The
 .B resources
 section contains the general program resources, these are mostly the items that
-were stored as X Window resources in previous versions of procmeter.
+were command line options or were stored as X Window resources in previous
+versions of procmeter.
 .TP
 .BR horizontal=...
 A Boolean to indicate that the outputs are stacked horizontally instead of
@@ -126,6 +127,9 @@ must be the same due to the Xaw Widget set used.
 .TP
 .BR menu-font=...
 The font to use for the menus.  (An X11 font name.)
+.TP
+.BR update=...
+The update interval for the output in seconds (an integer).
 .LP
 The module sections e.g.
 .I ProcMeter
@@ -136,9 +140,6 @@ module and as defaults for the all of the outputs of that module.
 .BR options=...
 A string containing options that are passed to the module at startup, different
 modules have different options, see the procmeter3(1) manual page.
-.TP
-.BR update=...
-The update interval for the output in seconds (an integer).
 .TP
 .BR graph-scale=...
 The scaling of the graph, the number of units between each of the grid lines (an
