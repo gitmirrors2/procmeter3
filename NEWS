@@ -1,3 +1,10 @@
+Version 3.3a of ProcMeter3 released : Sun May 27 08:45:00 2001
+--------------------------------------------------------------
+
+Bug fixes:
+ Better handling of kernel version 2.4.x.
+
+
 Version 3.3 of ProcMeter3 released : Fri Jan 5 20:00:00 2001
 ------------------------------------------------------------
 
