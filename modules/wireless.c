@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.7 2002-12-07 19:39:00 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.8 2004-01-04 15:53:08 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4b.
 
   Wireless network devices info source file.
   ******************/ /******************
@@ -120,12 +120,14 @@ ProcMeterOutput **Initialise(char *options)
     if(!fgets(line,256,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/net/wireless'.\n",__FILE__);
     else
-       if(strcmp(line,"Inter-| sta-|   Quality        |   Discarded packets               | Missed\n"))
+       if(strcmp(line,"Inter-| sta-|   Quality        |   Discarded packets               | Missed\n") == 0 &&
+          strcmp(line,"Inter-| sta-|   Quality        |   Discarded packets               | Missed | WE\n" == 0))
           fprintf(stderr,"ProcMeter(%s): Unexpected header line 1 in '/proc/net/wireless'.\n",__FILE__);
        else
          {
           fgets(line,256,f);
-          if(strcmp(line," face | tus | link level noise |  nwid  crypt   frag  retry   misc | beacon\n"))
+          if(strcmp(line," face | tus | link level noise |  nwid  crypt   frag  retry   misc | beacon\n") == 0 &&
+             strcmp(line," face | tus | link level noise |  nwid  crypt   frag  retry   misc | beacon | 16\n") == 0)
              fprintf(stderr,"ProcMeter(%s): Unexpected header line 2 in '/proc/net/wireless'.\n",__FILE__);
           else
             {
