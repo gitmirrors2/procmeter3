@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.3 1998-10-24 09:02:51 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.4 1999-02-07 17:16:20 amb Exp $
 
   ProcMeter - A system monitoring program for Linux (v3.0a).
 
@@ -60,7 +60,7 @@ extern int quit;
 static int sleeping;
 
 /*+ The pane that contains all of the outputs. +*/
-static Widget pane;
+Widget pane;
 
 /*+ A list of the outputs that are currently visible. +*/
 static Output *displayed=NULL;
@@ -290,6 +290,7 @@ void AddDefaultOutputs(int argc,char **argv)
  ResizePane();
 }
 
+
 /*++++++++++++++++++++++++++++++++++++++
   Add or remove an output
 
@@ -441,6 +442,81 @@ void AddRemoveOutput(Output output)
  XawPanedSetRefigureMode(pane,True);
 
  ResizePane();
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Move an output.
+
+  Output output1 The output to be moved.
+
+  Output output2 The one that the output is to be moved above or below.
+
+  int direction The direction to move the output (up=1 or down=2).
+  ++++++++++++++++++++++++++++++++++++++*/
+
+void MoveOutput(Output output1,Output output2,int direction)
+{
+ int i,i1=-1,i2=-1;
+
+ for(i=0;i<ndisplayed;i++)
+   {
+    if(displayed[i]==output1)
+       i1=i;
+    if(displayed[i]==output2)
+       i2=i;
+   }
+
+ if(i1==-1 || i2==-1 || i1==i2 || (direction==2 && i1==(i2+1)) || (direction==1 && i1==(i2-1)))
+    return;
+
+ XawPanedSetRefigureMode(pane,False);
+
+ XtUnmanageChild(output1->output_widget);
+
+ for(i=i2;i<ndisplayed;i++)
+   {
+    if(i==i2)
+      {
+       XtManageChild(output1->output_widget);
+       if(direction==2)
+          continue;
+      }
+    if(i!=i1)
+      {
+       XtUnmanageChild(displayed[i]->output_widget);
+       XtManageChild(displayed[i]->output_widget);
+      }
+   }
+
+ XawPanedSetRefigureMode(pane,True);
+
+ ResizePane();
+
+ if(direction==1 && i2>i1)
+   {
+    for(i=i1;i<i2;i++)
+       displayed[i]=displayed[i+1];
+    displayed[i2-1]=output1;
+   }
+ else if(direction==1 && i1>i2)
+   {
+    for(i=i1;i>i2;i--)
+       displayed[i]=displayed[i-1];
+    displayed[i2]=output1;
+   }
+ else if(direction==2 && i2>i1)
+   {
+    for(i=i1;i<i2;i++)
+       displayed[i]=displayed[i+1];
+    displayed[i2]=output1;
+   }
+ else /* if(direction==2 && i1>i2) */
+   {
+    for(i=i1;i>i2;i--)
+       displayed[i]=displayed[i-1];
+    displayed[i2+1]=output1;
+   }
 }
 
 
