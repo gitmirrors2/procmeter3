@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMBarP.h,v 1.1 1999-09-30 17:42:18 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMBarP.h,v 1.2 1999-10-05 17:53:47 amb Exp $
 
   ProcMeter Bar Widget Private header file (for ProcMeter3 3.2).
   ******************/ /******************
@@ -49,7 +49,9 @@ typedef struct _ProcMeterBarPart
  int             grid_drawn;       /*+ If 1 then draw as normal, if 0 never draw, if -1 draw only one line. +*/
  int             grid_num;         /*+ The actual number of grid lines. +*/
 
- unsigned short  data;             /*+ The data for the bar. +*/
+ unsigned short  data[8];          /*+ The data for the bar. +*/
+ unsigned short  data_index;       /*+ A pointer into the array +*/
+ unsigned long   data_sum;         /*+ The average value of the last 10 data points. +*/
 }
 ProcMeterBarPart;
 

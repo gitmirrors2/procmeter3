@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMBar.c,v 1.1 1999-09-30 17:41:57 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMBar.c,v 1.2 1999-10-05 17:53:44 amb Exp $
 
   ProcMeter Bar Widget Source file (for ProcMeter3 3.2).
   ******************/ /******************
@@ -18,7 +18,6 @@
 #include <X11/IntrinsicP.h>
 #include <X11/StringDefs.h>
 #include <X11/CoreP.h>
-#include <X11/Xaw/Paned.h>
 
 #include "PMGenericP.h"
 #include "PMBarP.h"
@@ -106,6 +105,7 @@ WidgetClass procMeterBarWidgetClass=(WidgetClass)&procMeterBarClassRec;
 
 static void Initialize(ProcMeterBarWidget request,ProcMeterBarWidget new)
 {
+ int i;
  XGCValues values;
 
  /* The grid parts. */
@@ -134,7 +134,12 @@ static void Initialize(ProcMeterBarWidget request,ProcMeterBarWidget new)
 
  /* The data parts. */
 
- new->procmeter_bar.data=0;
+ for(i=0;i<sizeof(new->procmeter_bar.data)/sizeof(new->procmeter_bar.data[0]);i++)
+    new->procmeter_bar.data[i]=0;
+
+ new->procmeter_bar.data_index=0;
+
+ new->procmeter_bar.data_sum=0;
 
  /* The rest of the sizing. */
 
@@ -287,9 +292,6 @@ static void BarResize(ProcMeterBarWidget w)
     w->procmeter_bar.grid_drawn=-1;
  if(w->procmeter_bar.grid_num<=w->procmeter_bar.grid_maxvis && w->procmeter_bar.grid_drawn)
     w->procmeter_bar.grid_drawn=1;
-
- if(XtIsSubclass(XtParent(w),panedWidgetClass))
-    XawPanedSetMinMax((Widget)w,20,20);
 }
 
 
@@ -306,6 +308,7 @@ static void BarUpdate(ProcMeterBarWidget w)
     int i;
     int scale=PROCMETER_GRAPH_SCALE*w->procmeter_bar.grid_num;
     Position pos;
+    Position top_average_bottom,bottom_average_top,average_size;
 
     ProcMeterGenericUpdate((ProcMeterGenericWidget)w);
 
@@ -314,11 +317,25 @@ static void BarUpdate(ProcMeterBarWidget w)
                    w->procmeter_bar.grid_units_x,w->procmeter_generic.label_y,
                    w->procmeter_bar.grid_units,(int)strlen(w->procmeter_bar.grid_units));
 
-    pos=w->procmeter_bar.data*w->core.width/scale;
+    pos=w->procmeter_bar.data_sum*w->core.width/(scale*2);
+
+    top_average_bottom=w->procmeter_generic.body_start+2*(w->procmeter_generic.body_height>>3);
+    bottom_average_top=w->procmeter_generic.body_start+w->procmeter_generic.body_height-2*(w->procmeter_generic.body_height>>3);
+    average_size=w->procmeter_generic.body_height>>3;
 
     XFillRectangle(XtDisplay(w),XtWindow(w),w->procmeter_generic.body_gc,
-                   0  ,2+w->procmeter_generic.body_start,
-                   pos,w->procmeter_generic.body_height-4);
+                   pos-average_size,top_average_bottom-average_size,
+                   average_size    ,average_size);
+
+    XFillRectangle(XtDisplay(w),XtWindow(w),w->procmeter_generic.body_gc,
+                   pos-average_size,bottom_average_top,
+                   average_size    ,average_size);
+
+    pos=w->procmeter_bar.data[w->procmeter_bar.data_index]*w->core.width/scale;
+
+    XFillRectangle(XtDisplay(w),XtWindow(w),w->procmeter_generic.body_gc,
+                   0  ,top_average_bottom+1,
+                   pos,bottom_average_top-top_average_bottom-2);
 
     if(w->procmeter_bar.grid_drawn==1)
        for(i=1;i<w->procmeter_bar.grid_num;i++)
@@ -352,10 +369,21 @@ void ProcMeterBarWidgetAddDatum(Widget pmw,unsigned short datum)
 {
  ProcMeterBarWidget w=(ProcMeterBarWidget)pmw;
  int new_grid_num;
+ unsigned short old_datum;
 
- w->procmeter_bar.data=datum;
+ w->procmeter_bar.data_index++;
+ if(w->procmeter_bar.data_index==8)
+    w->procmeter_bar.data_index=0;
 
- new_grid_num=(datum+(PROCMETER_GRAPH_SCALE-1))/PROCMETER_GRAPH_SCALE;
+ old_datum=w->procmeter_bar.data[w->procmeter_bar.data_index];
+ w->procmeter_bar.data[w->procmeter_bar.data_index]=datum;
+
+ w->procmeter_bar.data_sum=(w->procmeter_bar.data_sum>>1)+datum-(old_datum>>8);
+
+ if((w->procmeter_bar.data_sum/2)>datum)
+    new_grid_num=((w->procmeter_bar.data_sum/2)+(PROCMETER_GRAPH_SCALE-1))/PROCMETER_GRAPH_SCALE;
+ else
+    new_grid_num=(datum+(PROCMETER_GRAPH_SCALE-1))/PROCMETER_GRAPH_SCALE;
 
  if(new_grid_num<w->procmeter_bar.grid_min)
     new_grid_num=w->procmeter_bar.grid_min;
