@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.4 2002-01-26 12:13:18 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.5 2002-06-04 10:09:14 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.2.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Wireless network devices info source file.
   ******************/ /******************
@@ -114,7 +114,7 @@ ProcMeterOutput **Initialise(char *options)
 
  f=fopen("/proc/net/wireless","r");
  if(!f)
-    fprintf(stderr,"ProcMeter(%s): Could not open '/proc/net/wireless'.\n",__FILE__);
+    ;                           /* Don't bother giving an error message for 99% of systems. */
  else
    {
     if(!fgets(line,256,f))

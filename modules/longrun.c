@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.1 2002-04-14 14:03:33 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.2 2002-06-04 10:09:14 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3a.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   Transmeta longrun support.
   ******************/ /******************
@@ -109,7 +109,8 @@ ProcMeterOutput **Initialise(char *options)
  outputs[0]=NULL;
 
  if ((cpuid_fd = open(CPUID_DEVICE, O_RDONLY)) < 0) {
-	 fprintf(stderr, "Procmeter(%s): cannot open " CPUID_DEVICE ". make sure your kernel was compiled with CONFIG_X86_CPUID=y, and make sure the device is readable", __FILE__);
+  /* Don't bother giving an error message for 99% of systems. */
+  //	 fprintf(stderr, "Procmeter(%s): cannot open " CPUID_DEVICE ". make sure your kernel was compiled with CONFIG_X86_CPUID=y, and make sure the device is readable\n", __FILE__);
 	 return outputs;
  }
  
