@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.7 1999-12-06 20:13:46 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.8 1999-12-08 19:40:53 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -103,7 +103,7 @@ int main(int argc,char **argv)
       {
        /* handle time leaps (rdate, xntpd, or laptop sleep/hibernation) */
        /* We choose to be somewhat lenient and decide that one occured if the
-          expected time is more than 5 intervals ahead or behind the current time. */
+          expected time is more than 5 seconds ahead or behind the current time. */
 
        now2=time(NULL);            /* Should be now+interval if there is no jump. */
 
@@ -124,27 +124,27 @@ int main(int argc,char **argv)
    }
  else
    {
+    static char double_underline[32]="===============================";
     static char underline[16]="---------------";
     Module *modulep;
     Output *outputp;
 
-    printf("\nProcMeter Version %s\n\n",PROCMETER_VERSION);
-    printf("A system monitoring program for Linux.\n");
+    printf("\nProcMeter Version %s\n%s\n\n",PROCMETER_VERSION,&double_underline[sizeof(double_underline)-18-sizeof(PROCMETER_VERSION)]);
+    printf("An efficient modular system monitoring program for Linux.\n");
     printf("(c) Andrew M. Bishop 1998,99 [amb@gedanken.demon.co.uk]\n\n");
 
-    printf("Usage: ProcMeter [-h] ...\n\n");
+    printf("Usage: ProcMeter [-h] [--rc=<filename>] [--...] [...]\n\n");
 
-    printf("To specify the default output use <module>.<output>[-g|-t] where module and\n"
-           "output come from the list below and '-g', '-t' and '-b' choose graph, text or\n"
-           "bar format.\n"
-           "e.g. procmeter3 Statistics.CPU-g Processes.Load-t\n");
+    printf("To specify the displayed outputs use <module>.<output>[-g|-t|-b] where module\n"
+           "and output come from the list below and '-g', '-t' and '-b' choose graph, text\n"
+           "or bar format.   e.g. procmeter3 Statistics.CPU-g Processes.Load-t\n");
 
     for(modulep=Modules;*modulep;modulep++)
       {
        ProcMeterOutput *last=NULL;
        char *p=(*modulep)->module->description;
 
-       printf("\n\n%s\n%s\n\n",(*modulep)->module->name,&underline[15-strlen((*modulep)->module->name)]);
+       printf("\n\n%s\n%s\n\n",(*modulep)->module->name,&underline[sizeof(underline)-1-strlen((*modulep)->module->name)]);
 
        while(p)
           printf("%s\n",get_substring(&p,80));
@@ -165,7 +165,7 @@ int main(int argc,char **argv)
                           (*outputp)->output->type&PROCMETER_TEXT?'T':' ',
                           (*outputp)->output->type&PROCMETER_BAR?'B':' ');
                 else
-                   printf("                        ");
+                   printf("                         ");
 
                 printf("%s\n",get_substring(&p,55));
 
