@@ -1,11 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMGraph.c,v 1.3 2003-06-21 18:39:01 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMGraph.c,v 1.4 2004-05-15 14:07:45 amb Exp $
 
-  ProcMeter Graph Widget Source file (for ProcMeter3 3.4a).
+  ProcMeter Graph Widget Source file (for ProcMeter3 3.4c).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,99,2000,01,02,03 Andrew M. Bishop
+  This file Copyright 1996,98,99,2000,01,02,03,04 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -557,6 +557,8 @@ void ProcMeterGraphSetGridMax(ProcMeterGraph *pmw,gint grid_max)
 {
  if(grid_max<0)
     pmw->grid_max=0;
+ else
+    pmw->grid_max=grid_max;
 
  if(grid_max && grid_max<pmw->grid_min)
     pmw->grid_max=pmw->grid_min;
