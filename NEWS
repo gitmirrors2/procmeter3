@@ -1,3 +1,28 @@
+Version 3.2 of ProcMeter3 released : Sun Dec 12 14:15:00 1999
+-------------------------------------------------------------
+
+Bug fixes:
+ Better handling of colour options.  Improve appearance with Xaw3d.  Don't
+ change to the library directory when running.  The .procmeterrc file sections
+ and parameter names are not case sensitive.  Better memory handling for
+ unloading modules.
+
+Modules:
+ Added more sensor directories to the lm78 sensors module.
+ Fix the df module to remove mountpoints that can't be monitored.
+
+Configuration:
+ Allow the label that is displayed for each output to be user configurable.
+ Allow the update interval be specified globally in the resources section.
+ Simplify the way that commands to run on the functions menu can be specified.
+ Allow command line options to override the .procmeterrc options.
+
+Display:
+ Add a delete option to the function menu.
+ Add a third level of menus to select the output format.
+ Add a new Widget type, a bar chart widget.
+
+
 Version 3.1c of ProcMeter3 released : Sun Aug 22 13:00:00 1999
 --------------------------------------------------------------
 
