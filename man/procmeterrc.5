@@ -1,27 +1,29 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.13 2001-01-05 19:48:45 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.14 2002-11-30 19:11:38 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.3.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.4.
 .\"
 .\"  Manual page for .procmeterrc file
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998,99,2000,01 Andrew M. Bishop
+.\"  This file Copyright 1998,99,2000,01,02 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETERRC 5 "January 5, 2001"
+.TH PROCMETERRC 5 "November 30, 2002"
 
 .SH NAME
 
-The \.procmeterrc configuration file for procmeter3 and gprocmeter3.
+The \.procmeterrc configuration file for procmeter3, gprocmeter3,
+procmeter3-log and procmeter3-lcd programs.
 
 .SH SYNOPSIS
 
-This file contains the run-time options for the procmeter3 and gprocmeter3
-programs.  These include the outputs that are displayed, the colours and fonts
-that are used and other options.
+This file contains the run-time options for the procmeter3, gprocmeter3,
+procmeter3-log and procmeter3-lcd programs.  These include the outputs that are
+displayed, the colours and fonts that are used (for X window outputs) and other
+options.
 
 .SH DESCRIPTION
 
@@ -29,7 +31,8 @@ The resources for ProcMeter version 3.x are stored in the .procmeterrc file
 instead of using X resources.  This gives more flexibility and allows for much
 simpler customisation.
 .LP
-When the procmeter3 or gprocmeter3 programs start the
+When the procmeter3, gprocmeter3, procmeter3-log or procmeter3-lcd programs
+start the
 .B .procmeterrc
 file is searched for in the current directory, the current users home directory
 or the system default installation directory (named procmeterrc).  The file is
@@ -48,10 +51,11 @@ and continuation using the '\\' character at the end of a line is allowed.
 Below is listed the resource values and the sections of the
 .B .procmeterrc
 file that they can exist in.
-.LP
-The
-.B library
-section contains the information about the procmeter modules that are available.
+
+.SH library SECTION
+
+This section contains the information about the procmeter modules that are
+available.
 .TP
 .BR path=...
 The pathname of the library that contains the compiled ProcMeter modules.
@@ -69,81 +73,109 @@ started.
 A list of the outputs that are to be started up in the order that they are to be
 displayed (separated by spaces).  If command line options are also specified
 then they appear after those specified here.
-.LP
-The
-.B resources
-section contains the general program resources, these are mostly the items that
-were command line options or were stored as X Window resources in previous
+
+.SH resources SECTION
+
+This section contains the general program resources, these are mostly the items
+that were command line options or were stored as X Window resources in previous
 versions of procmeter.
 .TP
 .BR horizontal=...
 A Boolean to indicate that the outputs are stacked horizontally instead of
-the default which is vertically.
+the default which is vertically. (For X versions of procmeter3 only.)
 .TP
 .BR background=...
 The colour to use as the default background for all outputs. (An X11 colour name
-or an RGB value in hex as #RRGGBB.)
+or an RGB value in hex as #RRGGBB.)  (For X versions of procmeter3 only.)
 .TP
 .BR foreground=...
 The colour to use as the default foreground for all outputs. (An X11 colour name
-or an RGB value in hex as #RRGGBB.)
+or an RGB value in hex as #RRGGBB.)  (For X versions of procmeter3 only.)
 .TP
 .BR label-font=...
 The font to use for the label that describes the output. (An X11 font name.)
+(For X versions of procmeter3 only.)
 .TP
 .BR label-foreground=...
 The colour to use as the foreground for the label. (An X11 colour name or an RGB
-value in hex as #RRGGBB.)
+value in hex as #RRGGBB.)  (For X versions of procmeter3 only.)
 .TP
 .BR label-position=...
 The position of the label relative to the body of the output.  (Either top,
-bottom or none.)
+bottom or none.)  (For X versions of procmeter3 only.)
 .TP
 .BR grid-foreground=...
 The colour to use for the grid lines. (An X11 colour name or an RGB value in hex
-as #RRGGBB.)
+as #RRGGBB.)  (For X versions of procmeter3 only.)
 .TP
 .BR graph-solid=...
 A boolean to indicate if the graph should be solid (the default) or a single
-line.  (yes or no, true or false, 0 or 1.)
+line.  (yes or no, true or false, 0 or 1.)  (For X versions of procmeter3 only.)
 .TP
 .BR grid-min=...
 The minimum number of grid lines to display on a graph or bar chart.  (An
-integer.)  This is particularly important with the bar chart because with this
-set too low the bar will always be the same length on screen and the number of
-grid lines will change with the data.
+integer.)  (For X and LCD versions of procmeter3 only.)  This is particularly
+important with the bar chart because with this set too low the bar will always
+be the same length on screen and the number of grid lines will change with the
+data.
 .TP
 .BR grid-max=...
 The maximum number of grid lines to display on a graph or bar chart.  (An
-integer.)
+integer.)  (For X and LCD versions of procmeter3 only.)
 .TP
 .BR text-font=...
-The font to use for the textual outputs.  (An X11 font name.)
+The font to use for the textual outputs.  (An X11 font name.)  (For X versions
+of procmeter3 only.)
 .TP
 .BR menu-foreground=...
 The colour to use as the foreground for the menus.  (An X11 colour name or an RGB
-value in hex as #RRGGBB.)  (Does not work for gprocmeter3.)
+value in hex as #RRGGBB.)  (For procmeter3 only.)
 .TP
 .BR menu-background=...
 The colour to use as the background for the menus.  (An X11 colour name or an
-RGB value in hex as #RRGGBB.)  (Does not work for gprocmeter3.)  (The background
-of all items on the same menu must be the same due to the Xaw Widget set used.)
+RGB value in hex as #RRGGBB.)  (For procmeter3 only.)  (The background of all
+items on the same menu must be the same due to the Xaw Widget set used.)
 .TP
 .BR menu-font=...
-The font to use for the menus.  (An X11 font name.)  (Does not work for gprocmeter3.)
+The font to use for the menus.  (An X11 font name.)  (For procmeter3 only.)
 .TP
 .BR update=...
 The update interval for the output in seconds (an integer).
 .LP
-The module sections e.g.
+
+.SH LCD SECTION
+
+This section contains parameters that are only used by the
+.B procmeter3\-lcd
+version of the program.
+.TP
+.BR host=...
+The name of the host that the LCDd daemon is running on.
+.TP
+.BR port=...
+The port number that the LCDd daemon is running on.
+.TP
+.BR duration=...
+The length of time that all of the ProcMeter outputs are displayed on the LCD
+display for before cycling to the next.
+.TP
+.BR priority=...
+The priority of all of the ProcMeter outputs when they are displayed on the LCD
+display.
+
+.SH MODULE SECTION
+
+The name of the section is the name of the Procmeter3 module (see the help,
+procmeter3 -h), for example:
 .I ProcMeter
+.LP
 These can contain any of the resource values which will then apply to all
 outputs of this module.  There are also extra options that can be applied to the
 module and as defaults for the all of the outputs of that module.
 .TP
 .BR options=...
 A string containing options that are passed to the module at startup, different
-modules have different options, see the procmeter3(1) manual page.
+modules have different options, see the procmeter3_modules(1) manual page.
 .TP
 .BR graph-scale=...
 The scaling of the graph or bar chart, the number of units between each of the
@@ -151,8 +183,8 @@ grid lines (an integer).
 .TP
 .BR run=...
 A string that specifies a program that can be run by selecting it from the menu
-for the left mouse button.  The way that the command is run can be specfied
-using one of the following abbreviations;
+for the left mouse button.  (For X versions of procmeter3 only.)  The way that
+the command is run can be specfied using one of the following abbreviations;
 .B XTerm(
 .I command
 .B )
@@ -178,11 +210,16 @@ in an
 .B shell
 and exit.  This last one is equivalent to using none of these abbreviations.
 .LP
-The output sections e.g.
+
+.SH OUTPUT SECTION
+
+The name of the section is the name of the Procmeter3 output (see the help,
+procmeter3 -h), for example:
 .I ProcMeter.Version
-These can contain any of the resource or module options (except 'options') which
-will then apply only to the specified output.  There are also options that can
-only be applied to individual outputs.
+.LP
+The output sections can contain any of the resource or module options (except
+\'options') which will then apply only to the specified output.  There are also
+options that can only be applied to individual outputs.
 .TP
 .BR label=...
 Changes the default label for the output to the specified string.
@@ -257,4 +294,9 @@ or
 
 .SH SEE ALSO
 
-procmeter3(1), gprocmeter3(1)
+procmeter3(1), gprocmeter3(1), procmeter3-log(1), procmeter3-lcd(1),
+procmeter3_modules(1).
+
+.SH AUTHOR
+
+Andrew M. Bishop 1998,99,2000,01,02
