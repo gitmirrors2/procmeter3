@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.1 2002-04-14 14:08:00 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.2 2002-04-20 12:53:42 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
@@ -124,7 +124,7 @@ int find_items (char *itemname, char infoarray[ACPI_MAXITEM][128],
 	
 	dir = opendir(itemname);
 	if (dir == NULL)
-		return -1;
+		return 0;
 
 	while ((ent = readdir(dir))) {
 		if (!strncmp(".", ent->d_name, 1) || 
