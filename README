@@ -1,5 +1,5 @@
-                      PROCMETER V3.0
-                      ==============
+                              PROCMETER V3.0a
+                              ===============
 
 A system monitoring program for Linux.
 
@@ -20,8 +20,20 @@ directory (XINCLUDE,XLIBRARY) and the compiler options (CC,LD,CFLAGS).
 make all
 make install
 
-The manual pages procmeter(3) and procmeterrc(5) gives more details on how to
+The manual pages procmeter3(3) and procmeterrc(5) gives more details on how to
 use the program.
+
+
+More Information
+----------------
+
+There is a ProcMeter3 web-page that contains the latest information
+http://www.gedanken.demon.co.uk/procmeter3/
+
+
+There is also a ProcMeter announcements mailing list, either go to the web-page
+and fill in the form or send an e-mail to majordomo@gedanken.demon.co.uk with
+the phrase 'subscribe procmeter-announce' in the body.
 
 
 Author & Copyright
