@@ -1,4 +1,4 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.1 1998-09-19 15:19:31 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.2 1998-09-21 18:32:22 amb Exp $
 .\"
 .\"  ProcMeter - A system monitoring program for Linux.
 .\"
@@ -11,7 +11,7 @@
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETER3 1 "September 19, 1998"
+.TH PROCMETER3 1 "September 21, 1998"
 .SH NAME
 procmeter3 \- A user friendly system monitoring program.
 .SH SYNOPSIS
@@ -68,6 +68,13 @@ paging.
 Advanced Power Management information.  These outputs are only available if you
 have configured the kernel to have the APM feature.
 .TP
+.BR Biff
+Monitors the e-mail inbox (in /var/spool/mail/<username> or
+/var/mail/<username>) and indicates the number of e-mails that are waiting and
+the size.  The
+.I options
+parameter in the .procmeterrc file can be used to specify alternate filename.
+.TP
 .BR Uname
 The system information from the uname program, hostname and Linux kernel
 version.
@@ -97,6 +104,6 @@ ProcMeter (compared to previous versions) this is not the default method of
 configuring the program.  The file $HOME/.procmeterrc contains the configuration
 information.
 .SH SEE ALSO
-procmeterrc(5)
+procmeterrc(5) biff(1)
 .SH AUTHOR
 Andrew M. Bishop 1998
