@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/menus.c,v 1.1 2000-12-16 16:35:27 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/menus.c,v 1.2 2002-06-04 12:51:52 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3.
+  ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
   X Window menus (GTK version).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000 Andrew M. Bishop
+  This file Copyright 1998,99,2000,01,02 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -284,6 +284,11 @@ void AddModuleToMenu(Module module)
  ProcMeterOutput *prevoutput=NULL;
  char *string;
 
+ /* Return if pane widget is not initialised (e.g. gprocmeter3 -h). */
+
+ if(!pane)
+    return;
+
  /* Sort out the resources in advance. */
 
  // if(((string=GetProcMeterRC(module->module->name,"menu-foreground")) ||
@@ -393,6 +398,11 @@ void AddModuleToMenu(Module module)
 
 void AddMenuToOutput(GtkWidget *widget,Module module)
 {
+ /* Return if pane widget is not initialised (e.g. gprocmeter3 -h). */
+
+ if(!pane)
+    return;
+
  gtk_signal_connect(GTK_OBJECT(widget),"button_press_event",
                     GTK_SIGNAL_FUNC(MenuStart),module?module->module->name:NULL);
 }
@@ -406,6 +416,11 @@ void AddMenuToOutput(GtkWidget *widget,Module module)
 
 void RemoveModuleFromMenu(Module module)
 {
+ /* Return if pane widget is not initialised (e.g. gprocmeter3 -h). */
+
+ if(!pane)
+    return;
+
  gtk_widget_destroy(GTK_WIDGET(module->submenu_widget));
  gtk_object_destroy(GTK_OBJECT(module->menu_item_widget));
 }
