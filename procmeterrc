@@ -21,9 +21,9 @@ order=ProcMeter.Version Date_Time.Time_HM Date_Time.Date_DM
 
 [resources]
 
-# The outputs, black on white
+# The outputs, black on almost-white (for Xaw3d white does not work well).
 foreground = black
-background = white
+background = grey80
 
 # The text output, a large-medium size font.
 text-font = 8x13
@@ -31,16 +31,16 @@ text-font = 8x13
 # The graph output, a solid graph with at least 5 grid lines in grey.
 graph-solid = yes
 grid-min = 5
-grid-foreground = grey50
+grid-foreground = grey40
 
-# The labels on the graphs, black on white in a small size font below the data.
+# The labels on the graphs, black in a small size font below the data.
 label-font = 5x7
 label-foreground = black
 label-position = bottom
 
 # The menu items, black on white in a small-medium size font.
 menu-foreground = black
-menu-background = white
+menu-background = grey80
 menu-font = 7x13
 
 ##
