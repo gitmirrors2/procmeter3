@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/biff.c,v 1.4 2002-12-07 19:38:59 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/biff.c,v 1.5 2003-03-24 17:33:35 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4a.
 
   Mail inbox monitor.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,2002 Andrew M. Bishop
+  This file Copyright 1998,2002,2003 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -22,6 +22,9 @@
 #include <pwd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#include <utime.h>
+#include <sys/time.h>
 
 #include "procmeter.h"
 
@@ -158,8 +161,9 @@ ProcMeterOutput **Initialise(char *options)
 
 int Update(time_t now,ProcMeterOutput *output)
 {
- static time_t last=0,mtime=0;
+ static time_t last=0,mtime=0,atime=0;
  static int count,size;
+ struct utimbuf utimebuf;
 
  if(now!=last)
    {
@@ -186,7 +190,12 @@ int Update(time_t now,ProcMeterOutput *output)
             }
 
           mtime=buf.st_mtime;
+          atime=buf.st_atime;
           size=buf.st_size/1024;
+          
+          utimebuf.actime=atime;
+          utimebuf.modtime=mtime;
+          utime(filename,&utimebuf);
          }
       }
 
