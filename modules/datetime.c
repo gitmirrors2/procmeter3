@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.3 1999-12-03 19:50:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.4 2001-11-11 15:22:48 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -108,6 +108,7 @@ ProcMeterModule module=
 };
 
 
+static twelve_hour = 0;
 static time_t boot_time=0;
 
 
@@ -154,6 +155,9 @@ ProcMeterOutput **Initialise(char *options)
     fclose(f);
    }
 
+ if (options && strcmp(options, "12") == 0)
+    twelve_hour = 1;
+ 
  return(outputs);
 }
 
@@ -214,6 +218,11 @@ int Update(time_t now,ProcMeterOutput* output)
     if(tim->tm_isdst<0)
       {tim=gmtime(&now);utc=1;}
 
+    if (twelve_hour && tim->tm_hour > 12)
+      tim->tm_hour-=12;
+    else if (twelve_hour && tim->tm_hour == 0)
+      tim->tm_hour=12;
+    
     sprintf(output->text_value,"%02d:%02d:%02d %s",
             tim->tm_hour,
             tim->tm_min,
@@ -231,6 +240,11 @@ int Update(time_t now,ProcMeterOutput* output)
     if(tim->tm_isdst<0)
       {tim=gmtime(&now);utc=1;}
 
+    if (twelve_hour && tim->tm_hour > 12)
+      tim->tm_hour-=12;
+    else if (twelve_hour && tim->tm_hour == 0)
+      tim->tm_hour=12;
+    
     sprintf(output->text_value,"%02d:%02d %s",
             tim->tm_hour,
             tim->tm_min,
