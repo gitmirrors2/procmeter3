@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/run.c,v 1.1 1999-11-30 19:48:57 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/run.c,v 1.2 1999-12-04 16:57:31 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -88,7 +88,10 @@ void ParseRunCommand(char *string,RunOption *run)
  while(isspace(*r))
     r--;
 
- run->command=(char*)malloc(r-l+1);
+ if(r<l)
+    return;
+
+ run->command=(char*)malloc(r-l+2);
  strncpy(run->command,l,r-l+1);
  *(run->command+(r-l)+1)=0;
 }
