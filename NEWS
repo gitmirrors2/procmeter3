@@ -1,3 +1,14 @@
+Version 3.1b of ProcMeter3 released : Sat Jun 19 17:30:00 1999
+--------------------------------------------------------------
+
+Bug fixes:
+ Makefile fixes.
+
+Documentation
+ Improved the two manual pages.
+ Improve the output of 'procmeter3 -h' to show graph/text availability.
+
+
 Version 3.1a of ProcMeter3 released : Sun Apr 18 10:15:00 1999
 --------------------------------------------------------------
 
