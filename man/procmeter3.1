@@ -1,17 +1,17 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.4 1998-10-24 13:11:32 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.5 1999-03-03 19:07:28 amb Exp $
 .\"
 .\"  ProcMeter - A system monitoring program for Linux.
 .\"
-.\"  Manual page for procmeter program (v3.0a).
+.\"  Manual page for procmeter program (v3.1).
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998 Andrew M. Bishop
+.\"  This file Copyright 1998,99 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETER3 1 "October 24, 1998"
+.TH PROCMETER3 1 "March 2, 1999"
 .SH NAME
 procmeter3 \- A user friendly system monitoring program.
 .SH SYNOPSIS
@@ -112,6 +112,16 @@ Information about the procmeter program itself.
 Low level system statistics.  For example CPU usage, disk usage, swapping and
 paging.
 .TP
+.BR Stat-CPU
+Statistics about individual CPU usage including support for SMP machines.
+.TP
+.BR Stat-Disk
+Statistics about individual disk usage including support for up to 4 disks.
+.TP
+.BR Stat-Intr
+Statistics about individual interrupts including support for up to 32
+interrupts.
+.TP
 .BR Uname
 The system information from the uname program, hostname and Linux kernel
 version.
@@ -124,4 +134,4 @@ information.
 .SH SEE ALSO
 procmeterrc(5) biff(1)
 .SH AUTHOR
-Andrew M. Bishop 1998
+Andrew M. Bishop 1998,99
