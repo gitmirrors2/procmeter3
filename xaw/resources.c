@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/resources.c,v 1.1 1998-09-19 15:21:55 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/resources.c,v 1.2 1999-08-31 18:22:33 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   X Window resource conversions.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -43,33 +43,33 @@ XFontStruct *StringToFont(char *string)
 /*++++++++++++++++++++++++++++++++++++++
   Convert a string to a pixel.
 
-  Pixel *StringToPixel Returns a pointer to a Pixel value.
+  Pixel StringToPixel Returns a Pixel value.
 
   char *string The string to convert.
   ++++++++++++++++++++++++++++++++++++++*/
 
-Pixel *StringToPixel(char *string)
+Pixel StringToPixel(char *string)
 {
- static XColor screenColor;
+ XColor screenColor;
  XColor exactColor;
 
  XAllocNamedColor(display, DefaultColormap(display,DefaultScreen(display)), string, &screenColor, &exactColor);
 
- return(&screenColor.pixel);
+ return(screenColor.pixel);
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Convert a string to a Boolean.
 
-  Boolean *StringToBoolean Returns a pointer to a Boolean value.
+  Boolean StringToBoolean Returns a Boolean value.
 
   char *string The string to convert.
   ++++++++++++++++++++++++++++++++++++++*/
 
-Boolean *StringToBoolean(char *string)
+Boolean StringToBoolean(char *string)
 {
- static Boolean b;
+ Boolean b;
 
  if(!strcasecmp(string,"true") ||
     !strcasecmp(string,"yes") ||
@@ -78,40 +78,40 @@ Boolean *StringToBoolean(char *string)
  else
     b=False;
 
- return(&b);
+ return(b);
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Convert a string to an integer
 
-  int *StringToint Returns a pointer to an integer value.
+  int StringToInt Returns an integer value.
 
   char *string The string to convert.
   ++++++++++++++++++++++++++++++++++++++*/
 
-int *StringToInt(char *string)
+int StringToInt(char *string)
 {
- static int i;
+ int i;
 
  if(sscanf(string,"%d",&i)!=1)
     i=0;
 
- return(&i);
+ return(i);
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
   Convert a string to a label position.
 
-  int *StringToLabelPosition Returns a pointer to an integer value.
+  int StringToLabelPosition Returns an integer value.
 
   char *string The string to convert.
   ++++++++++++++++++++++++++++++++++++++*/
 
-int *StringToLabelPosition(char *string)
+int StringToLabelPosition(char *string)
 {
- static int i;
+ int i;
 
  if(!strcasecmp(string,"top"))
     i=1;
@@ -120,5 +120,5 @@ int *StringToLabelPosition(char *string)
  else
     i=0;
 
- return(&i);
+ return(i);
 }

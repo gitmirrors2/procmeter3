@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.h,v 1.1 1998-09-19 15:22:23 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.h,v 1.2 1999-08-31 18:22:33 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux - Version 3.2.
 
   Global X windows header file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998 Andrew M. Bishop
+  This file Copyright 1998,99 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -33,10 +33,10 @@ void AddMenuToOutput(Widget widget,Module module,Output output);
 /* In xresources.c */
 
 XFontStruct *StringToFont(char *string);
-Pixel *StringToPixel(char *string);
-Boolean *StringToBoolean(char *string);
-int *StringToInt(char *string);
-int *StringToLabelPosition(char *string);
+Pixel StringToPixel(char *string);
+Boolean StringToBoolean(char *string);
+int StringToInt(char *string);
+int StringToLabelPosition(char *string);
 
 /* In xbitmap.c */
 
