@@ -1,6 +1,6 @@
-# $Header: /home/amb/CVS/procmeter3/modules/Makefile,v 1.3 1999-02-07 16:12:55 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/modules/Makefile,v 1.4 1999-04-18 08:17:49 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.1.
+# ProcMeter - A system monitoring program for Linux - Version 3.1a.
 #
 # Makefile for the modules.
 #
@@ -15,7 +15,7 @@
 CC=gcc
 LD=gcc
 
-CFLAGS=-g -O2
+CFLAGS=-g -O2 -Wall
 
 INSTDIR=/usr/local
 LIB_PATH=$(INSTDIR)/lib/X11/ProcMeter3
