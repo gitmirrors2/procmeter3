@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.3 1999-12-04 16:19:43 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.4 1999-12-05 13:45:22 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -155,9 +155,13 @@ ProcMeterOutput **Initialise(char *options)
                 if(stat(filename,&buf)!=0 || !S_ISREG(buf.st_mode))
                    continue;
 
-                if(!strncmp(ent2->d_name,"temp",4) && isdigit(ent2->d_name[4]) && !ent2->d_name[5])
+                if(!strcmp(ent2->d_name,"temp"))
                    add_temperature(filename);
-                if(!strncmp(ent2->d_name,"fan",3) && isdigit(ent2->d_name[3]) && !ent2->d_name[4])
+                else if(!strcmp(ent2->d_name,"remote_temp"))
+                   add_temperature(filename);
+                else if(!strncmp(ent2->d_name,"temp",4) && isdigit(ent2->d_name[4]) && !ent2->d_name[5])
+                   add_temperature(filename);
+                else if(!strncmp(ent2->d_name,"fan",3) && isdigit(ent2->d_name[3]) && !ent2->d_name[4])
                    add_fan(filename);
                }
 
