@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.1 1998-09-19 15:25:26 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.2 1998-09-22 16:39:03 amb Exp $
 
   ProcMeter - A system monitoring program for Linux.
 
@@ -24,8 +24,9 @@
 #define MEM_USED  1
 #define MEM_BUFF  2
 #define MEM_CACHE 3
-#define MEM_SWAP  4
-#define N_OUTPUTS 5
+#define SWAP_FREE 4
+#define SWAP_USED 5
+#define N_OUTPUTS 6
 
 /* The interface information.  */
 
@@ -75,9 +76,20 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
   /* short graph_scale;      */ 1,
   /* char  graph_units[8];   */ "(%s MB)"
  },
- /*+ The mem swap output +*/
+ /*+ The mem swap free output +*/
  {
-  /* char  name[16];         */ "Mem_Swap",
+  /* char  name[16];         */ "Swap_Free",
+  /* char *description;      */ "The amount of memory that is free in the swap space.",
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* short interval;         */ 1,
+  /* char  text_value[16];   */ "unknown",
+  /* long  graph_value;      */ 0,
+  /* short graph_scale;      */ 1,
+  /* char  graph_units[8];   */ "(%s MB)"
+ },
+ /*+ The mem swap used output +*/
+ {
+  /* char  name[16];         */ "Swap_Used",
   /* char *description;      */ "The amount of memory that is used in the swap space.",
   /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
   /* short interval;         */ 1,
@@ -157,7 +169,7 @@ ProcMeterOutput **Initialise(char *options)
           fprintf(stderr,"ProcMeter(%s): Unexpected first line in '/proc/meminfo'.\n",__FILE__);
        else
          {
-          unsigned long mem_tot,mem_free,mem_used,mem_buff,mem_cache,mem_swap;
+          unsigned long mem_tot,mem_free,mem_used,mem_buff,mem_cache,swap_tot,swap_free,swap_used;
           int i;
 
           proc_meminfo_V2_1_41=!strncmp(line,"MemTotal:",9);
@@ -178,11 +190,11 @@ ProcMeterOutput **Initialise(char *options)
                 available[MEM_CACHE]=1;
              else
                 fprintf(stderr,"ProcMeter(%s): Expected 'Cached' line in '/proc/meminfo'.\n",__FILE__);
-             fgets(line,80,f); /* SwapTotal */
-             if(fgets(line,80,f) && sscanf(line,"SwapFree: %lu",&mem_swap)==1)
-                available[MEM_SWAP]=1;
+             if(fgets(line,80,f) && sscanf(line,"SwapTotal: %lu",&swap_tot)==1 &&
+                fgets(line,80,f) && sscanf(line,"SwapFree: %lu",&swap_free)==1)
+                available[SWAP_FREE]=available[SWAP_USED]=1;
              else
-                fprintf(stderr,"ProcMeter(%s): Expected 'SwapFree' line in '/proc/meminfo'.\n",__FILE__);
+                fprintf(stderr,"ProcMeter(%s): Expected 'SwapTotal' and 'SwapFree' lines in '/proc/meminfo'.\n",__FILE__);
             }
           else
             {
@@ -196,8 +208,8 @@ ProcMeterOutput **Initialise(char *options)
                    fprintf(stderr,"ProcMeter(%s): Unexpected 'Mem' line in '/proc/meminfo'.\n",__FILE__);
 
              fgets(line,80,f);
-             if(sscanf(line,"Swap: %*u %lu",&mem_swap)==1)
-                available[MEM_SWAP]=1;
+             if(sscanf(line,"Swap: %lu %lu",&swap_tot,&swap_used)==2)
+                available[SWAP_FREE]=available[SWAP_USED]=1;
              else
                 fprintf(stderr,"ProcMeter(%s): Unexpected 'Swap' line in '/proc/meminfo'.\n",__FILE__);
 
@@ -248,7 +260,7 @@ ProcMeterOutput **Initialise(char *options)
 int Update(time_t now,ProcMeterOutput *output)
 {
  static time_t last=0;
- static unsigned long mem_free,mem_used,mem_buff,mem_cache,mem_swap;
+ static unsigned long mem_free,mem_used,mem_buff,mem_cache,swap_free,swap_used;
 
  /* Get the statistics from /proc/meminfo */
 
@@ -256,6 +268,7 @@ int Update(time_t now,ProcMeterOutput *output)
    {
     FILE *f;
     char line[80];
+    unsigned long mem_tot=0,swap_tot=0;
 
     f=fopen("/proc/meminfo","r");
     if(!f)
@@ -263,7 +276,6 @@ int Update(time_t now,ProcMeterOutput *output)
 
     if(proc_meminfo_V2_1_41)
       {
-       unsigned long mem_tot=0,swap_tot=0,swap_free=0;
        fgets(line,80,f);
        sscanf(line,"MemTotal: %lu",&mem_tot);
        fgets(line,80,f);
@@ -278,7 +290,7 @@ int Update(time_t now,ProcMeterOutput *output)
        sscanf(line,"SwapTotal: %lu",&swap_tot);
        fgets(line,80,f);
        sscanf(line,"SwapFree: %lu",&swap_free);
-       mem_swap=swap_tot-swap_free;
+       swap_used=swap_tot-swap_free;
       }
     else
       {
@@ -287,14 +299,16 @@ int Update(time_t now,ProcMeterOutput *output)
        if(available[MEM_FREE])
           sscanf(line,"Mem: %*u %lu %lu %*u %lu %lu",&mem_used,&mem_free,&mem_buff,&mem_cache);
        fgets(line,80,f);
-       if(available[MEM_SWAP])
-          sscanf(line,"Swap: %*u %lu",&mem_swap);
+       if(available[SWAP_FREE])
+          sscanf(line,"Swap: %lu %lu",&swap_tot,&swap_used);
+       swap_free=swap_tot-swap_used;
 
        mem_free >>=10;
        mem_used >>=10;
        mem_buff >>=10;
        mem_cache>>=10;
-       mem_swap >>=10;
+       swap_free>>=10;
+       swap_used>>=10;
       }
 
     if(available[MEM_BUFF])
@@ -331,10 +345,16 @@ int Update(time_t now,ProcMeterOutput *output)
     output->graph_value=PROCMETER_GRAPH_FLOATING((double)(mem_cache>>mem_shift)/1024.0);
     return(0);
    }
- else if(output==&_outputs[MEM_SWAP])
+ else if(output==&_outputs[SWAP_FREE])
    {
-    sprintf(output->text_value,"%.3f MB",(double)mem_swap/1024.0);
-    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(mem_swap>>mem_shift)/1024.0);
+    sprintf(output->text_value,"%.3f MB",(double)swap_free/1024.0);
+    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(swap_free>>mem_shift)/1024.0);
+    return(0);
+   }
+ else if(output==&_outputs[SWAP_USED])
+   {
+    sprintf(output->text_value,"%.3f MB",(double)swap_used/1024.0);
+    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(swap_used>>mem_shift)/1024.0);
     return(0);
    }
 
