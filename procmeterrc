@@ -1,74 +1,126 @@
-#
-# The information about the library of modules.
-#
+##
+## The information about the library of modules.
+##
 
 [library]
 
+# The location of the modules
 path=modules
 
-#
-# The global default resources
-#
+##
+## The global default resources, mainly X-Windows resources
+##
 
 [resources]
 
-menu-foreground = black
-menu-background = white
-menu-font = 7x13
+# The outputs, black on white
+foreground = black
+background = white
 
-label-font = 5x7
-label-foreground = black
-label-position = bottom
-
+# The text output, a large-medium size font.
 text-font = 8x13
 
+# The graph output, a solid graph with at least 5 grid lines in grey.
 graph-solid = yes
 grid-min = 5
 grid-foreground = grey50
 
-#
-# The resources for the 'Statistics' module.
-#
+# The labels on the graphs, black on white in a small size font below the data.
+label-font = 5x7
+label-foreground = black
+label-position = bottom
 
-[Statistics]
+# The menu items, black on white in a small-medium size font.
+menu-foreground = black
+menu-background = white
+menu-font = 7x13
 
-grid-min = 5
-
-#
-# The resources for the 'CPU' output of the 'Statistics' module.
-#
-
-[Statistics.CPU]
-
-grid-min = 5
-
-#
-# The resources for the ProcMeter Version output.
-#
+##
+## The resources for the ProcMeter Version output.
+##
 
 [ProcMeter.Version]
 
+# A smaller font than normal with no label.
 text-font = 6x10
 label-position = none
 startup-text = true
 
-#
-# The resources for the Date and Time module
-#
+# More information about procmeter3
+run = xterm -e sh -c 'procmeter3 -h | less'
+
+##
+## The resources for the 'Statistics' module.
+##
+
+[Statistics]
+
+[Statistics.CPU]
+
+# The minimum number of grid lines, they are 20% each.
+grid-min = 5
+
+##
+## The resources for the 'Processes' module.
+##
+
+[Processes]
+
+# A more detailed look at the processes.
+run = xterm -e top
+
+##
+## The resources for the 'Memory' module.
+##
+
+[Memory]
+
+# More information about memory usage.
+run = xterm -e sh -c 'free ; echo "Press return to continue" ; read x'
+
+##
+## The resources for the 'Date and Time' module
+##
 
 [Date_Time]
 
+# No label for these since they are obvious
 label-position = none
+
+# A different clock.
+run = xclock
 
 [Date_Time.Uptime_DHM]
 
+# This one needs a label because otherwise it is not obvious.
 label-position = bottom
 
-#
-# The resources for the Network module
-#
+##
+## The resources for the 'Network' module
+##
 
 [Network]
 
 # To pick up extra devices not automatically recognised.
 #options=ppp0 slip0
+
+# Information about the network devices
+run = xterm -e sh -c 'ifconfig -a ; echo "Press return to continue" ; read x'
+
+##
+## The resources for the 'DiskUsage' module
+##
+
+[DiskUsage]
+
+# Information about the disks
+run = xterm -e sh -c 'df ; echo "Press return to continue" ; read x'
+
+##
+## The resources for the 'LogFile' module
+##
+
+[LogFile]
+
+# Files to monitor
+#options=/var/adm/messages /var/log/syslog
