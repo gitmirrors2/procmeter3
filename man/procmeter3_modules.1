@@ -1,4 +1,4 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3_modules.1,v 1.1 2002-11-30 19:12:37 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3_modules.1,v 1.2 2002-12-08 14:52:19 amb Exp $
 .\"
 .\"  ProcMeter - A system monitoring program for Linux - Version 3.4.
 .\"
@@ -49,7 +49,12 @@ file can be used to specify an alternate filename to use for the inbox.
 .BR Date_Time
 The current date and time and the amount of time since the system was last
 booted.  Different outputs are available that allow the format of the date and
-time information to be changed.
+time information to be changed.  For the time outputs the
+.I options
+parameter in the
+.B .procmeterrc
+file can be set to 12 to indicate that a 12 hour format with AM/PM is to be
+used.
 .TP
 .BR DiskUsage
 Shows the percentage of the disk that is used and the amount of free space for
