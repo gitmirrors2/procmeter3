@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.9 2002-06-04 13:54:26 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.10 2002-12-07 19:39:40 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4.
 
   Disk capacity monitoring source file.
   ******************/ /******************
@@ -29,27 +29,27 @@ ProcMeterOutput _outputs[2]=
 {
  /*+ The percentage used space +*/
  {
-  /* char  name[16];         */ "DF_Used_%s",
-  /* char *description;      */ "The percentage of the %s device mounted on %s that is occupied with files.  "
-                                "(This can exceed 100%% on UNIX format drives due to the reserved minimum free space.)",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
-  /* short interval;         */ 10,
-  /* char  text_value[16];   */ "unknown",
-  /* long  graph_value;      */ 0,
-  /* short graph_scale;      */ 10,
-  /* char  graph_units[8];   */ "(%d%%)"
+  /* char  name[];         */ "DF_Used_%s",
+  /* char *description;    */ "The percentage of the %s device mounted on %s that is occupied with files.  "
+                              "(This can exceed 100%% on UNIX format drives due to the reserved minimum free space.)",
+  /* char  type;           */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
+  /* short interval;       */ 10,
+  /* char  text_value[];   */ "unknown",
+  /* long  graph_value;    */ 0,
+  /* short graph_scale;    */ 10,
+  /* char  graph_units[];  */ "(%d%%)"
  },
  /*+ The amount of free space +*/
  {
-  /* char  name[16];         */ "DF_Free_%s",
-  /* char *description;      */ "The amount of space on the %s device mounted on %s that is available for non-root use.  "
-                                "(This can be negative on UNIX format drives since it does not include the reserved minimum free space.)",
-  /* char  type;             */ PROCMETER_TEXT,
-  /* short interval;         */ 10,
-  /* char  text_value[16];   */ "0 MB",
-  /* long  graph_value;      */ -1,
-  /* short graph_scale;      */ 0,
-  /* char  graph_units[8];   */ "n/a"
+  /* char  name[];         */ "DF_Free_%s",
+  /* char *description;    */ "The amount of space on the %s device mounted on %s that is available for non-root use.  "
+                              "(This can be negative on UNIX format drives since it does not include the reserved minimum free space.)",
+  /* char  type;           */ PROCMETER_TEXT,
+  /* short interval;       */ 10,
+  /* char  text_value[];   */ "0 MB",
+  /* long  graph_value;    */ -1,
+  /* short graph_scale;    */ 0,
+  /* char  graph_units[];  */ "n/a"
  }
 };
 
@@ -60,8 +60,8 @@ ProcMeterOutput **outputs=NULL;
 /*+ The module. +*/
 ProcMeterModule module=
 {
- /* char name[16];           */ "DiskUsage",
- /* char *description;       */ "The fraction of the disk that is occupied and the amount of space available."
+ /* char name[];           */ "DiskUsage",
+ /* char *description;     */ "The fraction of the disk that is occupied and the amount of space available."
 };
 
 
@@ -208,10 +208,7 @@ static void add_disk(char *dev,char *mnt)
     outputs[j]=(ProcMeterOutput*)malloc(sizeof(ProcMeterOutput));
 
     *outputs[j]=_outputs[i];
-    if(strlen(mnt)>7)
-      {char old=mnt[7];mnt[7]=0;sprintf(outputs[j]->name,_outputs[i].name,mnt);mnt[7]=old;}
-    else
-       sprintf(outputs[j]->name,_outputs[i].name,mnt);
+    snprintf(outputs[j]->name,PROCMETER_NAME_LEN+1,_outputs[i].name,mnt);
     outputs[j]->description=(char*)malloc(strlen(dev)+strlen(mnt)+strlen(_outputs[i].description)+4);
     sprintf(outputs[j]->description,_outputs[i].description,dev,mnt);
    }
