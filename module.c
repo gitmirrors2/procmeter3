@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.6 1999-09-24 19:02:23 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/module.c,v 1.7 1999-09-24 19:14:29 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -291,7 +291,8 @@ Module LoadModule(char* filename)
           char *string;
 
           if((string=GetProcMeterRC2(new->module->name,output->name,"update")) ||
-             (string=GetProcMeterRC(new->module->name,"update")))
+             (string=GetProcMeterRC(new->module->name,"update")) ||
+             (string=GetProcMeterRC("resources","update")))
              output->interval=atoi(string);
 
           if((string=GetProcMeterRC2(new->module->name,output->name,"graph-scale")) ||
