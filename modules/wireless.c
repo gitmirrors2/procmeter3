@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.8 2004-01-04 15:53:08 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.9 2004-04-03 16:04:20 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.4b.
 
@@ -121,7 +121,7 @@ ProcMeterOutput **Initialise(char *options)
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/net/wireless'.\n",__FILE__);
     else
        if(strcmp(line,"Inter-| sta-|   Quality        |   Discarded packets               | Missed\n") == 0 &&
-          strcmp(line,"Inter-| sta-|   Quality        |   Discarded packets               | Missed | WE\n" == 0))
+          strcmp(line,"Inter-| sta-|   Quality        |   Discarded packets               | Missed | WE\n") == 0)
           fprintf(stderr,"ProcMeter(%s): Unexpected header line 1 in '/proc/net/wireless'.\n",__FILE__);
        else
          {
@@ -180,8 +180,8 @@ ProcMeterOutput **Initialise(char *options)
       }
    }
 
- current =(long*)malloc(sizeof(long)*ndevices);
- previous=(long*)malloc(sizeof(long)*ndevices);
+ current =(long*)calloc(sizeof(long),ndevices);
+ previous=(long*)calloc(sizeof(long),ndevices);
 
  return(outputs);
 }
