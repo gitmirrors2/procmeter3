@@ -1,6 +1,6 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.13 2002-04-20 12:51:08 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3.1,v 1.14 2002-11-09 19:52:24 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.3c.
 .\"
 .\"  Manual page for procmeter program.
 .\"
@@ -11,7 +11,7 @@
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETER3 1 "January 5, 2001"
+.TH PROCMETER3 1 "November 9, 2002"
 
 .SH NAME
 
@@ -235,6 +235,10 @@ Advanced Configuration and Power Interface information. These outputs are
 only available if you have enabled ACPI in the Linux kernel and you have
 the appropriate hardware.  ACPI can report various information about a
 system's battery, and may also have thermal outputs available.
+.TP
+.BR VM_Statistics
+Low level system statistics about virtual memory (swaping and paging) for kernel
+version 2.5 where the information has moved from the Statistics section.
 
 .SH X RESOURCES
 
