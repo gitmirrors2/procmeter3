@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/logfile.c,v 1.4 1999-09-29 19:00:00 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/logfile.c,v 1.5 1999-10-04 18:31:32 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -65,7 +65,7 @@ ProcMeterOutput _outputs[4]=
  {
   /* char  name[16];         */ "Log_Rate_%s",
   /* char *description;      */ "The number of lines by which the log file '%s' is increasing per second.",
-  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "0 lines/s",
   /* long  graph_value;      */ 0,
