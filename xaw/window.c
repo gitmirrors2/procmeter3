@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.2 1998-09-26 09:36:13 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.3 1998-10-24 09:02:51 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux.
+  ProcMeter - A system monitoring program for Linux (v3.0a).
 
   X Windows interface.
   ******************/ /******************
@@ -276,13 +276,14 @@ void AddDefaultOutputs(int argc,char **argv)
 
  for(modulep=Modules;*modulep;modulep++)
     for(outputp=(*modulep)->outputs;*outputp;outputp++)
-       if(((*outputp)->type==PROCMETER_GRAPH &&
-           (string=GetProcMeterRC2((*modulep)->module->name,(*outputp)->output->name,"startup-graph")) &&
-           *StringToBoolean(string)) ||
-          ((*outputp)->type==PROCMETER_TEXT &&
-           (string=GetProcMeterRC2((*modulep)->module->name,(*outputp)->output->name,"startup-text")) &&
-           *StringToBoolean(string)))
-          AddRemoveOutput(*outputp);
+       if(!(*outputp)->output_widget)
+          if(((*outputp)->type==PROCMETER_GRAPH &&
+              (string=GetProcMeterRC2((*modulep)->module->name,(*outputp)->output->name,"startup-graph")) &&
+              *StringToBoolean(string)) ||
+             ((*outputp)->type==PROCMETER_TEXT &&
+              (string=GetProcMeterRC2((*modulep)->module->name,(*outputp)->output->name,"startup-text")) &&
+              *StringToBoolean(string)))
+             AddRemoveOutput(*outputp);
 
  initialising=0;
 
