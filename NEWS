@@ -1,3 +1,31 @@
+Version 3.1 of ProcMeter3 released : Sat Mar 6 15:00:00 1999
+------------------------------------------------------------
+
+Bug fixes:
+ Works with kernel version 2.2.2 with extra long interrupts line.
+
+Procmeterrc file:
+ Improve the information and examples in the default procmeterrc file.
+ Rename the system default .procmeterrc file to procmeterrc.
+ Allow the startup order of the outputs to be specified.
+ Remove the startup-text and startup-graph options.
+
+Display:
+ Add more information to the properties display window.
+ Allow the output displays to be moved around while running.
+
+Configuration:
+ Include the option to specify a program to run from the output menus.
+ Allow the graph scale and maximum number of grid lines be user specifiable.
+ Allow the update interval of the outputs to be user specifiable.
+
+Outputs:
+ Add in the number of bytes per second on each network interface.
+ Add new statistics for individual CPUs on SMP machines.
+ Add new statistics for individual disks.
+ Add new statistics for individual interrupts.
+
+
 Version 3.0a of ProcMeter3 released : Sat Oct 24 13:15:00 1998
 --------------------------------------------------------------
 
