@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.4 1999-02-13 11:38:01 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.5 1999-02-24 19:44:26 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.1.
 
@@ -24,9 +24,10 @@
 #define MEM_USED  1
 #define MEM_BUFF  2
 #define MEM_CACHE 3
-#define SWAP_FREE 4
-#define SWAP_USED 5
-#define N_OUTPUTS 6
+#define MEM_AVAIL 4
+#define SWAP_FREE 5
+#define SWAP_USED 6
+#define N_OUTPUTS 7
 
 /* The interface information.  */
 
@@ -68,7 +69,18 @@ ProcMeterOutput _outputs[N_OUTPUTS]=
  /*+ The mem cache output +*/
  {
   /* char  name[16];         */ "Mem_Cache",
-  /* char *description;      */ "The amount of memory that is used for cache.",
+  /* char *description;      */ "The amount of memory that is used for disk cache.",
+  /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
+  /* short interval;         */ 1,
+  /* char  text_value[16];   */ "unknown",
+  /* long  graph_value;      */ 0,
+  /* short graph_scale;      */ 0, /* calculated later */
+  /* char  graph_units[8];   */ "(%dMB)"
+ },
+ /*+ The mem avail output +*/
+ {
+  /* char  name[16];         */ "Mem_Avail",
+  /* char *description;      */ "The amount of memory that is available for programs, free plus cache.",
   /* char  type;             */ PROCMETER_GRAPH|PROCMETER_TEXT,
   /* short interval;         */ 1,
   /* char  text_value[16];   */ "unknown",
@@ -215,6 +227,9 @@ ProcMeterOutput **Initialise(char *options)
              mem_tot>>=10;
             }
 
+          if(available[MEM_FREE] && available[MEM_CACHE])
+             available[MEM_AVAIL]=1;
+
           if(available[MEM_FREE])
             {
              long mem_scale=1;
@@ -253,7 +268,7 @@ ProcMeterOutput **Initialise(char *options)
 int Update(time_t now,ProcMeterOutput *output)
 {
  static time_t last=0;
- static unsigned long mem_free,mem_used,mem_buff,mem_cache,swap_free,swap_used;
+ static unsigned long mem_free,mem_used,mem_buff,mem_cache,mem_avail,swap_free,swap_used;
 
  /* Get the statistics from /proc/meminfo */
 
@@ -304,6 +319,9 @@ int Update(time_t now,ProcMeterOutput *output)
        swap_used>>=10;
       }
 
+    if(available[MEM_AVAIL])
+       mem_avail=mem_free+mem_cache;
+
     if(available[MEM_BUFF])
        mem_used-=mem_buff;
     if(available[MEM_CACHE])
@@ -336,6 +354,12 @@ int Update(time_t now,ProcMeterOutput *output)
    {
     sprintf(output->text_value,"%.3f MB",(double)mem_cache/1024.0);
     output->graph_value=PROCMETER_GRAPH_FLOATING((double)(mem_cache>>10)/output->graph_scale);
+    return(0);
+   }
+ else if(output==&_outputs[MEM_AVAIL])
+   {
+    sprintf(output->text_value,"%.3f MB",(double)mem_avail/1024.0);
+    output->graph_value=PROCMETER_GRAPH_FLOATING((double)(mem_avail>>10)/output->graph_scale);
     return(0);
    }
  else if(output==&_outputs[SWAP_FREE])
