@@ -1,4 +1,4 @@
-# $Header: /home/amb/CVS/procmeter3/xaw/widgets/Makefile,v 1.2 1999-04-17 06:22:58 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/xaw/widgets/Makefile,v 1.3 1999-09-27 19:02:21 amb Exp $
 #
 # ProcMeter - A system monitoring program for Linux.
 #
@@ -19,7 +19,7 @@ XINCLUDE=-I/usr/X11/include
 
 CFLAGS=-g -O2
 
-OBJ=PMGeneric.o PMGraph.o PMText.o
+OBJ=PMGeneric.o PMGraph.o PMText.o SubMenus.o
 
 ########
 
@@ -32,6 +32,9 @@ PMGeneric.o : PMGeneric.c PMGeneric.h PMGenericP.h
 PMGraph.o : PMGraph.c PMGraph.h PMGraphP.h PMGeneric.h PMGenericP.h ../procmeter.h
 	$(CC) -c $(CFLAGS) $< -o $@ -I.. $(XINCLUDE)
 PMText.o : PMText.c PMText.h PMTextP.h PMGeneric.h PMGenericP.h
+	$(CC) -c $(CFLAGS) $< -o $@ $(XINCLUDE)
+
+SubMenus.o : SubMenus.c SubMenus.h
 	$(CC) -c $(CFLAGS) $< -o $@ $(XINCLUDE)
 
 ########
