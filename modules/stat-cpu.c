@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.8 2002-12-07 19:40:25 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.9 2004-04-03 16:06:29 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4b.
 
   Low level system statistics for CPU usage.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002 Andrew M. Bishop
+  This file Copyright 1998,99,2002,04 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -217,11 +217,11 @@ ProcMeterOutput **Initialise(char *options)
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
     else
       {
-       if(sscanf(line,"cpu %lu %lu %lu %lu",&current[CPU_USER],&current[CPU_NICE],&current[CPU_SYS],&current[CPU_IDLE])==4)
+       unsigned long d1,d2,d3,d4;
+
+       if(sscanf(line,"cpu %lu %lu %lu %lu",&d1,&d2,&d3,&d4)==4)
          {
           int i;
-
-          current[CPU]=current[CPU_USER]+current[CPU_NICE]+current[CPU_SYS];
 
           l=fgets(line,BUFFLEN,f); /* cpu or disk or page */
           while(l && line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
@@ -236,13 +236,6 @@ ProcMeterOutput **Initialise(char *options)
                 smp_values[0]=(long*)realloc((void*)smp_values[0],ncpus*N_OUTPUTS*sizeof(long));
                 smp_values[1]=(long*)realloc((void*)smp_values[1],ncpus*N_OUTPUTS*sizeof(long));
                 smp_current=smp_values[0]; smp_previous=smp_values[1];
-
-                smp_current[CPU_USER+ncpu*N_OUTPUTS]=cpu_user;
-                smp_current[CPU_NICE+ncpu*N_OUTPUTS]=cpu_nice;
-                smp_current[CPU_SYS +ncpu*N_OUTPUTS]=cpu_sys;
-                smp_current[CPU_IDLE+ncpu*N_OUTPUTS]=cpu_idle;
-
-                smp_current[CPU+ncpu*N_OUTPUTS]=smp_current[CPU_USER+ncpu*N_OUTPUTS]+smp_current[CPU_NICE+ncpu*N_OUTPUTS]+smp_current[CPU_SYS+ncpu*N_OUTPUTS];
 
                 smp_outputs=(ProcMeterOutput*)realloc((void*)smp_outputs,ncpus*N_OUTPUTS*sizeof(ProcMeterOutput));
 
@@ -269,6 +262,12 @@ ProcMeterOutput **Initialise(char *options)
 
           for(i=0;i<ncpus*N_OUTPUTS;i++)
              outputs[n++]=&smp_outputs[i];
+
+          for(i=0;i<N_OUTPUTS;i++)
+             current[i]=previous[i]=0;
+
+          for(i=0;i<ncpus*N_OUTPUTS;i++)
+             smp_current[i]=smp_previous[i]=0;
 
           outputs[n]=NULL;
          }

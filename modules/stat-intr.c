@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.8 2003-02-23 14:09:17 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.9 2004-04-03 16:06:12 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4a.
+  ProcMeter - A system monitoring program for Linux - Version 3.4b.
 
   Interrupt statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002,2003 Andrew M. Bishop
+  This file Copyright 1998,99,2002,03,04 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -115,6 +115,7 @@ ProcMeterOutput **Initialise(char *options)
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
     else
       {
+       unsigned long intr;
        int i,p,pp;
 
        while(l && !(line[0]=='i' && line[1]=='n' && line[2]=='t' && line[3]=='r'))
@@ -124,10 +125,10 @@ ProcMeterOutput **Initialise(char *options)
           fprintf(stderr,"ProcMeter(%s): Unexpected 'intr' line in '/proc/stat'.\n"
                          "    expected: 'intr ...'\n"
                          "    found:    EOF",__FILE__);
-       else if(sscanf(line,"intr %lu%n",&current[0],&p)==1)
+       else if(sscanf(line,"intr %lu%n",&intr,&p)==1)
          {
           for(i=0;i<N_INTR;i++)
-             if(sscanf(line+p,"%lu%n",&current[i+1],&pp)==1)
+             if(sscanf(line+p,"%lu%n",&intr,&pp)==1)
                {
                 char *type="unknown";
                 FILE *f2;
@@ -170,6 +171,9 @@ ProcMeterOutput **Initialise(char *options)
 
           for(i=0;i<nintr;i++)
              outputs[n++]=&intr_outputs[i];
+
+          for(i=0;i<N_INTR+1;i++)
+             current[i]=previous[i]=0;
 
           outputs[n]=NULL;
          }

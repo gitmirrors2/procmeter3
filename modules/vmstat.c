@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/vmstat.c,v 1.2 2002-12-07 19:39:00 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/vmstat.c,v 1.3 2004-04-03 16:04:50 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4b.
 
   Low level system VM statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000,2002 Andrew M. Bishop
+  This file Copyright 1998,99,2000,02,04 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -165,17 +165,18 @@ ProcMeterOutput **Initialise(char *options)
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/vmstat'.\n",__FILE__);
     else
       {
+       unsigned long d;
        int lineno=1,i;
 
        do
          {
-          if(sscanf(line,"pgpgin %lu",&current[PAGE_IN])==1)
+          if(sscanf(line,"pgpgin %lu",&d)==1)
              available[PAGE_IN]=lineno;
-          if(sscanf(line,"pgpgout %lu",&current[PAGE_OUT])==1)
+          if(sscanf(line,"pgpgout %lu",&d)==1)
              available[PAGE_OUT]=lineno;
-          if(sscanf(line,"pswpin %lu",&current[SWAP_IN])==1)
+          if(sscanf(line,"pswpin %lu",&d)==1)
              available[SWAP_IN]=lineno;
-          if(sscanf(line,"pswpout %lu",&current[SWAP_OUT])==1)
+          if(sscanf(line,"pswpout %lu",&d)==1)
              available[SWAP_OUT]=lineno;
 
           l=fgets(line,BUFFLEN,f);
@@ -186,18 +187,15 @@ ProcMeterOutput **Initialise(char *options)
        if(available[PAGE_IN] && available[PAGE_OUT])
           available[PAGE]=1;
 
-       if(available[PAGE])
-          current[PAGE]=current[PAGE_IN]+current[PAGE_OUT];
-
        if(available[SWAP_IN] && available[SWAP_OUT])
           available[SWAP]=1;
-
-       if(available[SWAP])
-          current[SWAP]=current[SWAP_IN]+current[SWAP_OUT];
 
        for(i=0;i<N_OUTPUTS;i++)
           if(available[i])
              outputs[n++]=&_outputs[i];
+
+       for(i=0;i<N_OUTPUTS;i++)
+          current[i]=previous[i]=0;
       }
 
     fclose(f);
