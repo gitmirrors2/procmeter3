@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.7 2002-06-16 14:19:41 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.8 2002-07-06 10:57:56 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.3b.
 
@@ -105,7 +105,7 @@ void LoadProcMeterRC(int *argc,char **argv)
 
        while(*l==' ' || *l=='\t')
           l++;
-       while(*r=='\n' || *r=='\r' || *r==' ' || *r=='\t')
+       while(r>l && (*r=='\n' || *r=='\r' || *r==' ' || *r=='\t'))
           *r--=0;
 
        if(*l==';' || *l=='#' || l>=r)
