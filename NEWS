@@ -1,3 +1,18 @@
+Version 3.4a of ProcMeter3 released : Sat Jun 28 20:00:00 2003
+--------------------------------------------------------------
+
+New or changed modules:
+ The stat-disk module allows specifying a list of extra devices in config file.
+ The biff module does not change the access time of the mailbox.
+
+Bug fixes:
+ The biff module does not change the access time of the mailbox file.
+ The memory module handles more than 4 GB of memory.
+ The stat-intr module does not crash when interrupt graphs are added.
+ Installation using 'make install' does not overwrite existing procmeterrc file.
+ Memory corruption problem fixed.
+
+
 Version 3.4 of ProcMeter3 released : Sun Jan 12 10:00:00 2003
 -------------------------------------------------------------
 
