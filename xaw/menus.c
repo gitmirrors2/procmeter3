@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.10 1999-09-27 19:02:08 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.11 1999-09-28 18:42:39 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.2.
 
@@ -50,15 +50,19 @@ extern int vertical;
 /*+ The pane that contains all of the outputs. +*/
 extern Widget pane;
 
+/* Local functions */
+
 static void ModuleMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params);
 static void OutputMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params);
 static void FunctionsMenuStart(Widget w,XEvent *event,String *params,Cardinal *num_params);
 
 static void SelectOutputMenuCallback(Widget widget,XtPointer clientData,XtPointer callData);
 static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPointer callData);
+
 static void DonePropertiesDialogCallback(Widget widget,XtPointer clientData,XtPointer callData);
 static void AtomPropertiesDialogCloseCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb);
 
+/* Menu widgets */
 
 static Widget module_menu;
 static Widget functions_menu,properties_dialog;
@@ -74,6 +78,7 @@ XtActionsRec MenuActions[]={{"ModuleMenuStart",ModuleMenuStart},
 
 /*+ The output that was used for the Functions menu. +*/
 static Output function_output;
+
 
 /*++++++++++++++++++++++++++++++++++++++
   Initialise the menus.
@@ -369,7 +374,8 @@ void CreateMenus(Widget parent)
 void AddModuleToMenu(Module module)
 {
  int i;
- Widget menulabel,menuline;
+ Widget menulabel,menuline,submenu=NULL,menuitem=NULL;
+ ProcMeterOutput *prevoutput=NULL;
  char *string;
  char menuname[32];
  Arg args[3];
@@ -424,14 +430,42 @@ void AddModuleToMenu(Module module)
     Widget sme;
     Pixmap bitmap=CircleBitmap;
 
+    if(module->outputs[i]->output!=prevoutput)
+      {
+       menuitem=XtVaCreateManagedWidget(module->outputs[i]->output->name,smeBSBObjectClass,module->submenu_widget,
+                                       XtNlabel,module->outputs[i]->label,
+                                       XtNheight,10,
+                                       NULL);
+
+       XtAddCallback(menuitem,XtNcallback,SelectOutputMenuCallback,(XtPointer)submenu);
+
+       if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-foreground")) ||
+           (string=GetProcMeterRC(module->module->name,"menu-foreground")) ||
+           (string=GetProcMeterRC("resources","menu-foreground"))))
+          XtVaSetValues(menuitem,XtNforeground,StringToPixel(string),NULL);
+
+       if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-font")) ||
+           (string=GetProcMeterRC(module->module->name,"menu-font")) ||
+           (string=GetProcMeterRC("resources","menu-font"))))
+          XtVaSetValues(menuitem,XtNfont,StringToFont(string),NULL);
+
+       submenu=XtVaCreatePopupShell("Type",simpleMenuWidgetClass,module->submenu_widget,
+                                    NULL);
+       XtSetValues(submenu,args,nargs);
+
+       AddSubMenu(menuitem,submenu);
+
+       prevoutput=module->outputs[i]->output;
+      }
+
     if(module->outputs[i]->type==PROCMETER_GRAPH)
        bitmap=GraphBitmap;
     else if(module->outputs[i]->type==PROCMETER_TEXT)
        bitmap=TextBitmap;
 
-    sme=XtVaCreateManagedWidget(module->outputs[i]->output->name,smeBSBObjectClass,module->submenu_widget,
-                                XtNlabel,module->outputs[i]->label,
-                                XtNleftMargin,12,XtNrightMargin,20,
+    sme=XtVaCreateManagedWidget(module->outputs[i]->output->name,smeBSBObjectClass,submenu,
+                                XtNlabel,"",
+                                XtNleftMargin,10,XtNrightMargin,20,
                                 XtNrightBitmap,bitmap,
                                 XtNheight,10,
                                 NULL);
@@ -442,11 +476,6 @@ void AddModuleToMenu(Module module)
         (string=GetProcMeterRC(module->module->name,"menu-foreground")) ||
         (string=GetProcMeterRC("resources","menu-foreground"))))
        XtVaSetValues(sme,XtNforeground,StringToPixel(string),NULL);
-
-    if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-font")) ||
-        (string=GetProcMeterRC(module->module->name,"menu-font")) ||
-        (string=GetProcMeterRC("resources","menu-font"))))
-       XtVaSetValues(sme,XtNfont,StringToFont(string),NULL);
 
     module->outputs[i]->menu_item_widget=sme;
     module->outputs[i]->output_widget=NULL;
