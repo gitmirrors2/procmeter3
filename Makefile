@@ -1,6 +1,6 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.20 2002-11-30 19:24:08 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.21 2003-01-17 18:48:39 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.4.
+# ProcMeter - A system monitoring program for Linux - Version 3.4a.
 #
 # Makefile.
 #
@@ -153,7 +153,7 @@ install :
 	[ ! -f $(RC_PATH)/.procmeterrc ] || mv $(RC_PATH)/.procmeterrc $(RC_PATH)/procmeterrc
 	@[ ! -f $(RC_PATH)/procmeterrc ] || (echo "" ; echo "*** The $(RC_PATH)/procmeterrc file has not been installed (it already exists)." ; echo "")
 	[ -f $(RC_PATH)/procmeterrc ] || install -m 644 procmeterrc.install $(RC_PATH)/procmeterrc
-	install -m 644 procmeterrc.install $(RC_PATH)/procmeterrc
+	install -m 644 procmeterrc.install $(RC_PATH)
 #
 	install -d $(LIB_PATH)/include
 	install -m 644 procmeter.h $(LIB_PATH)/include
