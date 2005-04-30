@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.12 2005-02-07 18:59:59 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.13 2005-04-30 14:36:35 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.4d.
 
@@ -167,7 +167,7 @@ ProcMeterModule module=
 
 static int add_disk(char *devname);
 
-static unsigned long *current,*previous,*values[2];
+static unsigned long long *current,*previous,*values[2];
 
 static unsigned *majors=NULL,*minors=NULL,*indexes=NULL;
 
@@ -235,9 +235,9 @@ ProcMeterOutput **Initialise(char *options)
                      "    found:    EOF\n",__FILE__);
           else if(!strncmp(line,"disk ",5)) /* kernel version < ~2.4.0-test4 */
             {
-             unsigned long d1,d2,d3,d4;
+             unsigned long long d1,d2,d3,d4;
 
-             if(sscanf(line,"disk %lu %lu %lu %lu",&d1,&d2,&d3,&d4)==4)
+             if(sscanf(line,"disk %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
                {
                 int i,j;
                 int read_avail=0,write_avail=0;
@@ -246,9 +246,9 @@ ProcMeterOutput **Initialise(char *options)
                 l=fgets(line,BUFFLEN,f); /* disk_* or page */
                 while(l && line[0]=='d') /* kernel version > ~1.3.0 */
                   {
-                   if(sscanf(line,"disk_rblk %lu %lu %lu %lu",&d1,&d2,&d3,&d4)==4)
+                   if(sscanf(line,"disk_rblk %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
                       read_avail=1;
-                   if(sscanf(line,"disk_wblk %lu %lu %lu %lu",&d1,&d2,&d3,&d4)==4)
+                   if(sscanf(line,"disk_wblk %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
                       write_avail=1;
                    l=fgets(line,BUFFLEN,f); /* disk_* or page */
                   }
@@ -284,7 +284,7 @@ ProcMeterOutput **Initialise(char *options)
           else if(!strncmp(line,"disk_io: ",9)) /* kernel version > ~2.4.0-test4 */
             {
              int maj,min,idx,num=8,nm,nr;
-             unsigned long d1,d2,d3,d4,d5;
+             unsigned long long d1,d2,d3,d4,d5;
              DIR *devdir,*devdiscsdir,*devmapperdir;
              char devname[PATH_MAX];
              struct dirent *ent;
@@ -298,8 +298,8 @@ ProcMeterOutput **Initialise(char *options)
              devdiscsdir=opendir("/dev/discs");
              devmapperdir=opendir("/dev/mapper");
 
-             while((nr=sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu,%lu)%n",&maj,&idx,&d1,&d2,&d3,&d4,&d5,&nm))==7 ||
-                   (nr=sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu)%n",&maj,&idx,&d1,&d2,&d3,&d4,&nm))==6)
+             while((nr=sscanf(line+num," (%d,%d):(%llu,%llu,%llu,%llu,%llu)%n",&maj,&idx,&d1,&d2,&d3,&d4,&d5,&nm))==7 ||
+                   (nr=sscanf(line+num," (%d,%d):(%llu,%llu,%llu,%llu)%n",&maj,&idx,&d1,&d2,&d3,&d4,&nm))==6)
                {
                 int done=0;
 
@@ -390,7 +390,7 @@ ProcMeterOutput **Initialise(char *options)
     else
       {
        int maj,min,nr;
-       unsigned long d1,d2,d3,d4,d5;
+       unsigned long long d1,d2,d3,d4,d5;
        DIR *devdir,*devdiscsdir,*devmapperdir;
        char devname[PATH_MAX];
        struct dirent *ent;
@@ -408,7 +408,7 @@ ProcMeterOutput **Initialise(char *options)
          {
           int done=0;
 
-          nr=sscanf(line,"%d %d %*s %lu %lu %lu %lu %lu",&maj,&min,&d1,&d2,&d3,&d4,&d5);
+          nr=sscanf(line,"%d %d %*s %llu %llu %llu %llu %llu",&maj,&min,&d1,&d2,&d3,&d4,&d5);
 
           if(nr<6)
              break;
@@ -508,8 +508,8 @@ ProcMeterOutput **Initialise(char *options)
     outputs[n]=NULL;
    }
 
- values[0]=(unsigned long*)calloc((N_OUTPUTS*(ndisks+1)),sizeof(unsigned long));
- values[1]=(unsigned long*)calloc((N_OUTPUTS*(ndisks+1)),sizeof(unsigned long));
+ values[0]=(unsigned long long*)calloc((N_OUTPUTS*(ndisks+1)),sizeof(unsigned long long));
+ values[1]=(unsigned long long*)calloc((N_OUTPUTS*(ndisks+1)),sizeof(unsigned long long));
 
  current=values[0];
  previous=values[1];
@@ -618,7 +618,7 @@ int Update(time_t now,ProcMeterOutput *output)
    {
     FILE *f;
     char line[BUFFLEN+1],*l;
-    long *temp;
+    unsigned long long *temp;
 
     temp=current;
     current=previous;
@@ -636,10 +636,10 @@ int Update(time_t now,ProcMeterOutput *output)
        while((l=fgets(line,BUFFLEN,f)))
          {
           int maj,min,nr;
-          unsigned long d1,d2,d3,d4,d5,dr,dw;
+          unsigned long long d1,d2,d3,d4,d5,dr,dw;
           int j;
 
-          nr=sscanf(line,"%d %d %*s %lu %lu %lu %lu %lu",&maj,&min,&d1,&d2,&d3,&d4,&d5);
+          nr=sscanf(line,"%d %d %*s %llu %llu %llu %llu %llu",&maj,&min,&d1,&d2,&d3,&d4,&d5);
 
           if(nr==7)
              dr=d1,dw=d5;
@@ -682,8 +682,8 @@ int Update(time_t now,ProcMeterOutput *output)
          {
           if(!kernel_version_130)
             {
-             sscanf(line,"disk %lu %lu %lu %lu",&current[N_OUTPUTS*1+DISK],&current[N_OUTPUTS*2+DISK],
-                                                &current[N_OUTPUTS*3+DISK],&current[N_OUTPUTS*4+DISK]);
+             sscanf(line,"disk %llu %llu %llu %llu",&current[N_OUTPUTS*1+DISK],&current[N_OUTPUTS*2+DISK],
+                                                    &current[N_OUTPUTS*3+DISK],&current[N_OUTPUTS*4+DISK]);
              current[DISK]=current[N_OUTPUTS*1+DISK]+current[N_OUTPUTS*2+DISK]+
                            current[N_OUTPUTS*3+DISK]+current[N_OUTPUTS*4+DISK];
             }
@@ -692,12 +692,12 @@ int Update(time_t now,ProcMeterOutput *output)
 
           while(l && line[0]=='d') /* kernel version > ~1.3.0 */
             {
-             if(sscanf(line,"disk_rblk %lu %lu %lu %lu",&current[N_OUTPUTS*1+DISK_READ],&current[N_OUTPUTS*2+DISK_READ],
-                                                        &current[N_OUTPUTS*3+DISK_READ],&current[N_OUTPUTS*4+DISK_READ])==4)
+             if(sscanf(line,"disk_rblk %llu %llu %llu %llu",&current[N_OUTPUTS*1+DISK_READ],&current[N_OUTPUTS*2+DISK_READ],
+                                                            &current[N_OUTPUTS*3+DISK_READ],&current[N_OUTPUTS*4+DISK_READ])==4)
                 current[DISK_READ]=current[N_OUTPUTS*1+DISK_READ]+current[N_OUTPUTS*2+DISK_READ]+
                                    current[N_OUTPUTS*3+DISK_READ]+current[N_OUTPUTS*4+DISK_READ];
-             if(sscanf(line,"disk_wblk %lu %lu %lu %lu",&current[N_OUTPUTS*1+DISK_WRITE],&current[N_OUTPUTS*2+DISK_WRITE],
-                                                        &current[N_OUTPUTS*3+DISK_WRITE],&current[N_OUTPUTS*4+DISK_WRITE])==4)
+             if(sscanf(line,"disk_wblk %llu %llu %llu %llu",&current[N_OUTPUTS*1+DISK_WRITE],&current[N_OUTPUTS*2+DISK_WRITE],
+                                                            &current[N_OUTPUTS*3+DISK_WRITE],&current[N_OUTPUTS*4+DISK_WRITE])==4)
                 current[DISK_WRITE]=current[N_OUTPUTS*1+DISK_WRITE]+current[N_OUTPUTS*2+DISK_WRITE]+
                                     current[N_OUTPUTS*3+DISK_WRITE]+current[N_OUTPUTS*4+DISK_WRITE];
              fgets(line,BUFFLEN,f); /* disk_* or page */
@@ -722,12 +722,12 @@ int Update(time_t now,ProcMeterOutput *output)
           while(1)
             {
              unsigned maj,idx;
-             unsigned long d1,d3;
+             unsigned long long d1,d3;
 
              if(kernel_version_240==6)
-                nr=sscanf(line+num," (%d,%d):(%*u,%lu,%*u,%lu)%n",&maj,&idx,&d1,&d3,&nm);
+                nr=sscanf(line+num," (%d,%d):(%*u,%llu,%*u,%llu)%n",&maj,&idx,&d1,&d3,&nm);
              else if(kernel_version_240==7)
-                nr=sscanf(line+num," (%d,%d):(%*u,%lu,%*u,%lu,%*u)%n",&maj,&idx,&d1,&d3,&nm);
+                nr=sscanf(line+num," (%d,%d):(%*u,%llu,%*u,%llu,%*u)%n",&maj,&idx,&d1,&d3,&nm);
 
              if(nr!=4)
                 break;

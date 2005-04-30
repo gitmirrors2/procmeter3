@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.9 2004-04-03 16:06:12 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.10 2005-04-30 14:36:35 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4d.
 
   Interrupt statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002,03,04 Andrew M. Bishop
+  This file Copyright 1998,99,2002,03,04,05 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -69,7 +69,7 @@ ProcMeterModule module=
 /*+ The number of interrupts. +*/
 static int nintr=0;
 
-static unsigned long *current,*previous,values[2][N_INTR+1];
+static unsigned long long *current,*previous,values[2][N_INTR+1];
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -115,7 +115,7 @@ ProcMeterOutput **Initialise(char *options)
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
     else
       {
-       unsigned long intr;
+       unsigned long long intr;
        int i,p,pp;
 
        while(l && !(line[0]=='i' && line[1]=='n' && line[2]=='t' && line[3]=='r'))
@@ -125,10 +125,10 @@ ProcMeterOutput **Initialise(char *options)
           fprintf(stderr,"ProcMeter(%s): Unexpected 'intr' line in '/proc/stat'.\n"
                          "    expected: 'intr ...'\n"
                          "    found:    EOF",__FILE__);
-       else if(sscanf(line,"intr %lu%n",&intr,&p)==1)
+       else if(sscanf(line,"intr %llu%n",&intr,&p)==1)
          {
           for(i=0;i<N_INTR;i++)
-             if(sscanf(line+p,"%lu%n",&intr,&pp)==1)
+             if(sscanf(line+p,"%llu%n",&intr,&pp)==1)
                {
                 char *type="unknown";
                 FILE *f2;
@@ -179,7 +179,7 @@ ProcMeterOutput **Initialise(char *options)
          }
        else
           fprintf(stderr,"ProcMeter(%s): Unexpected 'intr' line in '/proc/stat'.\n"
-                         "    expected: 'intr %%lu ...'\n"
+                         "    expected: 'intr %%llu ...'\n"
                          "    found:    %s",__FILE__,line);
       }
 
@@ -211,7 +211,7 @@ int Update(time_t now,ProcMeterOutput *output)
    {
     FILE *f;
     char line[BUFFLEN+1],*l;
-    long *temp;
+    unsigned long long *temp;
     int p,pp;
 
     temp=current;
@@ -226,10 +226,10 @@ int Update(time_t now,ProcMeterOutput *output)
        if(line[0]=='i' && line[1]=='n' && line[2]=='t' && line[3]=='r')
           break;
 
-    sscanf(line,"intr %lu%n",&current[0],&p);
+    sscanf(line,"intr %llu%n",&current[0],&p);
     for(i=0;i<nintr;i++)
       {
-       sscanf(line+p,"%lu%n",&current[i+1],&pp);
+       sscanf(line+p,"%llu%n",&current[i+1],&pp);
        p+=pp;
       }
 

@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.9 2004-04-03 16:06:29 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.10 2005-04-30 14:36:34 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4d.
 
   Low level system statistics for CPU usage.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002,04 Andrew M. Bishop
+  This file Copyright 1998,99,2002,04,05 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -170,8 +170,8 @@ ProcMeterModule module=
 };
 
 
-static long *current,*previous,values[2][N_OUTPUTS];
-static long *smp_current,*smp_previous,*smp_values[2]={NULL,NULL};
+static unsigned long long *current,*previous,values[2][N_OUTPUTS];
+static unsigned long long *smp_current,*smp_previous,*smp_values[2]={NULL,NULL};
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -217,9 +217,9 @@ ProcMeterOutput **Initialise(char *options)
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
     else
       {
-       unsigned long d1,d2,d3,d4;
+       unsigned long long d1,d2,d3,d4;
 
-       if(sscanf(line,"cpu %lu %lu %lu %lu",&d1,&d2,&d3,&d4)==4)
+       if(sscanf(line,"cpu %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
          {
           int i;
 
@@ -227,14 +227,14 @@ ProcMeterOutput **Initialise(char *options)
           while(l && line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
             {
              int ncpu;
-             long cpu_user,cpu_nice,cpu_sys,cpu_idle;
+             unsigned long long cpu_user,cpu_nice,cpu_sys,cpu_idle;
 
-             if(sscanf(line,"cpu%d %lu %lu %lu %lu",&ncpu,&cpu_user,&cpu_nice,&cpu_sys,&cpu_idle)==5)
+             if(sscanf(line,"cpu%d %llu %llu %llu %llu",&ncpu,&cpu_user,&cpu_nice,&cpu_sys,&cpu_idle)==5)
                {
                 ncpus++;
 
-                smp_values[0]=(long*)realloc((void*)smp_values[0],ncpus*N_OUTPUTS*sizeof(long));
-                smp_values[1]=(long*)realloc((void*)smp_values[1],ncpus*N_OUTPUTS*sizeof(long));
+                smp_values[0]=(unsigned long long*)realloc((void*)smp_values[0],ncpus*N_OUTPUTS*sizeof(unsigned long long));
+                smp_values[1]=(unsigned long long*)realloc((void*)smp_values[1],ncpus*N_OUTPUTS*sizeof(unsigned long long));
                 smp_current=smp_values[0]; smp_previous=smp_values[1];
 
                 smp_outputs=(ProcMeterOutput*)realloc((void*)smp_outputs,ncpus*N_OUTPUTS*sizeof(ProcMeterOutput));
@@ -249,7 +249,7 @@ ProcMeterOutput **Initialise(char *options)
                }
              else
                 fprintf(stderr,"ProcMeter(%s): Unexpected 'cpu%d' line in '/proc/stat'.\n"
-                               "    expected: 'cpu%d %%lu %%lu %%lu %%lu'\n"
+                               "    expected: 'cpu%d %%llu %%llu %%llu %%llu'\n"
                                "    found:    %s",__FILE__,ncpu,ncpu,line);
 
              l=fgets(line,BUFFLEN,f); /* cpu or disk or page */
@@ -273,7 +273,7 @@ ProcMeterOutput **Initialise(char *options)
          }
        else
           fprintf(stderr,"ProcMeter(%s): Unexpected 'cpu' line in '/proc/stat'.\n"
-                         "    expected: 'cpu %%lu %%lu %%lu %%lu'\n"
+                         "    expected: 'cpu %%llu %%llu %%llu %%llu'\n"
                          "    found:    %s",__FILE__,line);
       }
 
@@ -305,7 +305,7 @@ int Update(time_t now,ProcMeterOutput *output)
    {
     FILE *f;
     char line[BUFFLEN],*l;
-    long *temp;
+    unsigned long long *temp;
 
     temp=current;
     current=previous;
@@ -320,16 +320,16 @@ int Update(time_t now,ProcMeterOutput *output)
        return(-1);
 
     l=fgets(line,BUFFLEN,f); /* cpu */
-    sscanf(line,"cpu %lu %lu %lu %lu",&current[CPU_USER],&current[CPU_NICE],&current[CPU_SYS],&current[CPU_IDLE]);
+    sscanf(line,"cpu %llu %llu %llu %llu",&current[CPU_USER],&current[CPU_NICE],&current[CPU_SYS],&current[CPU_IDLE]);
     current[CPU]=current[CPU_USER]+current[CPU_NICE]+current[CPU_SYS];
 
     l=fgets(line,BUFFLEN,f); /* cpu or disk or page */
     while(l && line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
       {
        int ncpu;
-       long cpu_user,cpu_nice,cpu_sys,cpu_idle;
+       unsigned long long cpu_user,cpu_nice,cpu_sys,cpu_idle;
 
-       sscanf(line,"cpu%d %lu %lu %lu %lu",&ncpu,&cpu_user,&cpu_nice,&cpu_sys,&cpu_idle);
+       sscanf(line,"cpu%d %llu %llu %llu %llu",&ncpu,&cpu_user,&cpu_nice,&cpu_sys,&cpu_idle);
 
        smp_current[CPU_USER+ncpu*N_OUTPUTS]=cpu_user;
        smp_current[CPU_NICE+ncpu*N_OUTPUTS]=cpu_nice;
@@ -349,7 +349,7 @@ int Update(time_t now,ProcMeterOutput *output)
  for(i=0;i<N_OUTPUTS;i++)
     if(output==&_outputs[i])
       {
-       long tot;
+       unsigned long long tot;
        double value;
 
        tot=current[CPU]+current[CPU_IDLE]-previous[CPU]-previous[CPU_IDLE];
@@ -373,7 +373,7 @@ int Update(time_t now,ProcMeterOutput *output)
     if(output==&smp_outputs[i])
       {
        int ncpu=i/N_OUTPUTS;
-       long tot;
+       unsigned long long tot;
        double value;
 
        tot=smp_current[CPU+ncpu*N_OUTPUTS]+smp_current[CPU_IDLE+ncpu*N_OUTPUTS]-smp_previous[CPU+ncpu*N_OUTPUTS]-smp_previous[CPU_IDLE+ncpu*N_OUTPUTS];
