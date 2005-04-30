@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.17 2004-09-05 13:16:17 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.18 2005-04-30 14:37:33 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4c.
+  ProcMeter - A system monitoring program for Linux - Version 3.4d.
 
   Global public header file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000,01,02,03,04 Andrew M. Bishop
+  This file Copyright 1998,99,2000,01,02,03,04,05 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -20,7 +20,7 @@
 #include <time.h>
 
 
-#define PROCMETER_VERSION "3.4c"
+#define PROCMETER_VERSION "3.4d"
 
 
 #define PROCMETER_MAJOR_VERSION 3

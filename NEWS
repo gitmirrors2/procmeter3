@@ -1,5 +1,14 @@
+Version 3.4d of ProcMeter3 released : Sat Apr 30 16:00:00 2005
+-------------------------------------------------------------
+
+Bug fixes:
+ Updated ACPI support to handle kernel version 2.6.
+ Added support for /dev/mapper in disk statistics.
+ Change to using 64-bit variables from /proc/stat.
+
+
 Version 3.4c of ProcMeter3 released : Sun Sep 5 14:30:00 2004
---------------------------------------------------------------
+-------------------------------------------------------------
 
 Bug fixes:
  Make grid-max option work for GTK version.
