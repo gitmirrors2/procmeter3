@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.14 2004-04-03 16:06:41 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.15 2005-04-30 14:36:08 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4d.
 
   Low level system statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000,02,04 Andrew M. Bishop
+  This file Copyright 1998,99,2000,02,04,05 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -236,7 +236,7 @@ ProcMeterModule module=
 
 
 static int available[N_OUTPUTS];
-static unsigned long *current,*previous,values[2][N_OUTPUTS];
+static unsigned long long *current,*previous,values[2][N_OUTPUTS];
 
 static int kernel_version_240=0;
 
@@ -288,13 +288,13 @@ ProcMeterOutput **Initialise(char *options)
     else
       {
        int i;
-       unsigned long d1,d2,d3,d4;
+       unsigned long long d1,d2,d3,d4;
 
-       if(sscanf(line,"cpu %lu %lu %lu %lu",&d1,&d2,&d3,&d4)==4)
+       if(sscanf(line,"cpu %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
           available[CPU]=available[CPU_USER]=available[CPU_NICE]=available[CPU_SYS]=available[CPU_IDLE]=1;
        else
           fprintf(stderr,"ProcMeter(%s): Unexpected 'cpu' line in '/proc/stat'.\n"
-                  "    expected: 'cpu %%lu %%lu %%lu %%lu'\n"
+                  "    expected: 'cpu %%llu %%llu %%llu %%llu'\n"
                   "    found:    %s",__FILE__,line);
 
        while(l && (line[0]=='c' && line[1]=='p' && line[2]=='u')) /* kernel version > ~2.1.84 */
@@ -302,22 +302,22 @@ ProcMeterOutput **Initialise(char *options)
 
        if(!strncmp(line,"disk ",5)) /* kernel version < ~2.4.0-test4 */
          {
-          unsigned long d1,d2,d3,d4;
+          unsigned long long d1,d2,d3,d4;
 
-          if(sscanf(line,"disk %lu %lu %lu %lu",&d1,&d2,&d3,&d4)==4)
+          if(sscanf(line,"disk %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
              available[DISK]=1;
           else
              fprintf(stderr,"ProcMeter(%s): Unexpected 'disk' line in '/proc/stat'.\n"
-                            "    expected: 'disk %%u %%u %%u %%u'\n"
+                            "    expected: 'disk %%llu %%llu %%llu %%llu'\n"
                             "    found:    %s",__FILE__,line);
 
           l=fgets(line,BUFFLEN,f); /* disk_* or page */
 
           while(l && line[0]=='d') /* kernel version > ~1.3.0 */
             {
-             if(sscanf(line,"disk_rblk %lu %lu %lu %lu",&d1,&d2,&d3,&d4)==4)
+             if(sscanf(line,"disk_rblk %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
                 available[DISK_READ]=1;
-             if(sscanf(line,"disk_wblk %lu %lu %lu %lu",&d1,&d2,&d3,&d4)==4)
+             if(sscanf(line,"disk_wblk %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
                 available[DISK_WRITE]=1;
              l=fgets(line,BUFFLEN,f); /* disk_* or page */
             }
@@ -325,46 +325,46 @@ ProcMeterOutput **Initialise(char *options)
 
        if(!strncmp(line,"page",4)) /* kernel version < ~2.5.30 */
          {
-          if(sscanf(line,"page %lu %lu",&d1,&d2)==2)
+          if(sscanf(line,"page %llu %llu",&d1,&d2)==2)
             {
              available[PAGE]=available[PAGE_IN]=available[PAGE_OUT]=1;
              l=fgets(line,BUFFLEN,f); /* swap or intr */
             }
           else
              fprintf(stderr,"ProcMeter(%s): Unexpected 'page' line in '/proc/stat'.\n"
-                            "    expected: 'page %%lu %%lu'\n"
+                            "    expected: 'page %%llu %%llu'\n"
                             "    found:    %s",__FILE__,line);
 
-          if(sscanf(line,"swap %lu %lu",&d1,&d2)==2)
+          if(sscanf(line,"swap %llu %llu",&d1,&d2)==2)
             {
              available[SWAP]=available[SWAP_IN]=available[SWAP_OUT]=1;
              l=fgets(line,BUFFLEN,f); /* intr */
             }
           else
              fprintf(stderr,"ProcMeter(%s): Unexpected 'swap' line in '/proc/stat'.\n"
-                            "    expected: 'swap %%lu %%lu'\n"
+                            "    expected: 'swap %%llu %%llu'\n"
                             "    found:    %s",__FILE__,line);
          }
 
-       if(sscanf(line,"intr %lu",&d1)==1)
+       if(sscanf(line,"intr %llu",&d1)==1)
          {
           available[INTR]=1;
           l=fgets(line,BUFFLEN,f); /* disk_io or ctxt */
          }
        else
           fprintf(stderr,"ProcMeter(%s): Unexpected 'intr' line in '/proc/stat'.\n"
-                         "    expected: 'intr %%lu ...'\n"
+                         "    expected: 'intr %%llu ...'\n"
                          "    found:    %s",__FILE__,line);
 
        if(!strncmp(line,"disk_io: ",9)) /* kernel version > ~2.4.0-test4 */
          {
           int maj,idx,num=8,nm,nr;
-          unsigned long d0,d1,d2,d3,d4;
+          unsigned long long d0,d1,d2,d3,d4;
 
           kernel_version_240=1;
 
-          while((nr=sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu,%lu)%n",&maj,&idx,&d0,&d1,&d2,&d3,&d4,&nm))==7 ||
-                (nr=sscanf(line+num," (%d,%d):(%lu,%lu,%lu,%lu)%n",&maj,&idx,&d0,&d1,&d2,&d3,&nm))==6)
+          while((nr=sscanf(line+num," (%d,%d):(%llu,%llu,%llu,%llu,%llu)%n",&maj,&idx,&d0,&d1,&d2,&d3,&d4,&nm))==7 ||
+                (nr=sscanf(line+num," (%d,%d):(%llu,%llu,%llu,%llu)%n",&maj,&idx,&d0,&d1,&d2,&d3,&nm))==6)
             {
              num+=nm;
 
@@ -378,11 +378,11 @@ ProcMeterOutput **Initialise(char *options)
           l=fgets(line,BUFFLEN,f); /* ctxt */
          }
 
-       if(sscanf(line,"ctxt %lu",&d1)==1)
+       if(sscanf(line,"ctxt %llu",&d1)==1)
           available[CONTEXT]=1;
        else
           fprintf(stderr,"ProcMeter(%s): Unexpected 'ctxt' line in '/proc/stat'.\n"
-                         "    expected: 'ctxt %%lu'\n"
+                         "    expected: 'ctxt %%llu'\n"
                          "    found:    %s",__FILE__,line);
 
        for(i=0;i<N_OUTPUTS;i++)
@@ -421,7 +421,7 @@ int Update(time_t now,ProcMeterOutput *output)
    {
     FILE *f;
     char line[BUFFLEN+1],*l;
-    long *temp;
+    unsigned long long *temp;
 
     temp=current;
     current=previous;
@@ -433,27 +433,27 @@ int Update(time_t now,ProcMeterOutput *output)
 
     l=fgets(line,BUFFLEN,f); /* cpu */
     if(available[CPU])
-       sscanf(line,"cpu %lu %lu %lu %lu",&current[CPU_USER],&current[CPU_NICE],&current[CPU_SYS],&current[CPU_IDLE]);
+       sscanf(line,"cpu %llu %llu %llu %llu",&current[CPU_USER],&current[CPU_NICE],&current[CPU_SYS],&current[CPU_IDLE]);
 
     while(l && line[0]=='c') /* kernel version > ~2.1.84 */
        l=fgets(line,BUFFLEN,f); /* cpu or disk or page or intr */
 
     if(available[DISK] && !kernel_version_240) /* kernel version < ~2.4.0-test4 */
       {
-       unsigned long d0,d1,d2,d3;
+       unsigned long long d0,d1,d2,d3;
 
        if(available[DISK])
-         {sscanf(line,"disk %lu %lu %lu %lu",&d0,&d1,&d2,&d3);current[DISK]=d0+d1+d2+d3;}
+         {sscanf(line,"disk %llu %llu %llu %llu",&d0,&d1,&d2,&d3);current[DISK]=d0+d1+d2+d3;}
 
        l=fgets(line,BUFFLEN,f); /* disk_* or page */
 
        while(line[0]=='d') /* kernel version > ~1.3.x */
          {
           if(available[DISK_READ])
-             if(sscanf(line,"disk_rblk %lu %lu %lu %lu",&d0,&d1,&d2,&d3)==4)
+             if(sscanf(line,"disk_rblk %llu %llu %llu %llu",&d0,&d1,&d2,&d3)==4)
                {current[DISK_READ]=d0+d1+d2+d3;}
           if(available[DISK_WRITE])
-             if(sscanf(line,"disk_wblk %lu %lu %lu %lu",&d0,&d1,&d2,&d3)==4)
+             if(sscanf(line,"disk_wblk %llu %llu %llu %llu",&d0,&d1,&d2,&d3)==4)
                {current[DISK_WRITE]=d0+d1+d2+d3;}
           l=fgets(line,BUFFLEN,f); /* disk_* or page */
          }
@@ -461,26 +461,26 @@ int Update(time_t now,ProcMeterOutput *output)
 
     if(available[PAGE])
       {
-       sscanf(line,"page %lu %lu",&current[PAGE_IN],&current[PAGE_OUT]);
+       sscanf(line,"page %llu %llu",&current[PAGE_IN],&current[PAGE_OUT]);
        l=fgets(line,BUFFLEN,f); /* swap */
       }
 
     if(available[SWAP])
       {
-       sscanf(line,"swap %lu %lu",&current[SWAP_IN],&current[SWAP_OUT]);
+       sscanf(line,"swap %llu %llu",&current[SWAP_IN],&current[SWAP_OUT]);
        l=fgets(line,BUFFLEN,f); /* intr */
       }
 
     if(available[INTR])
       {
-       sscanf(line,"intr %lu",&current[INTR]);
+       sscanf(line,"intr %llu",&current[INTR]);
        l=fgets(line,BUFFLEN,f); /* disk_io or ctxt */
       }
 
     if(kernel_version_240 && available[DISK]) /* kernel version > ~2.4.0-test4 */
       {
        int num=8,nm,nr=0;
-       unsigned long d1,d3;
+       unsigned long long d1,d3;
 
        current[DISK_READ]=0;
        current[DISK_WRITE]=0;
@@ -489,9 +489,9 @@ int Update(time_t now,ProcMeterOutput *output)
           while(1)
             {
              if(kernel_version_240==6)
-                nr=sscanf(line+num," (%*d,%*d):(%*u,%lu,%*u,%lu)%n",&d1,&d3,&nm);
+                nr=sscanf(line+num," (%*d,%*d):(%*u,%llu,%*u,%llu)%n",&d1,&d3,&nm);
              else if(kernel_version_240==7)
-                nr=sscanf(line+num," (%*d,%*d):(%*u,%lu,%*u,%lu,%*u)%n",&d1,&d3,&nm);
+                nr=sscanf(line+num," (%*d,%*d):(%*u,%llu,%*u,%llu,%*u)%n",&d1,&d3,&nm);
 
              if(nr!=2)
                 break;
@@ -509,7 +509,7 @@ int Update(time_t now,ProcMeterOutput *output)
       }
 
     if(available[CONTEXT])
-       sscanf(line,"ctxt %lu",&current[CONTEXT]);
+       sscanf(line,"ctxt %llu",&current[CONTEXT]);
 
     if(available[CPU])
        current[CPU]=current[CPU_USER]+current[CPU_NICE]+current[CPU_SYS];
