@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.15 2005-04-30 14:36:08 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.16 2005-06-06 18:32:23 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4d.
+  ProcMeter - A system monitoring program for Linux - Version 3.4e.
 
   Low level system statistics source file.
   ******************/ /******************
@@ -238,7 +238,11 @@ ProcMeterModule module=
 static int available[N_OUTPUTS];
 static unsigned long long *current,*previous,values[2][N_OUTPUTS];
 
+/*+ A flag to indicate that this is kernel v2.4 and has many disk IO counters. +*/
 static int kernel_version_240=0;
+
+/*+ A flag to indicate that this is kernel v2.6 and has 8 CPU counters. +*/
+static int kernel_26=0;
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -288,13 +292,17 @@ ProcMeterOutput **Initialise(char *options)
     else
       {
        int i;
-       unsigned long long d1,d2,d3,d4;
+       unsigned long long d1,d2,d3,d4,d5,d6,d7,d8;
 
-       if(sscanf(line,"cpu %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
+       if(sscanf(line,"cpu %llu %llu %llu %llu %llu %llu %llu %llu",&d1,&d2,&d3,&d4,&d5,&d6,&d7,&d8)==8)
+          kernel_26=1;
+ 
+       if(kernel_26 || sscanf(line,"cpu %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
           available[CPU]=available[CPU_USER]=available[CPU_NICE]=available[CPU_SYS]=available[CPU_IDLE]=1;
        else
           fprintf(stderr,"ProcMeter(%s): Unexpected 'cpu' line in '/proc/stat'.\n"
                   "    expected: 'cpu %%llu %%llu %%llu %%llu'\n"
+                  "          or: 'cpu %%llu %%llu %%llu %%llu %%llu %%llu %%llu %%llu'\n"
                   "    found:    %s",__FILE__,line);
 
        while(l && (line[0]=='c' && line[1]=='p' && line[2]=='u')) /* kernel version > ~2.1.84 */
@@ -422,6 +430,7 @@ int Update(time_t now,ProcMeterOutput *output)
     FILE *f;
     char line[BUFFLEN+1],*l;
     unsigned long long *temp;
+    unsigned long long cpu_iowait,cpu_irq,cpu_softirq,cpu_steal;
 
     temp=current;
     current=previous;
@@ -433,7 +442,8 @@ int Update(time_t now,ProcMeterOutput *output)
 
     l=fgets(line,BUFFLEN,f); /* cpu */
     if(available[CPU])
-       sscanf(line,"cpu %llu %llu %llu %llu",&current[CPU_USER],&current[CPU_NICE],&current[CPU_SYS],&current[CPU_IDLE]);
+       sscanf(line,"cpu %llu %llu %llu %llu %llu %llu %llu %llu",&current[CPU_USER],&current[CPU_NICE],&current[CPU_SYS],&current[CPU_IDLE],
+                                                                 &cpu_iowait,&cpu_irq,&cpu_softirq,&cpu_steal);
 
     while(l && line[0]=='c') /* kernel version > ~2.1.84 */
        l=fgets(line,BUFFLEN,f); /* cpu or disk or page or intr */
@@ -512,7 +522,11 @@ int Update(time_t now,ProcMeterOutput *output)
        sscanf(line,"ctxt %llu",&current[CONTEXT]);
 
     if(available[CPU])
+      {
        current[CPU]=current[CPU_USER]+current[CPU_NICE]+current[CPU_SYS];
+       if(kernel_26)
+          current[CPU]+=cpu_iowait+cpu_irq+cpu_softirq+cpu_steal;
+      }
 
     if(available[PAGE])
        current[PAGE]=current[PAGE_IN]+current[PAGE_OUT];
