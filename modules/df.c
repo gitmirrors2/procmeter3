@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.10 2002-12-07 19:39:40 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.11 2005-06-14 17:38:33 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4e.
 
   Disk capacity monitoring source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002 Andrew M. Bishop
+  This file Copyright 1998,99,2002,05 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -36,7 +36,7 @@ ProcMeterOutput _outputs[2]=
   /* short interval;       */ 10,
   /* char  text_value[];   */ "unknown",
   /* long  graph_value;    */ 0,
-  /* short graph_scale;    */ 10,
+  /* short graph_scale;    */ 20,
   /* char  graph_units[];  */ "(%d%%)"
  },
  /*+ The amount of free space +*/

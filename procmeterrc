@@ -120,6 +120,9 @@ run = XTermWait(ifconfig -a)
 
 [DiskUsage]
 
+# The minimum number of grid lines, they are 20% each.
+grid-min = 5
+
 # Information about the disks
 run = XTermWait(df)
 
