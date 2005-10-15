@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.17 2002-12-07 19:40:25 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.18 2005-10-15 18:16:46 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4e.
 
   Network devices traffic source file.
   ******************/ /******************
@@ -228,8 +228,8 @@ ProcMeterOutput **Initialise(char *options)
       }
    }
 
- current =(long*)calloc(sizeof(long),ndevices);
- previous=(long*)calloc(sizeof(long),ndevices);
+ current =(unsigned long*)calloc(sizeof(long),ndevices);
+ previous=(unsigned long*)calloc(sizeof(long),ndevices);
 
  return(outputs);
 }
@@ -314,7 +314,7 @@ int Update(time_t now,ProcMeterOutput *output)
    {
     FILE *f;
     char line[256];
-    long *temp;
+    unsigned long *temp;
 
     temp=current;
     current=previous;

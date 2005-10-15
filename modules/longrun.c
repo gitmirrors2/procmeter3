@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.7 2003-06-21 18:39:29 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.8 2005-10-15 18:16:46 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4a.
+  ProcMeter - A system monitoring program for Linux - Version 3.4e.
 
   Transmeta longrun support.
   ******************/ /******************
@@ -132,8 +132,8 @@ ProcMeterOutput **Initialise(char *options)
  
  add_device();
 
- current =(long*)malloc(sizeof(long)*ndevices);
- previous=(long*)malloc(sizeof(long)*ndevices);
+ current =(unsigned long*)malloc(sizeof(long)*ndevices);
+ previous=(unsigned long*)malloc(sizeof(long)*ndevices);
 
  return(outputs);
 }

@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/vmstat.c,v 1.3 2004-04-03 16:04:50 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/vmstat.c,v 1.4 2005-10-15 18:16:46 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4b.
+  ProcMeter - A system monitoring program for Linux - Version 3.4e.
 
   Low level system VM statistics source file.
   ******************/ /******************
@@ -226,7 +226,7 @@ int Update(time_t now,ProcMeterOutput *output)
    {
     FILE *f;
     char line[BUFFLEN+1],*l;
-    long *temp;
+    unsigned long *temp;
     int lineno=1;
 
     temp=current;
