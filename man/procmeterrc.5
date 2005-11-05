@@ -1,6 +1,6 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.15 2004-09-07 17:49:52 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.16 2005-11-05 19:00:02 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.4d.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.4e.
 .\"
 .\"  Manual page for .procmeterrc file
 .\"
@@ -54,7 +54,7 @@ file that they can exist in.
 
 .SH library SECTION
 
-This section contains the information about the procmeter modules that are
+This section contains the information about the ProcMeter modules that are
 available.
 .TP
 .BR path=...
@@ -67,7 +67,7 @@ A list of other modules to be loaded (full pathnames separated by spaces).
 
 .SH startup SECTION
 
-This section controls how the procmeter window ahould look when the program is
+This section controls how the ProcMeter window should look when the program is
 started.
 .TP
 .BR order=...
@@ -79,7 +79,7 @@ then they appear after those specified here.
 
 This section contains the general program resources, these are mostly the items
 that were command line options or were stored as X Window resources in previous
-versions of procmeter.
+versions of ProcMeter.
 .TP
 .BR horizontal=...
 A Boolean to indicate that the outputs are stacked horizontally instead of
@@ -166,7 +166,7 @@ display.
 
 .SH MODULE SECTION
 
-The name of the section is the name of the Procmeter3 module (see the help,
+The name of the section is the name of the ProcMeter module (see the help,
 procmeter3 -h), for example:
 .I ProcMeter
 .LP
@@ -185,7 +185,7 @@ grid lines (an integer).
 .BR run=...
 A string that specifies a program that can be run by selecting it from the menu
 for the left mouse button.  (For X versions of procmeter3 only.)  The way that
-the command is run can be specfied using one of the following abbreviations;
+the command is run can be specified using one of the following abbreviations;
 .B XTerm(
 .I command
 .B )
@@ -214,7 +214,7 @@ and exit.  This last one is equivalent to using none of these abbreviations.
 
 .SH OUTPUT SECTION
 
-The name of the section is the name of the Procmeter3 output (see the help,
+The name of the section is the name of the ProcMeter output (see the help,
 procmeter3 -h), for example:
 .I ProcMeter.Version
 .LP
@@ -233,7 +233,7 @@ file, it is a much reduced version of the system default procmeterrc file.
 
  [startup]
 
- # Procmeter version, clock, CPU graph, load text
+ # ProcMeter version, clock, CPU graph, load text
  order=ProcMeter.Version Date_Time.Time_HM \\
        Statistics.CPU-g Processes.Load-t
 

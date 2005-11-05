@@ -1,8 +1,8 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3_modules.1,v 1.4 2004-04-04 10:10:14 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3_modules.1,v 1.5 2005-11-05 19:00:02 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.4b.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.4e.
 .\"
-.\"  Manual page for procmeter modules.
+.\"  Manual page for ProcMeter modules.
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
@@ -109,8 +109,8 @@ usage for SMP machines.
 .TP
 .BR Stat-Disk
 More detailed statistics about individual disk usage read and write.  For older
-linux kernels (before version 2.4) there is only support for up to 4 disks (this
-limit is set by the kernel and not by procmeter).  For version 2.4 or later
+Linux kernels (before version 2.4) there is only support for up to 4 disks (this
+limit is set by the kernel and not by ProcMeter).  For version 2.4 or later
 kernels the limit is removed and the disk names are picked up when the program
 starts.  For version 2.6 or later kernels individual partitions are available.
 To force other disks to be listed use the
@@ -143,7 +143,7 @@ configuration file which is a space separated list of device names.
 .BR Longrun
 For systems with the Transmeta Crueso processor, information about longrun.
 Will not work unless the kernel is compiled with CPUID support, and
-/dev/cpu/0/cpuid must be readable by procmeter. (Allow regular users to
+/dev/cpu/0/cpuid must be readable by ProcMeter. (Allow regular users to
 access the cpuid device at your own risk!)
 .TP
 .BR ACPI
@@ -153,7 +153,7 @@ the appropriate hardware.  ACPI can report various information about a
 system's battery, and may also have thermal outputs available.
 .TP
 .BR VM_Statistics
-Low level system statistics about virtual memory (swaping and paging) for kernel
+Low level system statistics about virtual memory (swapping and paging) for kernel
 version 2.6 where the information has moved from the Statistics section.
 
 .SH SEE ALSO
