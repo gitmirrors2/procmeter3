@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.14 2002-12-01 11:38:25 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.15 2005-11-19 17:25:36 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.4e.
 
   Global private header file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002 Andrew M. Bishop
+  This file Copyright 1998,99,2002,05 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -80,7 +80,7 @@ struct _Output
 {
  ProcMeterOutput *output;       /*+ The output that this represents. +*/
 
- char label[PROCMETER_NAME_LEN];/*+ The label for the output. +*/
+ char label[PROCMETER_NAME_LEN+1];/*+ The label for the output. +*/
 
  RunOption menu_run;            /*+ The function that can be run for this output. +*/
 
