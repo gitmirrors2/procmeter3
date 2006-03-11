@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.10 2005-05-06 18:36:53 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.11 2006-03-11 16:37:00 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.4e.
 
@@ -342,6 +342,10 @@ int acpi_read (int battery, apm_info *info) {
 		if (state) {
 			if (state[0] == 'd') { /* discharging */
 				info->battery_status = BATTERY_STATUS_CHARGING;
+				/* Expensive ac power check used here
+				 * because AC power might be on even if a
+				 * battery is discharging in some cases. */
+				info->ac_line_status = on_ac_power();
 			}
 			else if (state[0] == 'c' && state[1] == 'h') { /* charging */
 				info->battery_status = BATTERY_STATUS_CHARGING;
@@ -358,6 +362,10 @@ int acpi_read (int battery, apm_info *info) {
 			}
 			else if (state[0] == 'c') { /* not charging, so must be critical */
 				info->battery_status = BATTERY_STATUS_CRITICAL;
+				/* Expensive ac power check used here
+				 * because AC power might be on even if a
+				 * battery is critical in some cases. */
+				info->ac_line_status = on_ac_power();
 			}
 			else if (rate == 0) {
 				/* if rate is null, battery charged, on
@@ -397,7 +405,7 @@ int acpi_read (int battery, apm_info *info) {
 		info->battery_time = 0;
 		info->battery_status = BATTERY_STATUS_ABSENT;
 		acpi_batt_capacity[battery] = 0;
-		if (acpi_batt_count == 1) {
+		if (acpi_batt_count == 0) {
 			/* Where else would the power come from, eh? ;-) */
 			info->ac_line_status = 1;
 		}
