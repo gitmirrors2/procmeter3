@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/cpuinfo.c,v 1.1 2006-03-21 18:59:42 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/cpuinfo.c,v 1.2 2006-04-13 18:43:25 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.4e.
 
@@ -32,7 +32,7 @@
 ProcMeterOutput _output=
  /*+ The cpu speed output +*/
  {
-  /* char  name[];          */ "CPU Speed",
+  /* char  name[];          */ "CPU_Speed",
   /* char *description;     */ "The speed of the CPU in MHz.",
   /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;        */ 1,
@@ -46,7 +46,7 @@ ProcMeterOutput _output=
 ProcMeterOutput _smp_output=
  /*+ The total cpu output +*/
  {
-  /* char  name[];          */ "CPU%d Speed",
+  /* char  name[];          */ "CPU%d_Speed",
   /* char *description;     */ "The speed of the CPU number %d in MHz.",
   /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;        */ 1,
