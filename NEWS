@@ -1,5 +1,19 @@
+Version 3.4e of ProcMeter3 released : Sat Apr 29 16:00:00 2006
+--------------------------------------------------------------
+
+Bug fixes:
+ Fix some spelling mistakes in the manual pages.
+ Change the default scaling for the DiskUsage outputs to 5 grid lines of 20%.
+ Fix some gcc-4.x compilation warnings.
+ Fix some ACPI module bugs.
+
+New or changed modules:
+ Add in the new CPU statistics (iowait, irq, softirq and steal).
+ Add in a display of the CPU clock speed.
+
+
 Version 3.4d of ProcMeter3 released : Sat Apr 30 16:00:00 2005
--------------------------------------------------------------
+--------------------------------------------------------------
 
 Bug fixes:
  Updated ACPI support to handle kernel version 2.6.
