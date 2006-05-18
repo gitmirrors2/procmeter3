@@ -1,12 +1,12 @@
-# $Header: /home/amb/CVS/procmeter3/gtk1/Makefile,v 1.1 2000-12-16 16:35:00 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/gtk1/Makefile,v 1.2 2006-05-18 16:31:27 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.3.
+# ProcMeter - A system monitoring program for Linux - Version 3.4f.
 #
 # Makefile for gtk parts.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994,95,96,97,98,99,2000 Andrew M. Bishop
+# This file Copyright 1994,95,96,97,98,99,2000,06 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -25,6 +25,16 @@ LDFLAGS=
 X_CFLAGS=`gtk-config --cflags`
 X_LDFLAGS=`gtk-config --libs`
 
+# Check for GTK1 development libraries and headers
+
+HAVE_GTK1:=$(shell gtk-config --version)
+
+ifdef HAVE_GTK1
+  ALL=all-gtk
+else
+  ALL=all-no-gtk
+endif
+
 # Compilation targets
 
 SRC=$(wildcard *.c)
@@ -38,7 +48,15 @@ WOBJ=$(foreach f,$(WSRC),$(addsuffix .o,$(basename $f)))
 
 ########
 
-all : $(OBJ) procmeter.widget \
+all : $(ALL)
+
+all-no-gtk :
+	@echo "ProcMeter:"
+	@echo "ProcMeter: GTK1 is not installed (gtk-config could not be found)."
+	@echo "ProcMeter: Cannot compile gprocmeter3 program."
+	@echo "ProcMeter:"
+
+all-gtk : $(OBJ) procmeter.widget \
       ../gprocmeter3
 
 ########
