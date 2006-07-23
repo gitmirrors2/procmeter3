@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/biff.c,v 1.5 2003-03-24 17:33:35 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/biff.c,v 1.6 2006-07-23 18:03:08 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4a.
+  ProcMeter - A system monitoring program for Linux - Version 3.4f.
 
   Mail inbox monitor.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,2002,2003 Andrew M. Bishop
+  This file Copyright 1998,2002,2003,2006 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -170,10 +170,13 @@ int Update(time_t now,ProcMeterOutput *output)
     struct stat buf;
 
     if(stat(filename,&buf))
+      {
        count=size=0;
+       mtime=atime=0;
+      }
     else
       {
-       if(mtime<buf.st_mtime)
+       if(mtime!=buf.st_mtime || atime!=buf.st_atime || size!=buf.st_size)
          {
           FILE *f=fopen(filename,"r");
 
@@ -191,7 +194,7 @@ int Update(time_t now,ProcMeterOutput *output)
 
           mtime=buf.st_mtime;
           atime=buf.st_atime;
-          size=buf.st_size/1024;
+          size=buf.st_size;
           
           utimebuf.actime=atime;
           utimebuf.modtime=mtime;
@@ -210,7 +213,7 @@ int Update(time_t now,ProcMeterOutput *output)
    }
  else if(output==&size_output)
    {
-    sprintf(output->text_value,"%d KB",size);
+    sprintf(output->text_value,"%d KB",size/1024);
 
     return(0);
    }
