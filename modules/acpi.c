@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.11 2006-03-11 16:37:00 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.12 2007-02-16 09:27:43 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4e.
+  ProcMeter - A system monitoring program for Linux - Version 3.4f.
 
   ACPI source file.
   ******************/ /******************
@@ -131,7 +131,7 @@ inline char *scan_acpi_value (const char *buf, const char *key) {
 	static char ret[256];
 	
 	if ((ptr = strstr(buf, key))) {
-		if (sscanf(ptr + strlen(key), "%s", ret) == 1)
+		if (sscanf(ptr + strlen(key), "%255s", ret) == 1)
 			return ret;
 	}
 	return NULL;
