@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.11 2005-06-14 17:38:33 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.12 2007-02-16 09:27:07 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4e.
+  ProcMeter - A system monitoring program for Linux - Version 3.4f.
 
   Disk capacity monitoring source file.
   ******************/ /******************
@@ -95,7 +95,7 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[128];
+ char line[256];
 
  outputs=(ProcMeterOutput**)malloc(sizeof(ProcMeterOutput*));
  outputs[0]=NULL;
@@ -107,18 +107,18 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/mounts'.\n",__FILE__);
  else
    {
-    if(!fgets(line,128,f))
+    if(!fgets(line,256,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/mounts'.\n",__FILE__);
     else
        do
          {
-          char device[32],mount[32];
+          char device[65],mount[65];
 
-          if(sscanf(line,"%s %s",device,mount)==2)
+          if(sscanf(line,"%64s %64s",device,mount)==2)
              if(strcmp(mount,"none") && *mount=='/' && (*device=='/' || strstr(device, ":/")))
                 add_disk(device,mount);
          }
-       while(fgets(line,128,f));
+       while(fgets(line,256,f));
 
     fclose(f);
    }
@@ -130,21 +130,21 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/etc/fstab'.\n",__FILE__);
  else
    {
-    if(!fgets(line,128,f))
+    if(!fgets(line,256,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/etc/fstab'.\n",__FILE__);
     else
        do
          {
-          char device[33],mount[33];
+          char device[65],mount[65];
 
           if(*line=='#')
              continue;
 
-          if(sscanf(line,"%32s %32s",device,mount)==2)
+          if(sscanf(line,"%64s %64s",device,mount)==2)
              if(strcmp(mount,"none") && *mount=='/' && (*device=='/' || strstr(device, ":/")))
                 add_disk(device,mount);
          }
-       while(fgets(line,128,f));
+       while(fgets(line,256,f));
 
     fclose(f);
    }
@@ -245,7 +245,7 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[128];
+    char line[256];
 
     for(i=0;i<ndisks;i++)
        mounted[i]=0;
@@ -255,20 +255,20 @@ int Update(time_t now,ProcMeterOutput *output)
        return(-1);
     else
       {
-       if(!fgets(line,128,f))
+       if(!fgets(line,256,f))
           return(-1);
        else
           do
             {
-             char device[32],mount[32];
+             char device[65],mount[65];
 
-             if(sscanf(line,"%s %s",device,mount)==2)
+             if(sscanf(line,"%64s %64s",device,mount)==2)
                 if(strcmp(mount,"none") && *mount=='/' && (*device=='/' || strstr(device, ":/")))
                    for(i=0;i<ndisks;i++)
                       if(!strcmp(disk[i],mount))
                          mounted[i]=1;
             }
-          while(fgets(line,128,f));
+          while(fgets(line,256,f));
 
        fclose(f);
       }
