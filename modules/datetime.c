@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.9 2003-06-21 18:39:25 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/datetime.c,v 1.10 2007-04-17 18:06:04 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4a.
+  ProcMeter - A system monitoring program for Linux - Version 3.4g.
 
   Date and Time Information module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002 Andrew M. Bishop
+  This file Copyright 1998,99,2002,2007 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -31,7 +31,7 @@ ProcMeterOutput date_dmy_output=
  /* char  name[];          */ "Date_DMY",
  /* char *description;     */ "The current date in the local timezone; day of week, day of month, month, year.",
  /* char  type;            */ PROCMETER_TEXT,
- /* short interval;        */ 3600,
+ /* short interval;        */ 60,
  /* char  text_value[];    */ "unknown",
  /* long  graph_value;     */ -1,
  /* short graph_scale;     */ 0,
@@ -44,7 +44,7 @@ ProcMeterOutput date_dm_output=
  /* char  name[];          */ "Date_DM",
  /* char *description;     */ "The current date in the local timezone; day of week, day of month, month.",
  /* char  type;            */ PROCMETER_TEXT,
- /* short interval;        */ 3600,
+ /* short interval;        */ 60,
  /* char  text_value[];    */ "unknown",
  /* long  graph_value;     */ -1,
  /* short graph_scale;     */ 0,
@@ -107,7 +107,7 @@ ProcMeterOutput time_hm_tz_output=
 ProcMeterOutput uptime_dhm_output=
 {
  /* char  name[];          */ "Uptime_DHM",
- /* char *description;     */ "The amount of time that the system has been booted for; days, hours and minutes.",
+ /* char *description;     */ "The amount of time that the system has been running for; days, hours and minutes.",
  /* char  type;            */ PROCMETER_TEXT,
  /* short interval;        */ 60,
  /* char  text_value[];    */ "unknown",
@@ -133,12 +133,11 @@ ProcMeterOutput *outputs[]=
 ProcMeterModule module=
 {
  /* char name[];           */ "Date_Time",
- /* char *description;     */ "The current date and time and the amount of time since the system was last booted.",
+ /* char *description;     */ "The current date and time and the amount of time the system has been running.",
 };
 
 
 static int twelve_hour = 0;
-static time_t boot_time=0;
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -170,16 +169,12 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/uptime'.\n",__FILE__);
  else
    {
-    time_t now=time(NULL),uptime;
+    time_t uptime;
 
     if(fscanf(f,"%ld",&uptime)!=1)
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/uptime'.\n",__FILE__);
     else
-      {
-       boot_time=now-uptime;
-
        outputs[sizeof(outputs)/sizeof(outputs[0])-2]=&uptime_dhm_output;
-      }
 
     fclose(f);
    }
@@ -205,22 +200,24 @@ int Update(time_t now,ProcMeterOutput* output)
 {
  if(output==&uptime_dhm_output)
    {
-    time_t uptime=now-boot_time;
-    int days =uptime/(24*3600);
-    int hours=(uptime%(24*3600))/3600;
-    int mins =(uptime%3600)/60;
+    FILE *f;
+    time_t uptime;
+    int hours,days,mins;
 
-    if(boot_time)
-      {
-       sprintf(output->text_value,"%dD %2dH %2dM",
-               days,
-               hours,
-               mins);
-      }
-    else
+    f=fopen("/proc/uptime","r");
+    if(!f)
        return(-1);
 
-    return(0);
+    if(fscanf(f,"%ld",&uptime)!=1)
+       return(-1);
+
+    fclose(f);
+
+    days =uptime/(24*3600);
+    hours=(uptime%(24*3600))/3600;
+    mins =(uptime%3600)/60;
+
+    sprintf(output->text_value,"%dD %2dH %2dM",days,hours,mins);
    }
  else
    {
@@ -268,11 +265,9 @@ int Update(time_t now,ProcMeterOutput* output)
       }
     else
        return(-1);
-
-    return(0);
    }
 
- return(-1);
+ return(0);
 }
 
 
