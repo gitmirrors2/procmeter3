@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.12 2007-02-16 09:27:43 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.13 2007-05-15 16:45:13 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4f.
+  ProcMeter - A system monitoring program for Linux - Version 3.4g.
 
   ACPI source file.
   ******************/ /******************
@@ -264,10 +264,16 @@ int acpi_supported (void) {
 	}
 	closedir(dir);
 	
-	version = get_acpi_value(PROC_ACPI "/info", "ACPI-CA Version:");
+	/* If kernel is 2.6.21 or newer, version is in
+	   /sys/module/acpi/parameters/acpica_version */
+	
+	version = get_acpi_file("/sys/module/acpi/parameters/acpica_version");
 	if (version == NULL) {
-		/* 2.5 kernel acpi */
-		version = get_acpi_value(PROC_ACPI "/info", "version:");
+		version = get_acpi_value(PROC_ACPI "/info", "ACPI-CA Version:");
+		if (version == NULL) {
+			/* 2.5 kernel acpi */
+			version = get_acpi_value(PROC_ACPI "/info", "version:");
+		}
 	}
 	if (version == NULL) {
 		return 0;
