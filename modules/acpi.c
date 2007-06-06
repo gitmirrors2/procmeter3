@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.13 2007-05-15 16:45:13 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.14 2007-06-06 17:36:06 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.4g.
 
@@ -481,13 +481,13 @@ ProcMeterOutput _batt_outputs[N_BATT_OUTPUTS]=
  /*+ Rate of charge/discharge. +*/
  {
   /* char  name[];          */ "Batt%i_Rate",
-  /* char *description;     */ "The present rate of battery %i discharge or charge, in mW.",
+  /* char *description;     */ "The present rate of battery %i discharge or charge, in mA.",
   /* char  type;            */ PROCMETER_GRAPH|PROCMETER_TEXT|PROCMETER_BAR,
   /* short interval;        */ 1,
-  /* char  text_value[];    */ "0 mW",
+  /* char  text_value[];    */ "0 mA",
   /* long  graph_value;     */ 0,
   /* short graph_scale;     */ 1000,
-  /* char  graph_Units[];   */ "(%d mW)"
+  /* char  graph_Units[];   */ "(%d mA)"
  },
  /*+ The battery status output +*/
  {
@@ -759,7 +759,7 @@ NOBATT:
 	
 		/* Charge/discharge rate. */
 		batt_outputs[index + 1].graph_value = PROCMETER_GRAPH_FLOATING((float)rate/batt_outputs[index + 1].graph_scale);
-		sprintf(batt_outputs[index + 1].text_value,"%i mW", rate);
+		sprintf(batt_outputs[index + 1].text_value,"%i mA", rate);
 	}
 
 	return(0);
