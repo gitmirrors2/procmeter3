@@ -26,8 +26,11 @@ Edit the xaw/Makefile to set the X Windows compiler options if required.
 make all
 make install
 
-To compile just the Athena widgets version use 'make procmeter3', for just the
-GTK version use 'make gprocmeter3' instead of 'make all'.
+To compile just the Athena widgets version use 'make procmeter3'.
+
+For just the GTK-1.x version use 'make gprocmeter3' instead of 'make all'
+(gprocmeter3 has not been converted to use GTK version 2 and is known not to
+compile with it).
 
 There are also two versions that don't have an X window display output, they are
 a '-log' version that logs the data to a file and a '-lcd' version that will
