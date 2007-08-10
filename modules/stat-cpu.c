@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.11 2005-06-06 18:31:30 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.12 2007-08-10 18:51:13 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4e.
+  ProcMeter - A system monitoring program for Linux - Version 3.4g.
 
   Low level system statistics for CPU usage.
   ******************/ /******************
@@ -338,8 +338,8 @@ ProcMeterOutput **Initialise(char *options)
                {
                 ncpus++;
 
-                smp_values[0]=(unsigned long long*)realloc((void*)smp_values[0],ncpus*n_outputs*sizeof(unsigned long long));
-                smp_values[1]=(unsigned long long*)realloc((void*)smp_values[1],ncpus*n_outputs*sizeof(unsigned long long));
+                smp_values[0]=(unsigned long long*)realloc((void*)smp_values[0],ncpus*N_OUTPUTS_26*sizeof(unsigned long long));
+                smp_values[1]=(unsigned long long*)realloc((void*)smp_values[1],ncpus*N_OUTPUTS_26*sizeof(unsigned long long));
                 smp_current=smp_values[0]; smp_previous=smp_values[1];
 
                 smp_outputs=(ProcMeterOutput*)realloc((void*)smp_outputs,ncpus*n_outputs*sizeof(ProcMeterOutput));
@@ -456,7 +456,7 @@ int Update(time_t now,ProcMeterOutput *output)
 
        smp_current[CPU+offset]=smp_current[CPU_USER+offset]+smp_current[CPU_NICE+offset]+smp_current[CPU_SYS+offset];
        if(kernel_26)
-          current[CPU+offset]+=current[CPU_IOWAIT+offset]+current[CPU_IRQ+offset]+current[CPU_SOFTIRQ+offset]+current[CPU_STEAL+offset];
+          smp_current[CPU+offset]+=smp_current[CPU_IOWAIT+offset]+smp_current[CPU_IRQ+offset]+smp_current[CPU_SOFTIRQ+offset]+smp_current[CPU_STEAL+offset];
 
        l=fgets(line,BUFFLEN,f); /* cpu or disk or page */
       }
