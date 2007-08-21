@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/cpuinfo.c,v 1.2 2006-04-13 18:43:25 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/cpuinfo.c,v 1.3 2007-08-21 17:32:54 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4e.
+  ProcMeter - A system monitoring program for Linux - Version 3.4g.
 
   CPU information.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002,04,05,06 Andrew M. Bishop
+  This file Copyright 1998,99,2002,04,05,06,07 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -126,7 +126,7 @@ ProcMeterOutput **Initialise(char *options)
 
  /* Create the outputs */
 
- outputs=(ProcMeterOutput**)malloc(ncpus*sizeof(ProcMeterOutput*)+1);
+ outputs=(ProcMeterOutput**)malloc((ncpus+1)*sizeof(ProcMeterOutput*));
  outputs[ncpus]=NULL;
 
  values[0]=(float*)malloc(ncpus*sizeof(float));
