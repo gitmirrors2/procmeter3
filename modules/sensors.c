@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.8 2004-05-17 18:37:24 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.9 2007-09-07 16:19:06 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.4c.
 
@@ -9,7 +9,7 @@
   Written by Matt Kemner, Andrew M. Bishop
 
   This file Copyright 1999 Matt Kemner, Andrew M. Bishop
-  parts of it are Copyright 1998,99,2002,04 Andrew M. Bishop
+  parts of it are Copyright 1998,99,2002,04,07 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -65,8 +65,8 @@ ProcMeterOutput **outputs=NULL;
 ProcMeterModule module=
 {
  /* char name[];           */ "Sensors",
- /* char *description;     */ "Hardware status information, temperature, fan speed etc. [From /proc/sys/dev/sensors/*/*]"
-                              " (Requires version 2.x.x of lm78 sensors from http://www.netroedge.com/~lm78/).",
+ /* char *description;     */ "Hardware status information, temperature, fan speed etc."
+                              " (Requires lm_sensors patch from http://www.netroedge.com/~lm78/ or version 2.6 kernel).",
 };
 
 /*+ The temperature outputs. +*/
@@ -121,6 +121,7 @@ ProcMeterOutput **Initialise(char *options)
  struct dirent* ent1,*ent2;
  char *dirstart=NULL;
  struct stat buf;
+ int kernel_2_6_22 = 0;
  int n=0,i;
 
  /* Find the directory with the sensor information in it. */
@@ -129,6 +130,12 @@ ProcMeterOutput **Initialise(char *options)
    {
     dirstart="/proc/sys/dev/sensors";
     kernel_2_6_0=0;
+   }
+ else if((d1=opendir("/sys/class/hwmon"))) /* kernel >= 2.6.22 */
+   {
+    dirstart="/sys/class/hwmon";
+    kernel_2_6_22=1;
+    kernel_2_6_0=1;
    }
  else if((d1=opendir("/sys/bus/i2c/devices"))) /* kernel >= 2.6.0 */
    {
@@ -147,7 +154,11 @@ ProcMeterOutput **Initialise(char *options)
        if(!strcmp(ent1->d_name,".."))
           continue;
 
-       sprintf(dirname,"%s/%s",dirstart,ent1->d_name);
+       if (kernel_2_6_22)     /* kernel >= 2.6.22 */
+         sprintf(dirname,"%s/%s/%s",dirstart,ent1->d_name,"device");
+       else                   /* kernel < 2.6.22 */
+         sprintf(dirname,"%s/%s",dirstart,ent1->d_name);
+
        if(stat(dirname,&buf)==0 && S_ISDIR(buf.st_mode))
          {
           d2=opendir(dirname);
