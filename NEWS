@@ -1,3 +1,15 @@
+Version 3.4g of ProcMeter3 released : Sun Sep 9 15:30:00 2007
+-------------------------------------------------------------
+
+Bug fixes:
+ Quicker default update of the date displays (useful after suspending).
+ Uptime now accurately shows system running time even after suspend.
+ Fix ACPI battery discharge rates.
+ Fix for crashes with stat-cpu outputs on mulit-CPU machines.
+ Change to use longer integer values for netdev outputs.
+ Search other places for hardware sensors information.
+
+
 Version 3.4f of ProcMeter3 released : Fri Feb 16 09:45:00 2007
 --------------------------------------------------------------
 
