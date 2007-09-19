@@ -1,12 +1,12 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.21 2003-01-17 18:48:39 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.22 2007-09-19 19:01:53 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.4a.
+# ProcMeter - A system monitoring program for Linux - Version 3.5.
 #
 # Makefile.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994,95,96,97,98,99,2000,01,02 Andrew M. Bishop
+# This file Copyright 1994-2007 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -49,17 +49,18 @@ OBJ=$(foreach f,$(SRC),$(addsuffix .o,$(basename $f)))
 
 ########
 
-all : procmeter3 gprocmeter3 procmeter3-log procmeter3-lcd
+all : procmeter3 g1procmeter3 g2procmeter3 procmeter3-log procmeter3-lcd
 
 ########
 
-procmeter3      : obj procmeter.xaw procmeter.modules procmeterrc.install
+procmeter3      : obj procmeter.xaw  procmeter.modules procmeterrc.install
 
-gprocmeter3     : obj procmeter.gtk procmeter.modules procmeterrc.install
+g1procmeter3    : obj procmeter.gtk1 procmeter.modules procmeterrc.install
+g2procmeter3    : obj procmeter.gtk2 procmeter.modules procmeterrc.install
 
-procmeter3-log  : obj procmeter.log procmeter.modules procmeterrc.install
+procmeter3-log  : obj procmeter.log  procmeter.modules procmeterrc.install
 
-procmeter3-lcd  : obj procmeter.lcd procmeter.modules procmeterrc.install
+procmeter3-lcd  : obj procmeter.lcd  procmeter.modules procmeterrc.install
 
 ########
 
@@ -83,16 +84,19 @@ procmeter.modules :
 
 .PHONY : procmeter.xaw procmeter.gtk procmeter.log procmeter.lcd
 
-procmeter.xaw :
+procmeter.xaw  :
 	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C xaw
 
-procmeter.gtk :
-	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C gtk
+procmeter.gtk1 :
+	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C gtk1
 
-procmeter.log :
+procmeter.gtk2 :
+	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C gtk2
+
+procmeter.log  :
 	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C log
 
-procmeter.lcd :
+procmeter.lcd  :
 	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C lcd
 
 ########
@@ -109,13 +113,14 @@ procmeterrc.install: procmeterrc Makefile
 clean :
 	-rm -f *.o *~ core procmeterrc.install
 	$(MAKE) -C modules clean
-	$(MAKE) -C xaw clean
-	$(MAKE) -C gtk clean
-	$(MAKE) -C log clean
-	$(MAKE) -C lcd clean
+	$(MAKE) -C xaw  clean
+	$(MAKE) -C gtk1 clean
+	$(MAKE) -C gtk2 clean
+	$(MAKE) -C log  clean
+	$(MAKE) -C lcd  clean
 
 distclean : clean
-	-rm -f procmeter3 gprocmeter3 procmeter3-log procmeter3-lcd
+	-rm -f procmeter3 g1procmeter3 g2procmeter3 procmeter3-log procmeter3-lcd
 	$(MAKE) -C modules distclean
 
 ########
@@ -123,8 +128,8 @@ distclean : clean
 .PHONY : install
 
 install :
-	@[ -f procmeter3 ] || [ -f gprocmeter3 ] || [ -f procmeter3-log ] || [ -f procmeter3-lcd ] || \
-	  (echo "*** Run 'make all' or 'make procmeter3' or 'make gprocmeter3' or 'make procmeter3-log' or 'make procmeter3-lcd' first." ; exit 1)
+	@[ -f procmeter3 ] || [ -f g1procmeter3 ] || [ -f g2procmeter3 ] || [ -f procmeter3-log ] || [ -f procmeter3-lcd ] || \
+	  (echo "*** Run 'make all' or 'make procmeter3' or 'make g1procmeter3' or 'make g2procmeter3' or 'make procmeter3-log' or 'make procmeter3-lcd' first." ; exit 1)
 	install -d $(LIB_PATH)
 	install -d $(MOD_PATH)
 	install -d $(RC_PATH)
@@ -134,8 +139,10 @@ install :
 	install -d $(INSTDIR)/bin
 	[ ! -f procmeter3 ]     || install -m 755 procmeter3 $(INSTDIR)/bin
 	@[ -f procmeter3 ]      || (echo "" ; echo "*** The procmeter3 program has not been installed (it does not exist)." ; echo "")
-	[ ! -f gprocmeter3 ]    || install -m 755 gprocmeter3 $(INSTDIR)/bin
-	@[ -f gprocmeter3 ]     || (echo "" ; echo "*** The gprocmeter3 program has not been installed (it does not exist)." ; echo "")
+	[ ! -f g1procmeter3 ]   || install -m 755 g1procmeter3 $(INSTDIR)/bin
+	@[ -f g1procmeter3 ]    || (echo "" ; echo "*** The g1procmeter3 program has not been installed (it does not exist)." ; echo "")
+	[ ! -f g2procmeter3 ]   || install -m 755 g2procmeter3 $(INSTDIR)/bin
+	@[ -f g2procmeter3 ]    || (echo "" ; echo "*** The g2procmeter3 program has not been installed (it does not exist)." ; echo "")
 	[ ! -f procmeter3-log ] || install -m 755 procmeter3-log $(INSTDIR)/bin
 	@[ -f procmeter3-log ]  || (echo "" ; echo "*** The procmeter3-log program has not been installed (it does not exist)." ; echo "")
 	[ ! -f procmeter3-lcd ] || install -m 755 procmeter3-lcd $(INSTDIR)/bin
@@ -146,7 +153,8 @@ install :
 	[ ! -f procmeter3 ]     || install -m 644 man/procmeter3.1      $(MANDIR)/man1
 	[ ! -f procmeter3-log ] || install -m 644 man/procmeter3-log.1  $(MANDIR)/man1
 	[ ! -f procmeter3-lcd ] || install -m 644 man/procmeter3-lcd.1  $(MANDIR)/man1
-	[ ! -f gprocmeter3 ]    || install -m 644 man/gprocmeter3.1     $(MANDIR)/man1
+	[ ! -f g1procmeter3 ]   || install -m 644 man/g1procmeter3.1    $(MANDIR)/man1
+	[ ! -f g2procmeter3 ]   || install -m 644 man/g2procmeter3.1    $(MANDIR)/man1
 	install -m 644 man/procmeterrc.5        $(MANDIR)/man5
 	install -m 644 man/procmeter3_modules.1 $(MANDIR)/man1
 #
