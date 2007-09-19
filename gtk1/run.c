@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/run.c,v 1.1 2000-12-16 16:35:59 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/run.c,v 1.2 2007-09-19 19:03:13 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3.
+  ProcMeter - A system monitoring program for Linux - Version 3.5.
 
   Run external programs.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1999,2000 Andrew M. Bishop
+  This file Copyright 1999-2007 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -21,9 +21,13 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include <gdk/gdkprivate.h>
+#include <gtk/gtkwidget.h>
+#include <gdk/gdkx.h>
 
 #include "procmeterp.h"
+
+/*+ The toplevel widget. +*/
+extern GtkWidget *toplevel;
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -106,7 +110,7 @@ void RunProgram(RunOption *run)
     return;
 
  if(run->flag==RUN_XBELL)
-    XBell(gdk_display,0);
+    XBell(GDK_WINDOW_XDISPLAY(toplevel->window),0);
  else
    {
     pid_t pid=fork();
@@ -117,14 +121,14 @@ void RunProgram(RunOption *run)
       {
        char *string,*displayname,*displayenv;
 
-       displayname=XDisplayString(gdk_display);
+       displayname=XDisplayString(GDK_WINDOW_XDISPLAY(toplevel->window));
        displayenv=(char*)malloc(strlen(displayname)+10);
        sprintf(displayenv,"DISPLAY=%s",displayname);
        putenv(displayenv);
 
        /* close the X connection */
 
-       close(ConnectionNumber(gdk_display));
+       close(ConnectionNumber(GDK_WINDOW_XDISPLAY(toplevel->window)));
 
        switch(run->flag)
          {
