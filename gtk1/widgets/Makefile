@@ -1,12 +1,12 @@
-# $Header: /home/amb/CVS/procmeter3/gtk1/widgets/Makefile,v 1.1 2000-12-16 16:37:28 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/gtk1/widgets/Makefile,v 1.2 2007-09-19 19:02:45 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.3.
+# ProcMeter - A system monitoring program for Linux - Version 3.5.
 #
-# Makefile for gtk widgets.
+# Makefile for gtk1 widgets.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1998,99,2000 Andrew M. Bishop
+# This file Copyright 1998-2007 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
