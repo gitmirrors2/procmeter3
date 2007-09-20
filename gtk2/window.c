@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/window.c,v 1.1 2007-09-19 19:07:18 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk2/window.c,v 1.2 2007-09-20 18:29:39 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.4c.
 
@@ -539,7 +539,7 @@ void Resize(void)
 
     gtk_widget_set_usize(GTK_WIDGET(pane),-1,-1);
     gtk_widget_set_usize(GTK_WIDGET(pane),width,height);
-    gtk_window_set_default_size(GTK_WINDOW(toplevel),width,height);
+    gtk_window_resize(GTK_WINDOW(toplevel),width,height);
 
     gtk_container_resize_children(GTK_CONTAINER(pane));
 
@@ -574,6 +574,8 @@ void Resize(void)
     gtk_widget_set_usize(GTK_WIDGET(displayed[i]->output_widget),-1,-1);
     gtk_widget_set_usize(GTK_WIDGET(displayed[i]->output_widget),width,height);
    }
+
+ gtk_container_resize_children(GTK_CONTAINER(pane));
 }
 
 
