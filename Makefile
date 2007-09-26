@@ -1,4 +1,4 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.23 2007-09-26 18:40:22 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.24 2007-09-26 18:49:53 amb Exp $
 #
 # ProcMeter - A system monitoring program for Linux - Version 3.5.
 #
@@ -130,41 +130,41 @@ distclean : clean
 install :
 	@[ -f procmeter3-xaw ] || [ -f procmeter3-gtk1 ] || [ -f procmeter3-gtk2 ] || [ -f procmeter3-log ] || [ -f procmeter3-lcd ] || \
 	  (echo "*** Run 'make all' or 'make procmeter3-xaw' or 'make procmeter3-gtk1' or 'make procmeter3-gtk2' or 'make procmeter3-log' or 'make procmeter3-lcd' first." ; exit 1)
-	install -d $(LIB_PATH)
-	install -d $(MOD_PATH)
-	install -d $(RC_PATH)
+	install -d $(DESTDIR)$(LIB_PATH)
+	install -d $(DESTDIR)$(MOD_PATH)
+	install -d $(DESTDIR)$(RC_PATH)
 #
-	$(MAKE) -C modules install MOD_PATH=$(MOD_PATH) LIB_PATH=$(LIB_PATH)
+	$(MAKE) -C modules install INSTDIR=$(INSTDIR) MOD_PATH=$(MOD_PATH) LIB_PATH=$(LIB_PATH)
 #
-	install -d $(INSTDIR)/bin
-	[ ! -f procmeter3-xaw ]  || install -m 755 procmeter3-xaw $(INSTDIR)/bin
+	install -d $(DESTDIR)$(INSTDIR)/bin
+	[ ! -f procmeter3-xaw ]  || install -m 755 procmeter3-xaw $(DESTDIR)$(INSTDIR)/bin
 	@[ -f procmeter3-xaw ]   || (echo "" ; echo "*** The procmeter3-xaw program has not been installed (it does not exist)." ; echo "")
-	[ ! -f procmeter3-xaw ]  || ln -s procmeter3-xaw $(INSTDIR)/bin/procmeter3
-	[ ! -f procmeter3-gtk1 ] || install -m 755 procmeter3-gtk1 $(INSTDIR)/bin
+	[ ! -f procmeter3-xaw ]  || ln -s procmeter3-xaw $(DESTDIR)$(INSTDIR)/bin/procmeter3
+	[ ! -f procmeter3-gtk1 ] || install -m 755 procmeter3-gtk1 $(DESTDIR)$(INSTDIR)/bin
 	@[ -f procmeter3-gtk1 ]  || (echo "" ; echo "*** The procmeter3-gtk1 program has not been installed (it does not exist)." ; echo "")
-	[ ! -f procmeter3-gtk2 ] || install -m 755 procmeter3-gtk2 $(INSTDIR)/bin
+	[ ! -f procmeter3-gtk2 ] || install -m 755 procmeter3-gtk2 $(DESTDIR)$(INSTDIR)/bin
 	@[ -f procmeter3-gtk2 ]  || (echo "" ; echo "*** The procmeter3-gtk2 program has not been installed (it does not exist)." ; echo "")
-	[ -f procmeter3-gtk2 ]   || [ ! -f procmeter3-gtk1 ] || ln -s procmeter3-gtk1 $(INSTDIR)/bin/gprocmeter3
-	[ -f procmeter3-gtk1 ]   || [ ! -f procmeter3-gtk2 ] || ln -s procmeter3-gtk2 $(INSTDIR)/bin/gprocmeter3
-	[ ! -f procmeter3-log ]  || install -m 755 procmeter3-log $(INSTDIR)/bin
+	[ -f procmeter3-gtk2 ]   || [ ! -f procmeter3-gtk1 ] || ln -s procmeter3-gtk1 $(DESTDIR)$(INSTDIR)/bin/gprocmeter3
+	[ -f procmeter3-gtk1 ]   || [ ! -f procmeter3-gtk2 ] || ln -s procmeter3-gtk2 $(DESTDIR)$(INSTDIR)/bin/gprocmeter3
+	[ ! -f procmeter3-log ]  || install -m 755 procmeter3-log $(DESTDIR)$(INSTDIR)/bin
 	@[ -f procmeter3-log ]   || (echo "" ; echo "*** The procmeter3-log program has not been installed (it does not exist)." ; echo "")
-	[ ! -f procmeter3-lcd ]  || install -m 755 procmeter3-lcd $(INSTDIR)/bin
+	[ ! -f procmeter3-lcd ]  || install -m 755 procmeter3-lcd $(DESTDIR)$(INSTDIR)/bin
 	@[ -f procmeter3-lcd ]   || (echo "" ; echo "*** The procmeter3-lcd program has not been installed (it does not exist)." ; echo "")
 #
-	install -d $(MANDIR)/man1
-	install -d $(MANDIR)/man5
-	[ ! -f procmeter3-xaw ]  || install -m 644 man/procmeter3-xaw.1  man/procmeter3.1  $(MANDIR)/man1
-	[ ! -f procmeter3-log ]  || install -m 644 man/procmeter3-log.1                    $(MANDIR)/man1
-	[ ! -f procmeter3-lcd ]  || install -m 644 man/procmeter3-lcd.1                    $(MANDIR)/man1
-	[ ! -f procmeter3-gtk1 ] || install -m 644 man/procmeter3-gtk1.1 man/gprocmeter3.1 $(MANDIR)/man1
-	[ ! -f procmeter3-gtk2 ] || install -m 644 man/procmeter3-gtk2.1 man/gprocmeter3.1 $(MANDIR)/man1
-	install -m 644 man/procmeterrc.5        $(MANDIR)/man5
-	install -m 644 man/procmeter3_modules.1 $(MANDIR)/man1
+	install -d $(DESTDIR)$(MANDIR)/man1
+	install -d $(DESTDIR)$(MANDIR)/man5
+	[ ! -f procmeter3-xaw ]  || install -m 644 man/procmeter3-xaw.1  man/procmeter3.1  $(DESTDIR)$(MANDIR)/man1
+	[ ! -f procmeter3-log ]  || install -m 644 man/procmeter3-log.1                    $(DESTDIR)$(MANDIR)/man1
+	[ ! -f procmeter3-lcd ]  || install -m 644 man/procmeter3-lcd.1                    $(DESTDIR)$(MANDIR)/man1
+	[ ! -f procmeter3-gtk1 ] || install -m 644 man/procmeter3-gtk1.1 man/gprocmeter3.1 $(DESTDIR)$(MANDIR)/man1
+	[ ! -f procmeter3-gtk2 ] || install -m 644 man/procmeter3-gtk2.1 man/gprocmeter3.1 $(DESTDIR)$(MANDIR)/man1
+	install -m 644 man/procmeterrc.5        $(DESTDIR)$(MANDIR)/man5
+	install -m 644 man/procmeter3_modules.1 $(DESTDIR)$(MANDIR)/man1
 #
-	[ ! -f $(RC_PATH)/.procmeterrc ] || mv $(RC_PATH)/.procmeterrc $(RC_PATH)/procmeterrc
-	@[ ! -f $(RC_PATH)/procmeterrc ] || (echo "" ; echo "*** The $(RC_PATH)/procmeterrc file has not been installed (it already exists)." ; echo "")
-	[ -f $(RC_PATH)/procmeterrc ] || install -m 644 procmeterrc.install $(RC_PATH)/procmeterrc
-	install -m 644 procmeterrc.install $(RC_PATH)
+	[ ! -f $(DESTDIR)$(RC_PATH)/.procmeterrc ] || mv $(DESTDIR)$(RC_PATH)/.procmeterrc $(DESTDIR)$(RC_PATH)/procmeterrc
+	@[ ! -f $(DESTDIR)$(RC_PATH)/procmeterrc ] || (echo "" ; echo "*** The $(DESTDIR)$(RC_PATH)/procmeterrc file has not been installed (it already exists)." ; echo "")
+	[ -f $(DESTDIR)$(RC_PATH)/procmeterrc ] || install -m 644 procmeterrc.install $(DESTDIR)$(RC_PATH)/procmeterrc
+	install -m 644 procmeterrc.install $(DESTDIR)$(RC_PATH)
 #
-	install -d $(LIB_PATH)/include
-	install -m 644 procmeter.h $(LIB_PATH)/include
+	install -d $(DESTDIR)$(LIB_PATH)/include
+	install -m 644 procmeter.h $(DESTDIR)$(LIB_PATH)/include
