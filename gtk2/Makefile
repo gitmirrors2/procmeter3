@@ -1,4 +1,4 @@
-# $Header: /home/amb/CVS/procmeter3/gtk2/Makefile,v 1.1 2007-09-19 19:06:17 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/gtk2/Makefile,v 1.2 2007-09-26 18:31:46 amb Exp $
 #
 # ProcMeter - A system monitoring program for Linux - Version 3.5.
 #
@@ -53,15 +53,15 @@ all : $(ALL)
 all-no-gtk2 :
 	@echo "ProcMeter:"
 	@echo "ProcMeter: GTK2 is not installed (pkg-config could not find it)."
-	@echo "ProcMeter: Cannot compile g2procmeter3 program."
+	@echo "ProcMeter: Cannot compile procmeter3-gtk2 program."
 	@echo "ProcMeter:"
 
 all-gtk2 : $(OBJ) procmeter.widget \
-      ../g2procmeter3
+      ../procmeter3-gtk2
 
 ########
 
-../g2procmeter3 : $(OBJ) procmeter.widget procmeter.main
+../procmeter3-gtk2 : $(OBJ) procmeter.widget procmeter.main
 	$(LD) $(OBJ) $(WOBJ) $(POBJ) -o $@ -ldl $(LDFLAGS) $(X_LDFLAGS)
 
 ########

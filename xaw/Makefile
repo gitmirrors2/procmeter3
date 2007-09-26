@@ -1,12 +1,12 @@
-# $Header: /home/amb/CVS/procmeter3/xaw/Makefile,v 1.1 2000-12-16 16:54:23 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/xaw/Makefile,v 1.2 2007-09-26 18:31:46 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.3.
+# ProcMeter - A system monitoring program for Linux - Version 3.5.
 #
 # Makefile for xaw parts.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994,95,96,97,98,99,2000 Andrew M. Bishop
+# This file Copyright 1994-2007 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -39,11 +39,11 @@ WOBJ=$(foreach f,$(WSRC),$(addsuffix .o,$(basename $f)))
 ########
 
 all : $(OBJ) procmeter.widget \
-      ../procmeter3
+      ../procmeter3-xaw
 
 ########
 
-../procmeter3 : $(OBJ) procmeter.widget procmeter.main
+../procmeter3-xaw : $(OBJ) procmeter.widget procmeter.main
 	$(LD) $(OBJ) $(WOBJ) $(POBJ) -o $@ -ldl $(LDFLAGS) $(X_LDFLAGS)
 
 ########
