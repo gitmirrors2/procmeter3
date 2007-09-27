@@ -1,13 +1,14 @@
-                              PROCMETER V3.4
+                              PROCMETER V3.5
                               ==============
 
 A system monitoring program for Linux.
 
 
-Usage: procmeter3     [-h] [--rc=<filename>] [--...] ...
-       gprocmeter3    [-h] [--rc=<filename>] [--...] ...
-       procmeter3-log [-h] [--rc=<filename>] [--...] ...
-       procmeter3-lcd [-h] [--rc=<filename>] [--...] ...
+Usage: procmeter3-xaw  [-h] [--rc=<filename>] [--...] ...
+       procmeter3-gtk1 [-h] [--rc=<filename>] [--...] ...
+       procmeter3-gtk2 [-h] [--rc=<filename>] [--...] ...
+       procmeter3-log  [-h] [--rc=<filename>] [--...] ...
+       procmeter3-lcd  [-h] [--rc=<filename>] [--...] ...
 
 -h                Print out a help message.
 --rc=<filename>   Specify an alternative .procemterrc file.
@@ -16,30 +17,62 @@ Usage: procmeter3     [-h] [--rc=<filename>] [--...] ...
 
 
 
-Installation
-------------
+Compilation
+-----------
 
 Edit the Makefile to set the paths for installation (INSTDIR).
 
-Edit the xaw/Makefile to set the X Windows compiler options if required.
+To compile all possible versions (using GTK1 and/or GTK2 if available) then use:
 
 make all
+
+
+To compile a specific version or versions then specify the names of the versions
+that are required.  The possible version names are:
+
+procmeter3-xaw      - Traditional Athena Widgets version.
+
+procmeter3-gtk1     - GTK1 version.
+
+procmeter3-gtk2     - GTK2 version.
+
+procmeter3-log      - Non-GUI data-logging version.
+
+procmeter3-lcd      - Not an X Window system GUI version but using small LCD
+                      device with LCDproc server (http://lcdproc.omnipotent.net).
+
+
+For example to compile the Athena version and the GTK2 version use the command:
+
+make procmeter3-xaw procmeter3-gtk2
+
+
+Installation
+------------
+
+To install all files in the default locations just use:
+
 make install
 
-To compile just the Athena widgets version use 'make procmeter3'.
 
-For just the GTK-1.x version use 'make gprocmeter3' instead of 'make all'
-(gprocmeter3 has not been converted to use GTK version 2 and is known not to
-compile with it).
+To install all of the files into a directory tree that is rooted somewhere other
+than the usual place (e.g. in /tmp/procmeter3) use the DESTDIR option:
 
-There are also two versions that don't have an X window display output, they are
-a '-log' version that logs the data to a file and a '-lcd' version that will
-display on an LCD device by using the LCDproc server (see
-http://lcdproc.omnipotent.net).
+make install DESTDIR=/tmp/procmeter3
 
-The manual pages procmeter3(1), gprocmeter3(1), procmeter3-no-x(1),
-procmeter3-lcd(1), procmeter3_modules(1) and procmeterrc(5) give more details on
-how to use the programs.
+
+Usage
+-----
+
+The manual pages procmeter3-xaw(1), procmeter3-gtk1(1), procmeter3-gtk2(1),
+procmeter3-log(1) and procmeter3-lcd(1) give more details on how to use the
+programs.
+
+The manual page procmeter3_modules(1) describes the different data display
+modules that are available.
+
+The manual page procmeterrc(5) describes the format of the configuration file
+that is used by all versions of the program.
 
 
 More Information
@@ -64,6 +97,7 @@ Procmeter Version 3.1 Written February - March   1999
 Procmeter Version 3.2 Written August - December  1999
 Procmeter Version 3.3 Written August 2000 - November 2002
 Procmeter Version 3.4 Written November 2002 - September 2007
+Procmeter Version 3.5 Written September 2007
 
 email: amb@gedanken.demon.co.uk [Please put procmeter in the subject line]
 
