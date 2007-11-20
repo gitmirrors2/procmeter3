@@ -1,3 +1,25 @@
+Version 3.5 of ProcMeter3 released : Tue Nov 20 19:30:00 2007
+-------------------------------------------------------------
+
+New features
+ Added a gtk2 version of ProcMeter3.
+ Renamed the executables but added backwards compatibility links.
+ Added DESTDIR option to Makefiles.
+
+**** IMPORTANT ****
+
+The Xaw version is now named procmeter3-xaw instead of procmeter3.  A symbolic
+link to the original name will still be created and installed.
+
+The GTK1 version is now named procmeter3-gtk1 instead of gprocmeter3.
+The GTK2 version is named procmeter3-gtk2.
+
+If only one or the other GTK version is compiled then a link will be created to
+it from the name gprocmeter3.
+
+**** IMPORTANT ****
+
+
 Version 3.4g of ProcMeter3 released : Sun Sep 9 15:30:00 2007
 -------------------------------------------------------------
 
@@ -5,7 +27,7 @@ Bug fixes:
  Quicker default update of the date displays (useful after suspending).
  Uptime now accurately shows system running time even after suspend.
  Fix ACPI battery discharge rates.
- Fix for crashes with stat-cpu outputs on mulit-CPU machines.
+ Fix for crashes with stat-cpu outputs on multi-CPU machines.
  Change to use longer integer values for netdev outputs.
  Search other places for hardware sensors information.
 
