@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/window.c,v 1.5 2004-09-05 13:16:01 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/window.c,v 1.6 2007-11-21 19:56:40 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4c.
+  ProcMeter - A system monitoring program for Linux - Version 3.5a.
 
   X Windows interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997,98,99,2000,01,02,04 Andrew M. Bishop
+  This file Copyright 1997,98,99,2000,01,02,04,07 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -75,6 +75,7 @@ void Start(int *argc,char **argv)
 {
  static char procmeter_version[]="ProcMeter V" PROCMETER_VERSION;
  char *string;
+ GtkWidget *event_box;
  int i;
 
  if((string=GetProcMeterRC("resources","horizontal")) &&
@@ -99,6 +100,10 @@ void Start(int *argc,char **argv)
 
  /* Create the pane widget */
 
+ event_box=gtk_event_box_new();
+ gtk_container_add(GTK_CONTAINER(toplevel),event_box);
+ gtk_widget_show(event_box);
+
  if(vertical)
     pane=gtk_vbox_new(FALSE,0);
  else
@@ -106,13 +111,13 @@ void Start(int *argc,char **argv)
 
  gtk_box_set_spacing(GTK_BOX(pane),2);
 
- gtk_container_add(GTK_CONTAINER(toplevel),pane);
+ gtk_container_add(GTK_CONTAINER(event_box),pane);
  gtk_widget_show(GTK_WIDGET(pane));
 
  gtk_signal_connect(GTK_OBJECT(toplevel),"configure_event",
                     GTK_SIGNAL_FUNC(ResizePaneCallback),NULL);
 
- AddMenuToOutput(pane,NULL);
+ AddMenuToOutput(event_box,NULL);
 
  /* Parse the -geometry flag */
 
