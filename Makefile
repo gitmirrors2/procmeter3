@@ -1,6 +1,6 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.24 2007-09-26 18:49:53 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.25 2007-11-21 19:33:47 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.5.
+# ProcMeter - A system monitoring program for Linux - Version 3.5a.
 #
 # Makefile.
 #
@@ -84,7 +84,7 @@ procmeter3.modules :
 
 procmeter3-xaw  :
 	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C xaw
-	ln -s procmeter3-xaw procmeter3
+	[ -f procmeter3 ] || ln -s procmeter3-xaw procmeter3
 
 procmeter3-gtk1 :
 	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C gtk1
