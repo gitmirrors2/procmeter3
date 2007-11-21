@@ -1,11 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/widgets/PMBar.c,v 1.1 2007-09-19 19:04:22 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk2/widgets/PMBar.c,v 1.2 2007-11-21 19:57:18 amb Exp $
 
-  ProcMeter Bar Widget Source file (for ProcMeter3 3.4a).
+  ProcMeter Bar Widget Source file (for ProcMeter3 3.5a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,99,2000,01,02,03 Andrew M. Bishop
+  This file Copyright 1996,98,99,2000,01,02,03,07 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -169,9 +169,15 @@ static void destroy(GtkObject *object)
  pmw=GTK_PROCMETERBAR(object);
 
  if(pmw->grid_gc)
+   {
     gdk_gc_destroy(pmw->grid_gc);
+    pmw->grid_gc=NULL;
+   }
  if(pmw->grid_units!=empty_string)
+   {
     free(pmw->grid_units);
+    pmw->grid_units=empty_string;
+   }
 
  if(GTK_OBJECT_CLASS(parent_class)->destroy)
     (*GTK_OBJECT_CLASS(parent_class)->destroy)(object);

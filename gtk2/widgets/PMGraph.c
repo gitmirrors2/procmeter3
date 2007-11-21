@@ -1,11 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/widgets/PMGraph.c,v 1.1 2007-09-19 19:05:11 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk2/widgets/PMGraph.c,v 1.2 2007-11-21 19:57:18 amb Exp $
 
-  ProcMeter Graph Widget Source file (for ProcMeter3 3.4c).
+  ProcMeter Graph Widget Source file (for ProcMeter3 3.5a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,99,2000,01,02,03,04 Andrew M. Bishop
+  This file Copyright 1996,98,99,2000,01,02,03,04,07 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -165,10 +165,20 @@ static void destroy(GtkObject *object)
  pmw=GTK_PROCMETERGRAPH(object);
 
  if(pmw->grid_gc)
+   {
     gdk_gc_destroy(pmw->grid_gc);
+    pmw->grid_gc=NULL;
+   }
  if(pmw->grid_units!=empty_string)
+   {
     free(pmw->grid_units);
- free(pmw->data);
+    pmw->grid_units=empty_string;
+   }
+ if(pmw->data)
+   {
+    free(pmw->data);
+    pmw->data=NULL;
+   }
 
  if(GTK_OBJECT_CLASS(parent_class)->destroy)
     (*GTK_OBJECT_CLASS(parent_class)->destroy)(object);

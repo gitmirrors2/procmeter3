@@ -1,11 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/widgets/PMText.c,v 1.1 2007-09-19 19:05:28 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk2/widgets/PMText.c,v 1.2 2007-11-21 19:57:18 amb Exp $
 
-  ProcMeter Text Widget Source file (for ProcMeter 3.4a).
+  ProcMeter Text Widget Source file (for ProcMeter 3.5a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,2000,01,02,03 Andrew M. Bishop
+  This file Copyright 1996,98,2000,01,02,03,07 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -146,7 +146,10 @@ static void destroy(GtkObject *object)
  pmw=GTK_PROCMETERTEXT(object);
 
  if(pmw->text_string!=empty_string)
+   {
     free(pmw->text_string);
+    pmw->text_string=empty_string;
+   }
 
  if(GTK_OBJECT_CLASS(parent_class)->destroy)
     (*GTK_OBJECT_CLASS(parent_class)->destroy)(object);
