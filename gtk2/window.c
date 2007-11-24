@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/window.c,v 1.3 2007-11-21 19:56:40 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk2/window.c,v 1.4 2007-11-24 16:02:33 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.5a.
 
@@ -88,7 +88,7 @@ void Start(int *argc,char **argv)
 
  toplevel=gtk_window_new(GTK_WINDOW_TOPLEVEL);
  gtk_window_set_title(GTK_WINDOW(toplevel),procmeter_version);
- gtk_window_set_policy(GTK_WINDOW(toplevel),TRUE,TRUE,TRUE);
+ gtk_window_set_resizable(GTK_WINDOW(toplevel),TRUE);
 
  /* Create the bitmaps */
 
@@ -128,18 +128,18 @@ void Start(int *argc,char **argv)
 
        if(sscanf(argv[i+1],"%dx%d%d%d",&w,&h,&x,&y)==4)
          {
-          gtk_widget_set_usize(GTK_WIDGET(toplevel),w,h);
+          gtk_widget_set_size_request(GTK_WIDGET(toplevel),w,h);
 
           if(x<0) x=gdk_screen_width()-w+x;
           if(y<0) y=gdk_screen_height()-h+y;
 
-          gtk_widget_set_uposition(GTK_WIDGET(toplevel),x,y);
+          gtk_window_move(GTK_WINDOW(toplevel),x,y);
 
           break;
          }
        else if(sscanf(argv[i+1],"%dx%d",&w,&h)==2)
          {
-          gtk_widget_set_usize(GTK_WIDGET(toplevel),w,h);
+          gtk_widget_set_size_request(GTK_WIDGET(toplevel),w,h);
 
           break;
          }
@@ -290,10 +290,10 @@ void AddRemoveOutput(Output output)
            (string=GetProcMeterRC("resources","grid-min"))))
           ProcMeterGraphSetGridMin(GTK_PROCMETERGRAPH(w),StringToInt(string));
  
-//       if(vertical)
-//         {XtSetArg(args[nargs],XtNmin,MINHEIGHT);nargs++;}
-//       else
-//         {XtSetArg(args[nargs],XtNmin,MINWIDTH);nargs++;}
+       if(vertical)
+          gtk_widget_set_size_request(GTK_WIDGET(w),-1,MINHEIGHT);
+       else
+          gtk_widget_set_size_request(GTK_WIDGET(w),MINWIDTH,-1);
 
        sprintf(str,output->output->graph_units,output->output->graph_scale);
        ProcMeterGraphSetGridUnits(GTK_PROCMETERGRAPH(w),str);
@@ -542,10 +542,11 @@ void Resize(void)
     else
        width=msize;
 
-    gtk_widget_set_usize(GTK_WIDGET(pane),-1,-1);
-    gtk_widget_set_usize(GTK_WIDGET(pane),width,height);
+    gtk_widget_set_size_request(GTK_WIDGET(toplevel),0,0);
     gtk_window_resize(GTK_WINDOW(toplevel),width,height);
+    gdk_window_resize(GTK_WIDGET(toplevel)->window,width,height);
 
+    gtk_widget_set_size_request(GTK_WIDGET(pane),width,height);
     gtk_container_resize_children(GTK_CONTAINER(pane));
 
     return;
@@ -576,8 +577,7 @@ void Resize(void)
           width=request.width;
       }
 
-    gtk_widget_set_usize(GTK_WIDGET(displayed[i]->output_widget),-1,-1);
-    gtk_widget_set_usize(GTK_WIDGET(displayed[i]->output_widget),width,height);
+    //gtk_widget_set_size_request(GTK_WIDGET(displayed[i]->output_widget),width,height);
    }
 
  gtk_container_resize_children(GTK_CONTAINER(pane));

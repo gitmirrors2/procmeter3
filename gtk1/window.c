@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/window.c,v 1.6 2007-11-21 19:56:40 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/window.c,v 1.7 2007-11-24 16:02:27 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.5a.
 
@@ -290,10 +290,10 @@ void AddRemoveOutput(Output output)
            (string=GetProcMeterRC("resources","grid-min"))))
           ProcMeterGraphSetGridMin(GTK_PROCMETERGRAPH(w),StringToInt(string));
  
-//       if(vertical)
-//         {XtSetArg(args[nargs],XtNmin,MINHEIGHT);nargs++;}
-//       else
-//         {XtSetArg(args[nargs],XtNmin,MINWIDTH);nargs++;}
+       if(vertical)
+          gtk_widget_set_usize(GTK_WIDGET(w),-1,MINHEIGHT);
+       else
+          gtk_widget_set_usize(GTK_WIDGET(w),MINWIDTH,-1);
 
        sprintf(str,output->output->graph_units,output->output->graph_scale);
        ProcMeterGraphSetGridUnits(GTK_PROCMETERGRAPH(w),str);
@@ -542,10 +542,10 @@ void Resize(void)
     else
        width=msize;
 
-    gtk_widget_set_usize(GTK_WIDGET(pane),-1,-1);
-    gtk_widget_set_usize(GTK_WIDGET(pane),width,height);
-    gtk_window_set_default_size(GTK_WINDOW(toplevel),width,height);
+    gtk_widget_set_usize(GTK_WIDGET(toplevel),0,0);
+    gdk_window_resize(GTK_WIDGET(toplevel)->window,width,height);
 
+    gtk_widget_set_usize(GTK_WIDGET(pane),width,height);
     gtk_container_resize_children(GTK_CONTAINER(pane));
 
     return;
@@ -576,8 +576,7 @@ void Resize(void)
           width=request.width;
       }
 
-    gtk_widget_set_usize(GTK_WIDGET(displayed[i]->output_widget),-1,-1);
-    gtk_widget_set_usize(GTK_WIDGET(displayed[i]->output_widget),width,height);
+    //gtk_widget_set_usize(GTK_WIDGET(displayed[i]->output_widget),width,height);
    }
 }
 
