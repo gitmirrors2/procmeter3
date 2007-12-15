@@ -1,17 +1,17 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3-log.1,v 1.4 2005-11-05 19:00:02 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3-log.1,v 1.5 2007-12-15 19:33:53 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.4e.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.5a.
 .\"
 .\"  Manual page for procmeter3-log program.
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998,99,2000,01,02 Andrew M. Bishop
+.\"  This file Copyright 1998-2007 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETER3-LOG 1 "November 30, 2002"
+.TH PROCMETER3-LOG 1 "December 15, 2007"
 
 .SH NAME
 
@@ -49,11 +49,11 @@ file in stead of the searching in the usual places.
 A list of configuration file options that will override the values in the
 .B .procmeterrc
 file.  The format of these options is (for example)
-.I \-\-resources.background=grey50
+.I \-\-library.path=/usr/local/procmeter3
 which is equivalent to the entry in the .procmeterrc file of
 
- [resources]
- background = grey50
+ [library]
+ path = /usr/local/procmeter3
 
 All spaces around the equal sign must be removed and if spaces are required in
 the value on the right hand side then quotes must be used around the entire
@@ -91,4 +91,4 @@ procmeterrc(5) procmeter3_modules(1)
 
 .SH AUTHOR
 
-Andrew M. Bishop 1998,99,2000,01,02
+Andrew M. Bishop 1998-2007

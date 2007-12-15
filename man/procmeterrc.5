@@ -1,29 +1,31 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.16 2005-11-05 19:00:02 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.17 2007-12-15 19:33:53 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.4e.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.5a.
 .\"
 .\"  Manual page for .procmeterrc file
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998,99,2000,01,02,04 Andrew M. Bishop
+.\"  This file Copyright 1998-2007 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETERRC 5 "September 7, 2004"
+.TH PROCMETERRC 5 "December 15, 2007"
 
 .SH NAME
 
-The \.procmeterrc configuration file for procmeter3, gprocmeter3,
-procmeter3-log and procmeter3-lcd programs.
+The \.procmeterrc configuration file for procmeter3, procmeter3-xaw,
+gprocmeter3, procmeter3-gtk1, procmeter3-gtk2, procmeter3-log and procmeter3-lcd
+programs.
 
 .SH SYNOPSIS
 
-This file contains the run-time options for the procmeter3, gprocmeter3,
-procmeter3-log and procmeter3-lcd programs.  These include the outputs that are
-displayed, the colours and fonts that are used (for X window outputs) and other
-options.
+This file contains the run-time options for the procmeter3, procmeter3-xaw,
+gprocmeter3, procmeter3-gtk1, procmeter3-gtk2, procmeter3-log and procmeter3-lcd
+programs.  These include the outputs that are displayed, the colours and fonts
+that are used (for X window outputs), the LCDproc server (for the procmeter-lcd
+version) and other program options.
 
 .SH DESCRIPTION
 
@@ -31,8 +33,8 @@ The resources for ProcMeter version 3.x are stored in the .procmeterrc file
 instead of using X resources.  This gives more flexibility and allows for much
 simpler customisation.
 .LP
-When the procmeter3, gprocmeter3, procmeter3-log or procmeter3-lcd programs
-start the
+When the procmeter3, procmeter3-xaw, gprocmeter3, procmeter3-gtk1,
+procmeter3-gtk2, procmeter3-log or procmeter3-lcd programs start the
 .B .procmeterrc
 file is searched for in the current directory, the current users home directory
 or the system default installation directory (named procmeterrc).  The file is
@@ -55,7 +57,7 @@ file that they can exist in.
 .SH library SECTION
 
 This section contains the information about the ProcMeter modules that are
-available.
+available.  This applies to all versions of the program.
 .TP
 .BR path=...
 The pathname of the library that contains the compiled ProcMeter modules.
@@ -77,9 +79,9 @@ then they appear after those specified here.
 
 .SH resources SECTION
 
-This section contains the general program resources, these are mostly the items
-that were command line options or were stored as X Window resources in previous
-versions of ProcMeter.
+This section contains the general program display resources.  Not all of the
+options apply to all of the versions of the program.  Specific versions that the
+options apply to are specified below.
 .TP
 .BR horizontal=...
 A Boolean to indicate that the outputs are stacked horizontally instead of
@@ -130,15 +132,17 @@ of procmeter3 only.)
 .TP
 .BR menu-foreground=...
 The colour to use as the foreground for the menus.  (An X11 colour name or an RGB
-value in hex as #RRGGBB.)  (For procmeter3 only.)
+value in hex as #RRGGBB.)  (For procmeter3 and procmeter3-xaw only.)
 .TP
 .BR menu-background=...
 The colour to use as the background for the menus.  (An X11 colour name or an
-RGB value in hex as #RRGGBB.)  (For procmeter3 only.)  (The background of all
-items on the same menu must be the same due to the Xaw Widget set used.)
+RGB value in hex as #RRGGBB.)  (For procmeter3 and procmeter3-xaw only.)  (The
+background of all items on the same menu must be the same due to the Xaw Widget
+set used.)
 .TP
 .BR menu-font=...
-The font to use for the menus.  (An X11 font name.)  (For procmeter3 only.)
+The font to use for the menus.  (An X11 font name.)  (For procmeter3 and
+procmeter3-xaw only.)
 .TP
 .BR update=...
 The update interval for the output in seconds (an integer).
@@ -146,8 +150,7 @@ The update interval for the output in seconds (an integer).
 
 .SH LCD SECTION
 
-This section contains parameters that are only used by the
-.B procmeter3\-lcd
+This section contains parameters that are only used by the procmeter3-lcd
 version of the program.
 .TP
 .BR host=...
@@ -295,9 +298,9 @@ or
 
 .SH SEE ALSO
 
-procmeter3(1), gprocmeter3(1), procmeter3-log(1), procmeter3-lcd(1),
-procmeter3_modules(1).
+procmeter3(1), procmeter3-xaw(1), gprocmeter3(1), procmeter3-gtk1(1),
+procmeter3-gtk2(1), procmeter3-log(1), procmeter3-lcd(1), procmeter3_modules(1).
 
 .SH AUTHOR
 
-Andrew M. Bishop 1998,99,2000,01,02
+Andrew M. Bishop 1998-2007
