@@ -1,3 +1,14 @@
+Version 3.5a of ProcMeter3 released : Sun Dec 16 15:00:00 2007
+--------------------------------------------------------------
+
+Bug Fixes
+ Stop the GTK2 version crashing when displayed items are removed.
+ Make sure that the right mouse button menu works with no outputs displayed.
+ Make the GTK1 and GTK2 version windows resize themselves like Xaw version.
+ Updates to manual pages to reflect new executable names.
+ Bug fixes for ACPI module.
+
+
 Version 3.5 of ProcMeter3 released : Tue Nov 20 19:30:00 2007
 -------------------------------------------------------------
 
