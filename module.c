@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.13 2002-12-07 19:30:38 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/module.c,v 1.14 2007-12-20 11:56:15 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Module handling functions.
   ******************/ /******************
@@ -71,18 +71,12 @@ void LoadAllModules(void)
     exit(1);
    }
 
- ent=readdir(dir);  /* skip .  */
- if(ent)
-   {
-    ent=readdir(dir);  /* skip .. */
-
-    while((ent=readdir(dir)))
-       if(!strcmp(ent->d_name+strlen(ent->d_name)-3,".so"))
-         {
-          strcpy(libp,ent->d_name);
-          LoadModule(lib);
-         }
-   }
+ while((ent=readdir(dir)))
+    if(!strcmp(ent->d_name+strlen(ent->d_name)-3,".so"))
+      {
+       strcpy(libp,ent->d_name);
+       LoadModule(lib);
+      }
 
  closedir(dir);
 
