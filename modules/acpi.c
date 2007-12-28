@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.15 2007-12-15 19:32:53 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.16 2007-12-28 15:43:04 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4g.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   ACPI source file.
   ******************/ /******************
   Written by Joey Hess.
 
-  This file Copyright 2001 Joey Hess
+  This file Copyright 2001-2007 Joey Hess
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -159,20 +159,25 @@ char *get_acpi_value (const char *file, const char *key) {
  */
 int get_acpi_batt_capacity(int battery) {
 	int dcap, lcap;
-	char *dcaps=get_acpi_value(acpi_batt_info[battery], acpi_labels[label_design_capacity]);
-	char *lcaps=get_acpi_value(acpi_batt_info[battery], acpi_labels[label_last_full_capacity]);
-	if (dcaps == NULL)
+	char *s;
+
+	s=get_acpi_value(acpi_batt_info[battery], acpi_labels[label_design_capacity]);
+	if (s == NULL)
 		dcap=0; /* battery not present */
 	else
-		dcap=atoi(dcaps);
+		dcap=atoi(s);
+
 	/* This is ACPI's broken way of saying that there is no battery. */
 	if (dcap == 655350)
 		return 0;
-	if (lcaps != NULL) {
-		lcap=atoi(lcaps);
+
+	s=get_acpi_value(acpi_batt_info[battery], acpi_labels[label_last_full_capacity]);
+	if (s != NULL) {
+		lcap=atoi(s);
 		if (lcap > dcap)
 			return lcap;
 	}
+
 	return dcap;
 }
 
