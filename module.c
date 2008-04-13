@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.14 2007-12-20 11:56:15 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/module.c,v 1.15 2008-04-13 14:29:07 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
@@ -7,7 +7,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <locale.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -46,6 +47,10 @@ void LoadAllModules(void)
 
  Modules=(Module*)malloc(16*sizeof(Module));
  *Modules=NULL;
+
+ /* set LC_NUMERIC to C, else 0.1 in /proc/loadavg may not be parsed */
+
+ setlocale(LC_NUMERIC, "C");
 
  /* Load the library modules */
 
