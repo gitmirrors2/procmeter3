@@ -1,11 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.8 2001-01-04 19:26:46 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/widgets/PMGraph.c,v 1.9 2008-04-27 15:21:30 amb Exp $
 
-  ProcMeter Graph Widget Source file (for ProcMeter3 3.3).
+  ProcMeter Graph Widget Source file (for ProcMeter3 3.5b).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,99,2000 Andrew M. Bishop
+  This file Copyright 1996-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -126,13 +126,21 @@ static void Initialize(ProcMeterGraphWidget request,ProcMeterGraphWidget new)
     new->procmeter_graph.grid_min=-request->procmeter_graph.grid_min;
     new->procmeter_graph.grid_drawn=0;
    }
- else
+ else if(request->procmeter_graph.grid_min>0)
+   {
+    new->procmeter_graph.grid_min=request->procmeter_graph.grid_min;
     new->procmeter_graph.grid_drawn=1;
- if(request->procmeter_graph.grid_min==0)
+   }
+ else /* if(request->procmeter_graph.grid_min==0) */
+   {
     new->procmeter_graph.grid_min=1;
+    new->procmeter_graph.grid_drawn=1;
+   }
 
  if(request->procmeter_graph.grid_max<0)
     new->procmeter_graph.grid_max=0;
+ else
+    new->procmeter_graph.grid_max=request->procmeter_graph.grid_max;
 
  if(new->procmeter_graph.grid_max && new->procmeter_graph.grid_max<new->procmeter_graph.grid_min)
     new->procmeter_graph.grid_max=new->procmeter_graph.grid_min;
@@ -217,10 +225,16 @@ static Boolean SetValues(ProcMeterGraphWidget current,ProcMeterGraphWidget reque
        new->procmeter_graph.grid_min=-request->procmeter_graph.grid_min;
        new->procmeter_graph.grid_drawn=0;
       }
-    else
+    else if(request->procmeter_graph.grid_min>0)
+      {
+       new->procmeter_graph.grid_min=request->procmeter_graph.grid_min;
        new->procmeter_graph.grid_drawn=1;
-    if(request->procmeter_graph.grid_min==0)
+      }
+    else /* if(request->procmeter_graph.grid_min==0) */
+      {
        new->procmeter_graph.grid_min=1;
+       new->procmeter_graph.grid_drawn=1;
+      }
 
     if(request->procmeter_graph.grid_min>request->procmeter_graph.grid_max && request->procmeter_graph.grid_max)
        new->procmeter_graph.grid_min=request->procmeter_graph.grid_max;
@@ -235,6 +249,8 @@ static Boolean SetValues(ProcMeterGraphWidget current,ProcMeterGraphWidget reque
    {
     if(request->procmeter_graph.grid_max<0)
        new->procmeter_graph.grid_max=0;
+    else
+       new->procmeter_graph.grid_max=request->procmeter_graph.grid_max;
 
     if(request->procmeter_graph.grid_max && request->procmeter_graph.grid_max<new->procmeter_graph.grid_min)
        new->procmeter_graph.grid_max=new->procmeter_graph.grid_min;

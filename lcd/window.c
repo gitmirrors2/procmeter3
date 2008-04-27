@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/lcd/window.c,v 1.3 2002-12-08 14:24:04 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/lcd/window.c,v 1.4 2008-04-27 15:21:30 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   LCD driver daemon interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997,98,99,2000,02 Andrew M. Bishop
+  This file Copyright 1997-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -334,9 +334,9 @@ void CreateGraph(Output output)
      (string=GetProcMeterRC("resources","grid-min"))))
     graph->grid_min=atoi(string);
  else
-    graph->grid_min=0;
+    graph->grid_min=1;
 
- graph->grid_num=graph->grid_min;
+ graph->grid_num=-1;            /* force update */
 
  graph->bars_num=LCD_screen_width-4;
  graph->bars=(unsigned short*)calloc(graph->bars_num,sizeof(unsigned short));
@@ -416,7 +416,7 @@ void CreateBar(Output output)
      (string=GetProcMeterRC("resources","grid-min"))))
     bar->grid_min=atoi(string);
  else
-    bar->grid_min=0;
+    bar->grid_min=1;
 
  bar->grid_num=-1;              /* force update */
 

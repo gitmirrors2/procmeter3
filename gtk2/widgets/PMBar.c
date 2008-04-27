@@ -1,11 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/widgets/PMBar.c,v 1.2 2007-11-21 19:57:18 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk2/widgets/PMBar.c,v 1.3 2008-04-27 15:21:30 amb Exp $
 
-  ProcMeter Bar Widget Source file (for ProcMeter3 3.5a).
+  ProcMeter Bar Widget Source file (for ProcMeter3 3.5b).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,99,2000,01,02,03,07 Andrew M. Bishop
+  This file Copyright 1996-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -116,9 +116,6 @@ static void procmeterbar_init(ProcMeterBar *pmw)
  pmw->grid_min=1;
 
  pmw->grid_max=0;
-
- if(pmw->grid_max && pmw->grid_max<pmw->grid_min)
-    pmw->grid_max=pmw->grid_min;
 
  pmw->grid_num=pmw->grid_min;
 
@@ -463,10 +460,16 @@ void ProcMeterBarSetGridMin(ProcMeterBar *pmw,gint grid_min)
     pmw->grid_min=-grid_min;
     pmw->grid_drawn=0;
    }
- else
+ else if(grid_min>0)
+   {
+    pmw->grid_min=grid_min;
     pmw->grid_drawn=1;
- if(grid_min==0)
+   }
+ else /* if(grid_min==0) */
+   {
     pmw->grid_min=1;
+    pmw->grid_drawn=1;
+   }
 
  if(grid_min>pmw->grid_max && pmw->grid_max)
     pmw->grid_min=pmw->grid_max;
@@ -492,6 +495,8 @@ void ProcMeterBarSetGridMax(ProcMeterBar *pmw,gint grid_max)
 {
  if(grid_max<0)
     pmw->grid_max=0;
+ else
+    pmw->grid_max=grid_max;
 
  if(grid_max && grid_max<pmw->grid_min)
     pmw->grid_max=pmw->grid_min;
