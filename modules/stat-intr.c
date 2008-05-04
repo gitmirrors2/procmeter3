@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.10 2005-04-30 14:36:35 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.11 2008-05-04 18:19:08 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4d.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Interrupt statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002,03,04,05 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -20,10 +20,10 @@
 
 #include "procmeter.h"
 
-#define N_INTR 32
+#define N_INTR 256
 
 /*+ The length of the buffer for reading in lines. +*/
-#define BUFFLEN 2048
+#define BUFFLEN 4096
 
 /* The interface information.  */
 

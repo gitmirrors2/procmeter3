@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.16 2005-06-06 18:32:23 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.17 2008-05-04 18:19:08 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4e.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Low level system statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000,02,04,05 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -39,7 +39,7 @@
 #define N_OUTPUTS  16
 
 /*+ The length of the buffer for reading in lines. +*/
-#define BUFFLEN 2048
+#define BUFFLEN 4096
 
 /* The interface information.  */
 
