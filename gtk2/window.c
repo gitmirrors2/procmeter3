@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/window.c,v 1.4 2007-11-24 16:02:33 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk2/window.c,v 1.5 2008-05-05 12:48:23 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.5a.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   X Windows interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997,98,99,2000,01,02,04,07 Andrew M. Bishop
+  This file Copyright 1997-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -76,7 +76,7 @@ void Start(int *argc,char **argv)
  static char procmeter_version[]="ProcMeter V" PROCMETER_VERSION;
  char *string;
  GtkWidget *event_box;
- int i;
+ int i,j=0;
 
  if((string=GetProcMeterRC("resources","horizontal")) &&
     StringToBoolean(string))
@@ -119,14 +119,16 @@ void Start(int *argc,char **argv)
 
  AddMenuToOutput(event_box,NULL);
 
- /* Parse the -geometry flag */
+ /* Parse the -geometry and -w flag */
 
- for(i=1;i<*argc-1;i++)
-    if(!strcmp(argv[i],"-geometry"))
+ for(i=1;i<*argc;i++)
+    if((!strcmp(argv[i],"-geometry")) && (i+1<=*argc))
       {
        int x,y,w,h;
 
-       if(sscanf(argv[i+1],"%dx%d%d%d",&w,&h,&x,&y)==4)
+       i++;j+=2;
+
+       if(sscanf(argv[i],"%dx%d%d%d",&w,&h,&x,&y)==4)
          {
           gtk_widget_set_size_request(GTK_WIDGET(toplevel),w,h);
 
@@ -134,22 +136,43 @@ void Start(int *argc,char **argv)
           if(y<0) y=gdk_screen_height()-h+y;
 
           gtk_window_move(GTK_WINDOW(toplevel),x,y);
-
-          break;
          }
-       else if(sscanf(argv[i+1],"%dx%d",&w,&h)==2)
-         {
+       else if(sscanf(argv[i],"%dx%d",&w,&h)==2)
           gtk_widget_set_size_request(GTK_WIDGET(toplevel),w,h);
+       else
+          fprintf(stderr,"ProcMeter3: Cannot parse -geometry option: '%s'\n",argv[i]);
+      }
+    else if((!strcmp(argv[i],"-w")) && (i+1<=*argc))
+      {
+       char *token;
 
-          break;
+       i++;j+=2;
+
+       token=strtok(argv[i],",");
+       while(token)
+         {
+          if(!strcmp(token,"above"))
+             gtk_window_set_keep_above(GTK_WINDOW(toplevel),TRUE);
+          else if(!strcmp(token,"below"))
+             gtk_window_set_keep_below(GTK_WINDOW(toplevel),TRUE);
+          else if(!strcmp(token,"skip_taskbar"))
+             gtk_window_set_skip_taskbar_hint(GTK_WINDOW(toplevel),TRUE);
+          else if(!strcmp(token,"skip_pager"))
+             gtk_window_set_skip_pager_hint(GTK_WINDOW(toplevel),TRUE);
+          else if(!strcmp(token,"sticky"))
+             gtk_window_stick(GTK_WINDOW(toplevel));
+          else
+             fprintf(stderr,"ProcMeter3: Cannot parse -w option: '%s'\n",token);
+
+          token = strtok(NULL,",");
          }
       }
 
- if(i<*argc-1)
+ if(j>0)
    {
-    for(i+=2;i<*argc;i++)
-       argv[i-2]=argv[i];
-    *argc-=2;
+    for(i=j;i<*argc;i++)
+      argv[i-j]=argv[i];
+    *argc-=j;
    }
 
  /* Show the widgets */

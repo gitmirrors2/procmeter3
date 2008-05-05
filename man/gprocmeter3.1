@@ -1,17 +1,17 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/gprocmeter3.1,v 1.6 2007-12-15 19:33:52 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/gprocmeter3.1,v 1.7 2008-05-05 12:48:23 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.5a.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 .\"
 .\"  Manual page for gprocmeter3, procmeter3-gtk1 or procmeter3-gtk2 programs.
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998-2007 Andrew M. Bishop
+.\"  This file Copyright 1998-2008 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH GPROCMETER3 1 "December 15, 2007"
+.TH GPROCMETER3 1 "May 5, 2008"
 
 .SH NAME
 
@@ -21,6 +21,7 @@ gprocmeter3, procmeter3-gtk1 or procmeter3-gtk2 \- A user friendly system monito
 
 .B gprocmeter3|procmeter3-gtk1|procmeter3-gtk2
 .I [\-h|\-\-help]
+.I [\-w <hint1>[,<hint2>]]
 .I [\-\-rc=<filename>] [\-\-...]
 .I [...]
 .I [GTK \ program \ options]
@@ -40,6 +41,16 @@ The command line options are described below.
 Provides a help message listing the available outputs.  This will be different
 for different computers depending on the Linux kernel version that is being used
 and the hardware/software that is configured.
+.TP
+.BR \-w
+Gives Extended Window Manager hints (EWMH) to change the way that the Window
+Manager treats the ProcMeter3 window.  Implemented hints are: above, below,
+skip_pager, skip_taskbar, sticky.
+
+You can give more than one hint separated by commas (e. g. \-w
+above,skip_taskbar,sticky), or use \-w multiple times (e. g. \-w above \-w
+sticky).
+.BR
 .TP
 .BR \-\-rc=<filename>
 Load the specified
@@ -137,4 +148,4 @@ procmeterrc(5) procmeter3_modules(1)
 
 .SH AUTHOR
 
-Andrew M. Bishop 1998-2007
+Andrew M. Bishop 1998-2008

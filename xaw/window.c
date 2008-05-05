@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.14 2002-12-07 19:34:22 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.15 2008-05-05 12:48:23 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   X Windows interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997,98,99,2000,02 Andrew M. Bishop
+  This file Copyright 1997-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -43,6 +43,7 @@
 static void SleepCallback(XtPointer p,XtIntervalId i);
 static void ResizePaneCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb);
 static void CloseCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb);
+static void add_EWMH(char *name);
 
 
 /*+ The application context. +*/
@@ -50,6 +51,9 @@ XtAppContext app_context;
 
 /*+ The display that the meter is on. +*/
 Display* display=NULL;
+
+/*+ The toplevel widget. +*/
+Widget toplevel;
 
 /*+ The pane that contains all of the outputs. +*/
 Widget pane;
@@ -82,9 +86,9 @@ static int initialising=1;
 void Start(int *argc,char **argv)
 {
  Atom close_atom;
- Widget toplevel;
  static char procmeter_version[]="ProcMeter V" PROCMETER_VERSION;
  char *string;
+ int i,j=0;
 
  if((string=GetProcMeterRC("resources","horizontal")) &&
     StringToBoolean(string))
@@ -128,6 +132,42 @@ void Start(int *argc,char **argv)
 
  XtRealizeWidget(toplevel);
  XFlush(display);
+
+ /* Parse the -w flag */
+
+ for(i=1;i<*argc;i++)
+    if((!strcmp(argv[i],"-w")) && (i+1<=*argc))
+      {
+       char *token;
+
+       i++;j+=2;
+
+       token=strtok(argv[i],",");
+       while(token)
+         {
+          if(!strcmp(token,"above"))
+             add_EWMH("_NET_WM_STATE_ABOVE");
+          else if(!strcmp(token,"below"))
+             add_EWMH("_NET_WM_STATE_BELOW");
+          else if(!strcmp(token,"skip_taskbar"))
+             add_EWMH("_NET_WM_STATE_SKIP_TASKBAR");
+          else if(!strcmp(token,"skip_pager"))
+             add_EWMH("_NET_WM_STATE_SKIP_PAGER");
+          else if(!strcmp(token,"sticky"))
+             add_EWMH("_NET_WM_STATE_STICKY");
+          else
+             fprintf(stderr,"ProcMeter3: Cannot parse -w option: '%s'\n",token);
+
+          token = strtok(NULL,",");
+         }
+      }
+
+ if(j>0)
+   {
+    for(i=j;i<*argc;i++)
+      argv[i-j]=argv[i];
+    *argc-=j;
+   }
 
  /* Put an action on the close button */
 
@@ -618,4 +658,30 @@ static void CloseCallback(Widget w,XtPointer va,XEvent* e,Boolean* vb)
     if(cev->format==32 && atom_proto==(Atom)cev->data.l[0])
        quit=1;
    }
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Adds an Extended Window Manager Hint to the window.
+
+  char *name The name of the hint to add.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+static void add_EWMH(char *name)
+{
+ XEvent event;
+
+ event.xclient.type=ClientMessage;
+ event.xclient.serial=0;
+ event.xclient.send_event=True;
+ event.xclient.message_type=XInternAtom(display,"_NET_WM_STATE",False);
+ event.xclient.window=XtWindow(toplevel);
+ event.xclient.format=32;
+ event.xclient.data.l[0]=1; /* add */
+ event.xclient.data.l[1]=XInternAtom(display,name,False);
+ event.xclient.data.l[2]=0;
+ event.xclient.data.l[3]=0;
+ event.xclient.data.l[4]=0;
+
+ XSendEvent(display,DefaultRootWindow(display),False,SubstructureRedirectMask|SubstructureNotifyMask,&event);
 }
