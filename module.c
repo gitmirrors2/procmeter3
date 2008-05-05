@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.15 2008-04-13 14:29:07 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/module.c,v 1.16 2008-05-05 18:45:17 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
@@ -394,4 +394,62 @@ void UnloadModule(Module module)
 
  free(module->filename);
  free(module);
+}
+
+
+#define INCSIZE 256             /*+ The buffer increment size +*/
+
+/*++++++++++++++++++++++++++++++++++++++
+  Call fgets and realloc the buffer as needed to get a whole line.
+
+  char *fgets_realloc Returns the modified buffer (NULL at the end of the file).
+
+  char **buffer A pointer to the location of the buffer (pointer to NULL to intialise a new one).
+
+  size_t *length A pointer to the current length of the buffer or the intial length if buffer is NULL.
+
+  FILE *file The file to read from.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+char *fgets_realloc(char **buffer,size_t *length,FILE *file)
+{
+ int n=0;
+ char *buf;
+
+ if(!*buffer)
+   {
+    if(!*length)
+       *length=INCSIZE;
+
+    *buffer=(char*)malloc(*length);
+
+//    fprintf(stderr,"Pointer %p allocated    %4u bytes\n",buffer,*length);
+
+    if(!*buffer)
+      {*length=0;return(NULL);}
+   }
+
+ while((buf=fgets(*buffer+n,*length-n,file)))
+   {
+    int s=strlen(buf);
+    n+=s;
+
+    if((*buffer)[n-1]=='\n')
+       break;
+    else
+      {
+       *length+=INCSIZE;
+       *buffer=(char*)realloc(*buffer,*length);
+
+//       fprintf(stderr,"Pointer %p re-allocated %4u bytes\n",buffer,*length);
+
+       if(!*buffer)
+         {*length=0;return(NULL);}
+      }
+   }
+
+ if(!buf)
+   {**buffer=0;return(NULL);}
+ else
+    return(*buffer);
 }

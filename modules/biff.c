@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/biff.c,v 1.6 2006-07-23 18:03:08 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/biff.c,v 1.7 2008-05-05 18:45:17 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4f.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Mail inbox monitor.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,2002,2003,2006 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -78,6 +78,14 @@ ProcMeterModule module=
 };
 
 
+/* The line buffer */
+static char *line=NULL;
+static size_t length=0;
+
+/* The name of the file to monitor */
+static char *filename=NULL;
+
+
 /*++++++++++++++++++++++++++++++++++++++
   Load the module.
 
@@ -88,11 +96,6 @@ ProcMeterModule *Load(void)
 {
  return(&module);
 }
-
-
-static char *fgets_realloc(char *buffer,FILE *file);
-
-static char *filename=NULL;
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -184,8 +187,7 @@ int Update(time_t now,ProcMeterOutput *output)
 
           if(f)
             {
-             char *line=NULL;
-             while((line=fgets_realloc(line,f)))
+             while(fgets_realloc(&line,&length,f))
                 if(!strncmp("From ",line,5))
                    count++;
 
@@ -230,42 +232,7 @@ void Unload(void)
 {
  if(filename)
     free(module.description);
-}
 
-
-#define BUFSIZE 128
-
-/*++++++++++++++++++++++++++++++++++++++
-  Call fgets and realloc the buffer as needed to get a whole line.
-
-  char *fgets_realloc Returns the modified buffer (NULL at the end of the file).
-
-  char *buffer The current buffer.
-
-  FILE *file The file to read from.
-  ++++++++++++++++++++++++++++++++++++++*/
-
-static char *fgets_realloc(char *buffer,FILE *file)
-{
- int n=0;
- char *buf;
-
- if(!buffer)
-    buffer=(char*)malloc((BUFSIZE+1));
-
- while((buf=fgets(&buffer[n],BUFSIZE,file)))
-   {
-    int s=strlen(buf);
-    n+=s;
-
-    if(buffer[n-1]=='\n')
-       break;
-    else
-       buffer=(char*)realloc(buffer,n+(BUFSIZE+1));
-   }
-
- if(!buf)
-   {free(buffer);buffer=NULL;}
-
- return(buffer);
+ if(line)
+    free(line);
 }

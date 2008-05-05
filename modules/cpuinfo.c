@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/cpuinfo.c,v 1.3 2007-08-21 17:32:54 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/cpuinfo.c,v 1.4 2008-05-05 18:45:17 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4g.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   CPU information.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002,04,05,06,07 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -22,9 +22,6 @@
 
 #define CPU_SPEED   0
 #define NOUTPUTS    1
-
-/*+ The length of the buffer for reading in lines. +*/
-#define BUFFLEN 2048
 
 /* The interface information.  */
 
@@ -68,6 +65,11 @@ ProcMeterModule module=
 };
 
 
+/* The line buffer */
+static char *line=NULL;
+static size_t length=0;
+
+/* The current and previous information */
 static float *current,*previous,*values[2]={NULL,NULL};
 
 /*+ The number of CPUs. +*/
@@ -97,7 +99,6 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[BUFFLEN],*l;
  int i;
 
  /* Verify the statistics from /proc/stat */
@@ -107,7 +108,7 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/cpuinfo'.\n",__FILE__);
  else
    {
-    if(!fgets(line,BUFFLEN,f)) /* cpu */
+    if(!fgets_realloc(&line,&length,f)) /* cpu */
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/cpuinfo'.\n",__FILE__);
     else
       {
@@ -118,7 +119,7 @@ ProcMeterOutput **Initialise(char *options)
           if(sscanf(line,"processor : %d",&count)==1)
              ncpus++;
          }
-         while((l=fgets(line,BUFFLEN,f)));
+         while(fgets_realloc(&line,&length,f));
       }
 
     fclose(f);
@@ -174,7 +175,6 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[BUFFLEN],*l;
     float *temp;
 
     temp=current;
@@ -187,7 +187,7 @@ int Update(time_t now,ProcMeterOutput *output)
 
     i=0;
 
-    while((l=fgets(line,BUFFLEN,f)))
+    while(fgets_realloc(&line,&length,f))
       {
        float speed;
 
@@ -239,4 +239,7 @@ void Unload(void)
 
  free(values[0]);
  free(values[1]);
+
+ if(line)
+    free(line);
 }

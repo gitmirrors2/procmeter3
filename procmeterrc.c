@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.9 2002-12-01 09:35:15 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeterrc.c,v 1.10 2008-05-05 18:45:17 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Handle the .procmeterrc file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000,02 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -45,9 +45,6 @@ struct _Parameter
 Section FirstSection=NULL;
 
 
-static char *fgets_realloc(char *buffer,FILE *file);
-
-
 /*++++++++++++++++++++++++++++++++++++++
   Load in the configuration file.
 
@@ -58,12 +55,10 @@ static char *fgets_realloc(char *buffer,FILE *file);
 
 void LoadProcMeterRC(int *argc,char **argv)
 {
- char *rcpath=NULL;
- struct stat buf;
- char *home,*line=NULL;
+ char *rcpath=NULL,*home;
  Section *next_section=&FirstSection;
  Parameter *next_parameter=NULL,prev_parameter=NULL;
- int continued=0,i;
+ int i;
 
  /* Find the .procmeterrc file. */
 
@@ -77,6 +72,8 @@ void LoadProcMeterRC(int *argc,char **argv)
 
  if(!rcpath)
    {
+    struct stat buf;
+
     if(!stat(".procmeterrc",&buf))
        rcpath=".procmeterrc";
     else if((home=getenv("HOME")))
@@ -98,6 +95,9 @@ void LoadProcMeterRC(int *argc,char **argv)
  if(rcpath)
    {
     FILE *rc=fopen(rcpath,"r");
+    char *line=NULL;
+    size_t length=256;
+    int continued=0;
 
     if(!rc)
       {
@@ -105,7 +105,7 @@ void LoadProcMeterRC(int *argc,char **argv)
        exit(1);
       }
 
-    while((line=fgets_realloc(line,rc)))
+    while(fgets_realloc(&line,&length,rc))
       {
        char *l=line,*r=line+strlen(line)-1;
 
@@ -364,42 +364,4 @@ void FreeProcMeterRC(void)
     free(last_section->name);
     free(last_section);
    }
-}
-
-
-#define BUFSIZE 64
-
-/*++++++++++++++++++++++++++++++++++++++
-  Call fgets and realloc the buffer as needed to get a whole line.
-
-  char *fgets_realloc Returns the modified buffer (NULL at the end of the file).
-
-  char *buffer The current buffer.
-
-  FILE *file The file to read from.
-  ++++++++++++++++++++++++++++++++++++++*/
-
-static char *fgets_realloc(char *buffer,FILE *file)
-{
- int n=0;
- char *buf;
-
- if(!buffer)
-    buffer=(char*)malloc((BUFSIZE+1));
-
- while((buf=fgets(&buffer[n],BUFSIZE,file)))
-   {
-    int s=strlen(buf);
-    n+=s;
-
-    if(buffer[n-1]=='\n')
-       break;
-    else
-       buffer=(char*)realloc(buffer,n+(BUFSIZE+1));
-   }
-
- if(!buf)
-   {free(buffer);buffer=NULL;}
-
- return(buffer);
 }

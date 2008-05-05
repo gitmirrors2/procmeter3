@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.9 2007-09-07 16:19:06 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.10 2008-05-05 18:45:36 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4c.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Temperature indicators for Mainboard and CPU
   Based on loadavg.c, stat-cpu.c by Andrew M. Bishop
@@ -9,7 +9,7 @@
   Written by Matt Kemner, Andrew M. Bishop
 
   This file Copyright 1999 Matt Kemner, Andrew M. Bishop
-  parts of it are Copyright 1998,99,2002,04,07 Andrew M. Bishop
+  parts of it are Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -69,6 +69,10 @@ ProcMeterModule module=
                               " (Requires lm_sensors patch from http://www.netroedge.com/~lm78/ or version 2.6 kernel).",
 };
 
+/* The line buffer */
+static char *line=NULL;
+static size_t length=64;
+
 /*+ The temperature outputs. +*/
 ProcMeterOutput *temp_outputs=NULL;
 
@@ -90,7 +94,7 @@ static int nfans=0;
 /*+ A flag to indicate if it is kernel version 2.6.0 or later +*/
 int kernel_2_6_0=0;
 
-
+/* Functions to add a temperature monitor or a fan */
 static void add_temperature(char *filename);
 static void add_fan(char *filename);
 
@@ -233,14 +237,13 @@ ProcMeterOutput **Initialise(char *options)
 static void add_temperature(char *filename)
 {
  FILE *f;
- char line[80];
 
  f=fopen(filename,"r");
  if(!f)
     fprintf(stderr,"ProcMeter(%s): Could not open '%s'.\n",__FILE__,filename);
  else
    {
-    if(!fgets(line,80,f))
+    if(!fgets_realloc(&line,&length,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '%s'.\n",__FILE__,filename);
     else
       {
@@ -278,14 +281,13 @@ static void add_temperature(char *filename)
 static void add_fan(char *filename)
 {
  FILE *f;
- char line[80];
 
  f=fopen(filename,"r");
  if(!f)
     fprintf(stderr,"ProcMeter(%s): Could not open '%s'.\n",__FILE__,filename);
  else
    {
-    if(!fgets(line,80,f))
+    if(!fgets_realloc(&line,&length,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '%s'.\n",__FILE__,filename);
     else
       {
@@ -425,4 +427,7 @@ void Unload(void)
     free(fan_outputs);
 
  free(outputs);
+
+ if(line)
+    free(line);
 }

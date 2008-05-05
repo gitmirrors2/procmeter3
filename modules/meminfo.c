@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.10 2004-03-27 16:43:23 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.11 2008-05-05 18:45:35 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4b.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Memory status module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002,03,04 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -129,10 +129,15 @@ ProcMeterModule module=
 };
 
 
+/* The line buffer */
+static char *line=NULL;
+static size_t length=0;
+
+/* The estimated kernel version based on the format of the file */
 static int proc_meminfo_V2_1_41=0;
 
+/* The contents of the file when parsed */
 static int contents[20];
-
 static int available[N_LINES];
 
 
@@ -159,7 +164,6 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[80];
  int n;
 
  for(n=0;n<=N_OUTPUTS;n++)
@@ -175,7 +179,7 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/meminfo'.\n",__FILE__);
  else
    {
-    if(!fgets(line,80,f))
+    if(!fgets_realloc(&line,&length,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/meminfo'.\n",__FILE__);
     else
       {
@@ -213,7 +217,7 @@ ProcMeterOutput **Initialise(char *options)
                 else if(sscanf(line,"SwapFree: %llu",&swap_free)==1)
                    contents[lineno]=SWAP_FREE,available[SWAP_FREE]=1;
                }
-             while(fgets(line,80,f) && ++lineno<(sizeof(contents)/sizeof(contents[0])));
+             while(fgets_realloc(&line,&length,f) && ++lineno<(sizeof(contents)/sizeof(contents[0])));
 
              if(available[MEM_TOTAL] && available[MEM_FREE])
                 available[MEM_USED]=1;
@@ -235,7 +239,7 @@ ProcMeterOutput **Initialise(char *options)
             }
           else
             {
-             fgets(line,80,f);
+             fgets_realloc(&line,&length,f);
              if(sscanf(line,"Mem: %llu %llu %llu %*u %llu %llu",&mem_tot,&mem_free,&mem_used,&mem_buff,&mem_cache)==5)
                 available[MEM_FREE]=available[MEM_USED]=available[MEM_BUFF]=available[MEM_CACHE]=1;
              else
@@ -244,7 +248,7 @@ ProcMeterOutput **Initialise(char *options)
                 else
                    fprintf(stderr,"ProcMeter(%s): Unexpected 'Mem' line in '/proc/meminfo'.\n",__FILE__);
 
-             fgets(line,80,f);
+             fgets_realloc(&line,&length,f);
              if(sscanf(line,"Swap: %llu %llu",&swap_tot,&swap_used)==2)
                 available[SWAP_FREE]=available[SWAP_USED]=1;
              else
@@ -302,7 +306,6 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[80];
     unsigned long long mem_tot=0,swap_tot=0;
 
     f=fopen("/proc/meminfo","r");
@@ -313,7 +316,7 @@ int Update(time_t now,ProcMeterOutput *output)
       {
        int lineno=0;
 
-       while(fgets(line,80,f) && ++lineno<(sizeof(contents)/sizeof(contents[0])))
+       while(fgets_realloc(&line,&length,f) && ++lineno<(sizeof(contents)/sizeof(contents[0])))
          {
           switch(contents[lineno])
             {
@@ -345,11 +348,11 @@ int Update(time_t now,ProcMeterOutput *output)
       }
     else
       {
-       fgets(line,80,f);
-       fgets(line,80,f);
+       fgets_realloc(&line,&length,f);
+       fgets_realloc(&line,&length,f);
        if(available[MEM_FREE])
           sscanf(line,"Mem: %*u %llu %llu %*u %llu %llu",&mem_used,&mem_free,&mem_buff,&mem_cache);
-       fgets(line,80,f);
+       fgets_realloc(&line,&length,f);
        if(available[SWAP_FREE])
           sscanf(line,"Swap: %llu %llu",&swap_tot,&swap_used);
        swap_free=swap_tot-swap_used;
@@ -427,4 +430,6 @@ int Update(time_t now,ProcMeterOutput *output)
 
 void Unload(void)
 {
+ if(line)
+    free(line);
 }

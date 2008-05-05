@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.12 2007-08-10 18:51:13 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-cpu.c,v 1.13 2008-05-05 18:45:36 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4g.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Low level system statistics for CPU usage.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002,04,05 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -32,9 +32,6 @@
 
 #define N_OUTPUTS_24 5
 #define N_OUTPUTS_26 9
-
-/*+ The length of the buffer for reading in lines. +*/
-#define BUFFLEN 2048
 
 /* The interface information.  */
 
@@ -261,6 +258,11 @@ ProcMeterModule module=
 };
 
 
+/* The line buffer */
+static char *line=NULL;
+static size_t length=0;
+
+/* The current and previous values read from the file */
 static unsigned long long *current,*previous,values[2][N_OUTPUTS_26];
 static unsigned long long *smp_current,*smp_previous,*smp_values[2]={NULL,NULL};
 
@@ -294,7 +296,6 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[BUFFLEN],*l;
  int n=0;
 
  outputs=(ProcMeterOutput**)malloc(sizeof(ProcMeterOutput*));
@@ -310,7 +311,7 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/stat'.\n",__FILE__);
  else
    {
-    if(!fgets(line,BUFFLEN,f)) /* cpu */
+    if(!fgets_realloc(&line,&length,f)) /* cpu */
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
     else
       {
@@ -328,8 +329,8 @@ ProcMeterOutput **Initialise(char *options)
           else
              n_outputs=N_OUTPUTS_24;
 
-          l=fgets(line,BUFFLEN,f); /* cpu or disk or page */
-          while(l && line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
+          /* cpu or disk or page */
+          while(fgets_realloc(&line,&length,f) && line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
             {
              int ncpu;
 
@@ -357,8 +358,6 @@ ProcMeterOutput **Initialise(char *options)
                                "    expected: 'cpu%d %%llu %%llu %%llu %%llu'\n"
                                "          or: 'cpu%d %%llu %%llu %%llu %%llu %%llu %%llu %%llu %%llu'\n"
                                "    found:    %s",__FILE__,ncpu,ncpu,ncpu,line);
-
-             l=fgets(line,BUFFLEN,f); /* cpu or disk or page */
             }
 
           outputs=(ProcMeterOutput**)realloc((void*)outputs,(1+n_outputs+ncpus*n_outputs)*sizeof(ProcMeterOutput*));
@@ -411,7 +410,6 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[BUFFLEN],*l;
     unsigned long long *temp;
 
     temp=current;
@@ -426,7 +424,7 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    l=fgets(line,BUFFLEN,f); /* cpu */
+    fgets_realloc(&line,&length,f); /* cpu */
     sscanf(line,"cpu %llu %llu %llu %llu %llu %llu %llu %llu",&current[CPU_USER],&current[CPU_NICE],&current[CPU_SYS],&current[CPU_IDLE],
                                                               &current[CPU_IOWAIT],&current[CPU_IRQ],&current[CPU_SOFTIRQ],&current[CPU_STEAL]);
 
@@ -434,8 +432,8 @@ int Update(time_t now,ProcMeterOutput *output)
     if(kernel_26)
        current[CPU]+=current[CPU_IOWAIT]+current[CPU_IRQ]+current[CPU_SOFTIRQ]+current[CPU_STEAL];
 
-    l=fgets(line,BUFFLEN,f); /* cpu or disk or page */
-    while(l && line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
+    /* cpu or disk or page */
+    while(fgets_realloc(&line,&length,f) && line[0]=='c' && line[1]=='p' && line[2]=='u') /* kernel version > ~2.1.84 */
       {
        int ncpu,offset;
        unsigned long long cpu_user,cpu_nice,cpu_sys,cpu_idle,cpu_iowait,cpu_irq,cpu_softirq,cpu_steal;
@@ -457,8 +455,6 @@ int Update(time_t now,ProcMeterOutput *output)
        smp_current[CPU+offset]=smp_current[CPU_USER+offset]+smp_current[CPU_NICE+offset]+smp_current[CPU_SYS+offset];
        if(kernel_26)
           smp_current[CPU+offset]+=smp_current[CPU_IOWAIT+offset]+smp_current[CPU_IRQ+offset]+smp_current[CPU_SOFTIRQ+offset]+smp_current[CPU_STEAL+offset];
-
-       l=fgets(line,BUFFLEN,f); /* cpu or disk or page */
       }
 
     fclose(f);
@@ -547,4 +543,7 @@ void Unload(void)
    }
 
  free(outputs);
+
+ if(line)
+    free(line);
 }

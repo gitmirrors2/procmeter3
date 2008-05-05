@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.12 2007-02-16 09:27:07 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.13 2008-05-05 18:45:17 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4f.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Disk capacity monitoring source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002,05 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -65,10 +65,16 @@ ProcMeterModule module=
 };
 
 
+/* The line buffer */
+static char *line=NULL;
+static size_t length=128;
+
+/* The information about the disks */
 static int ndisks=0;
 static char **disk=NULL;
 static int *mounted;
 
+/* A function to add a disk */
 static void add_disk(char *dev,char *mnt);
 
 
@@ -95,7 +101,6 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[256];
 
  outputs=(ProcMeterOutput**)malloc(sizeof(ProcMeterOutput*));
  outputs[0]=NULL;
@@ -107,7 +112,7 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/mounts'.\n",__FILE__);
  else
    {
-    if(!fgets(line,256,f))
+    if(!fgets_realloc(&line,&length,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/mounts'.\n",__FILE__);
     else
        do
@@ -118,7 +123,7 @@ ProcMeterOutput **Initialise(char *options)
              if(strcmp(mount,"none") && *mount=='/' && (*device=='/' || strstr(device, ":/")))
                 add_disk(device,mount);
          }
-       while(fgets(line,256,f));
+       while(fgets_realloc(&line,&length,f));
 
     fclose(f);
    }
@@ -130,7 +135,7 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/etc/fstab'.\n",__FILE__);
  else
    {
-    if(!fgets(line,256,f))
+    if(!fgets_realloc(&line,&length,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/etc/fstab'.\n",__FILE__);
     else
        do
@@ -144,7 +149,7 @@ ProcMeterOutput **Initialise(char *options)
              if(strcmp(mount,"none") && *mount=='/' && (*device=='/' || strstr(device, ":/")))
                 add_disk(device,mount);
          }
-       while(fgets(line,256,f));
+       while(fgets_realloc(&line,&length,f));
 
     fclose(f);
    }
@@ -245,7 +250,6 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[256];
 
     for(i=0;i<ndisks;i++)
        mounted[i]=0;
@@ -255,7 +259,7 @@ int Update(time_t now,ProcMeterOutput *output)
        return(-1);
     else
       {
-       if(!fgets(line,256,f))
+       if(!fgets_realloc(&line,&length,f))
           return(-1);
        else
           do
@@ -268,7 +272,7 @@ int Update(time_t now,ProcMeterOutput *output)
                       if(!strcmp(disk[i],mount))
                          mounted[i]=1;
             }
-          while(fgets(line,256,f));
+          while(fgets_realloc(&line,&length,f));
 
        fclose(f);
       }
@@ -339,4 +343,7 @@ void Unload(void)
     free(disk);
     free(mounted);
    }
+
+ if(line)
+    free(line);
 }

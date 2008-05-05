@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/logfile.c,v 1.8 2002-12-07 19:40:25 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/logfile.c,v 1.9 2008-05-05 18:45:35 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   A log file monitoring source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -86,8 +86,8 @@ ProcMeterModule module=
                                "(Use 'options=<filename1> <filename2>' in the configuration file to specify the files.)"
 };
 
-static char *fgets_realloc(char *buffer,FILE *file);
 
+/* The files to monitor and the information about them */
 static int nfiles=0;
 static char **file=NULL;
 static long *last=NULL;
@@ -97,6 +97,7 @@ static long *grow=NULL;
 static long *line=NULL;
 static long *rate=NULL;
 
+/* Add a file to be monitored */
 static void add_file(char *fil);
 
 
@@ -241,15 +242,17 @@ int Update(time_t now,ProcMeterOutput *output)
              if(buf.st_size>size[i/4])
                {
                 FILE *f=fopen(file[i/4],"r");
+                char buffer[2048];
+                int nread,byte;
 
                 if(f)
                   {
-                   char *l=NULL;
-
                    fseek(f,size[i/4],SEEK_SET);
 
-                   while((l=fgets_realloc(l,f)))
-                      lines++;
+                   while((nread=fread(buffer,1,2048,f))>0)
+                      for(byte=0;byte<nread;byte++)
+                         if(buffer[byte]=='\n')
+                            lines++;
 
                    fclose(f);
                   }
@@ -322,42 +325,4 @@ void Unload(void)
     free(line);
     free(rate);
    }
-}
-
-
-#define BUFSIZE 128
-
-/*++++++++++++++++++++++++++++++++++++++
-  Call fgets and realloc the buffer as needed to get a whole line.
-
-  char *fgets_realloc Returns the modified buffer (NULL at the end of the file).
-
-  char *buffer The current buffer.
-
-  FILE *file The file to read from.
-  ++++++++++++++++++++++++++++++++++++++*/
-
-static char *fgets_realloc(char *buffer,FILE *file)
-{
- int n=0;
- char *buf;
-
- if(!buffer)
-    buffer=(char*)malloc((BUFSIZE+1));
-
- while((buf=fgets(&buffer[n],BUFSIZE,file)))
-   {
-    int s=strlen(buf);
-    n+=s;
-
-    if(buffer[n-1]=='\n')
-       break;
-    else
-       buffer=(char*)realloc(buffer,n+(BUFSIZE+1));
-   }
-
- if(!buf)
-   {free(buffer);buffer=NULL;}
-
- return(buffer);
 }

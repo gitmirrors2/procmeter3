@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.19 2007-08-25 20:42:28 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.20 2008-05-05 18:45:35 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4g.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Network devices traffic source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002,05,07 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -105,16 +105,23 @@ ProcMeterModule module=
                                "(Use 'options=ppp0' in the configuration file to specify extra network devices."
 };
 
-static char *proc_net_dev_format=NULL;
 
+/* The line buffer */
+static char *line=NULL;
+static size_t length=0;
+
+/* The format to use to read the data depending on the kernel version */
+static char *proc_net_dev_format=NULL;
 static char *proc_net_dev_format1="%llu %*u %*u %*u %*u %llu"; /* kernel version < ~2.1.28 */
 static char *proc_net_dev_format2="%llu %llu %*u %*u %*u %*u %llu %llu"; /* ~2.1.28 < kernel version < ~2.1.80 (two possiblities) */
 static char *proc_net_dev_format3="%llu %llu %*u %*u %*u %*u %*u %*u %llu %llu"; /* ~2.1.91 < kernel version */
 
+/* The information about the network devices */
 static int ndevices=0;
 static unsigned long *current=NULL,*previous=NULL;
 static char **device=NULL;
 
+/* A function to add a new device */
 static void add_device(char *dev);
 
 
@@ -141,7 +148,6 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[256];
 
  outputs=(ProcMeterOutput**)malloc(sizeof(ProcMeterOutput*));
  outputs[0]=NULL;
@@ -153,7 +159,7 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/net/dev'.\n",__FILE__);
  else
    {
-    if(!fgets(line,256,f))
+    if(!fgets_realloc(&line,&length,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/net/dev'.\n",__FILE__);
     else
        if(strcmp(line,"Inter-|   Receive                  |  Transmit\n") && /* kernel version < ~2.1.80 */
@@ -162,7 +168,7 @@ ProcMeterOutput **Initialise(char *options)
           fprintf(stderr,"ProcMeter(%s): Unexpected header line 1 in '/proc/net/dev'.\n",__FILE__);
        else
          {
-          fgets(line,256,f);
+          fgets_realloc(&line,&length,f);
           if(strcmp(line," face |packets errs drop fifo frame|packets errs drop fifo colls carrier\n") && /* kernel version < ~2.1.28 */
              strcmp(line," face |bytes    packets errs drop fifo frame|bytes    packets errs drop fifo colls carrier\n") && /* ~2.1.28 < kernel version < ~2.1.80 */
              strcmp(line," face |bytes    packets errs drop fifo frame|bytes    packets errs drop fifo colls carrier multicast\n") && /* ~2.1.80 < kernel version < ~2.1.91 */
@@ -177,7 +183,7 @@ ProcMeterOutput **Initialise(char *options)
              else
                 proc_net_dev_format=proc_net_dev_format2; /* ~2.1.28 < kernel version < ~2.1.80 (two possiblities) */
 
-             while(fgets(line,256,f))
+             while(fgets_realloc(&line,&length,f))
                {
                 int i;
                 char *dev=line;
@@ -313,7 +319,6 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[256];
     unsigned long *temp;
 
     temp=current;
@@ -327,9 +332,9 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    fgets(line,256,f);
-    fgets(line,256,f);
-    while(fgets(line,256,f))
+    fgets_realloc(&line,&length,f);
+    fgets_realloc(&line,&length,f);
+    while(fgets_realloc(&line,&length,f))
       {
        int i;
        long long rxp=0,txp=0,rxb=0,txb=0;
@@ -431,4 +436,7 @@ void Unload(void)
        free(device[i]);
     free(device);
    }
+
+ if(line)
+    free(line);
 }

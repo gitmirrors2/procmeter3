@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/vmstat.c,v 1.4 2005-10-15 18:16:46 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/vmstat.c,v 1.5 2008-05-05 18:45:36 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4e.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Low level system VM statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000,02,04 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -28,8 +28,6 @@
 #define SWAP_OUT   5
 #define N_OUTPUTS  6
 
-/*+ The length of the buffer for reading in lines. +*/
-#define BUFFLEN 256
 
 /* The interface information.  */
 
@@ -115,6 +113,11 @@ ProcMeterModule module=
 };
 
 
+/* The line buffer */
+static char *line=NULL;
+static size_t length=0;
+
+/* Information about the availability and the current and previous values */
 static int available[N_OUTPUTS];
 static unsigned long *current,*previous,values[2][N_OUTPUTS];
 
@@ -142,7 +145,6 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[BUFFLEN+1],*l;
  int n;
 
  outputs[0]=NULL;
@@ -160,8 +162,7 @@ ProcMeterOutput **Initialise(char *options)
     ; /*fprintf(stderr,"ProcMeter(%s): Could not open '/proc/vmstat'.\n",__FILE__); */
  else
    {
-    l=fgets(line,BUFFLEN,f);
-    if(!l)
+    if(!fgets_realloc(&line,&length,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/vmstat'.\n",__FILE__);
     else
       {
@@ -179,10 +180,9 @@ ProcMeterOutput **Initialise(char *options)
           if(sscanf(line,"pswpout %lu",&d)==1)
              available[SWAP_OUT]=lineno;
 
-          l=fgets(line,BUFFLEN,f);
           lineno++;
          }
-       while(l);
+       while(fgets_realloc(&line,&length,f));
 
        if(available[PAGE_IN] && available[PAGE_OUT])
           available[PAGE]=1;
@@ -225,7 +225,6 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[BUFFLEN+1],*l;
     unsigned long *temp;
     int lineno=1;
 
@@ -237,7 +236,7 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    while((l=fgets(line,BUFFLEN,f)))
+    while(fgets_realloc(&line,&length,f))
       {
        if(available[PAGE_IN]==lineno)
           sscanf(line,"pgpgin %lu",&current[PAGE_IN]);
@@ -291,4 +290,6 @@ int Update(time_t now,ProcMeterOutput *output)
 
 void Unload(void)
 {
+ if(line)
+    free(line);
 }

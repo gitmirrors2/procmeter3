@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.17 2008-05-04 18:19:08 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat.c,v 1.18 2008-05-05 18:45:36 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
@@ -37,9 +37,6 @@
 #define CONTEXT    14
 #define INTR       15
 #define N_OUTPUTS  16
-
-/*+ The length of the buffer for reading in lines. +*/
-#define BUFFLEN 4096
 
 /* The interface information.  */
 
@@ -235,6 +232,11 @@ ProcMeterModule module=
 };
 
 
+/* The line buffer */
+static char *line=NULL;
+static size_t length=0;
+
+/* Information about the availability and the current and previous values */
 static int available[N_OUTPUTS];
 static unsigned long long *current,*previous,values[2][N_OUTPUTS];
 
@@ -268,7 +270,6 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[BUFFLEN+1],*l;
  int n;
 
  outputs[0]=NULL;
@@ -286,8 +287,7 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/stat'.\n",__FILE__);
  else
    {
-    l=fgets(line,BUFFLEN,f);
-    if(!l) /* cpu */
+    if(!fgets_realloc(&line,&length,f)) /* cpu */
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
     else
       {
@@ -305,8 +305,9 @@ ProcMeterOutput **Initialise(char *options)
                   "          or: 'cpu %%llu %%llu %%llu %%llu %%llu %%llu %%llu %%llu'\n"
                   "    found:    %s",__FILE__,line);
 
-       while(l && (line[0]=='c' && line[1]=='p' && line[2]=='u')) /* kernel version > ~2.1.84 */
-          l=fgets(line,BUFFLEN,f); /* cpu or disk or page or intr */
+       /* cpu or disk or page or intr */
+       while(fgets_realloc(&line,&length,f) && (line[0]=='c' && line[1]=='p' && line[2]=='u')) /* kernel version > ~2.1.84 */
+          ;
 
        if(!strncmp(line,"disk ",5)) /* kernel version < ~2.4.0-test4 */
          {
@@ -319,15 +320,13 @@ ProcMeterOutput **Initialise(char *options)
                             "    expected: 'disk %%llu %%llu %%llu %%llu'\n"
                             "    found:    %s",__FILE__,line);
 
-          l=fgets(line,BUFFLEN,f); /* disk_* or page */
-
-          while(l && line[0]=='d') /* kernel version > ~1.3.0 */
+          /* disk_* or page */
+          while(fgets_realloc(&line,&length,f) && line[0]=='d') /* kernel version > ~1.3.0 */
             {
              if(sscanf(line,"disk_rblk %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
                 available[DISK_READ]=1;
              if(sscanf(line,"disk_wblk %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
                 available[DISK_WRITE]=1;
-             l=fgets(line,BUFFLEN,f); /* disk_* or page */
             }
          }
 
@@ -336,7 +335,7 @@ ProcMeterOutput **Initialise(char *options)
           if(sscanf(line,"page %llu %llu",&d1,&d2)==2)
             {
              available[PAGE]=available[PAGE_IN]=available[PAGE_OUT]=1;
-             l=fgets(line,BUFFLEN,f); /* swap or intr */
+             fgets_realloc(&line,&length,f); /* swap or intr */
             }
           else
              fprintf(stderr,"ProcMeter(%s): Unexpected 'page' line in '/proc/stat'.\n"
@@ -346,7 +345,7 @@ ProcMeterOutput **Initialise(char *options)
           if(sscanf(line,"swap %llu %llu",&d1,&d2)==2)
             {
              available[SWAP]=available[SWAP_IN]=available[SWAP_OUT]=1;
-             l=fgets(line,BUFFLEN,f); /* intr */
+             fgets_realloc(&line,&length,f); /* intr */
             }
           else
              fprintf(stderr,"ProcMeter(%s): Unexpected 'swap' line in '/proc/stat'.\n"
@@ -357,7 +356,7 @@ ProcMeterOutput **Initialise(char *options)
        if(sscanf(line,"intr %llu",&d1)==1)
          {
           available[INTR]=1;
-          l=fgets(line,BUFFLEN,f); /* disk_io or ctxt */
+          fgets_realloc(&line,&length,f); /* disk_io or ctxt */
          }
        else
           fprintf(stderr,"ProcMeter(%s): Unexpected 'intr' line in '/proc/stat'.\n"
@@ -383,7 +382,7 @@ ProcMeterOutput **Initialise(char *options)
              available[DISK_WRITE]=1;
             }
 
-          l=fgets(line,BUFFLEN,f); /* ctxt */
+          fgets_realloc(&line,&length,f); /* ctxt */
          }
 
        if(sscanf(line,"ctxt %llu",&d1)==1)
@@ -428,7 +427,6 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[BUFFLEN+1],*l;
     unsigned long long *temp;
     unsigned long long cpu_iowait,cpu_irq,cpu_softirq,cpu_steal;
 
@@ -440,13 +438,14 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    l=fgets(line,BUFFLEN,f); /* cpu */
+    fgets_realloc(&line,&length,f); /* cpu */
     if(available[CPU])
        sscanf(line,"cpu %llu %llu %llu %llu %llu %llu %llu %llu",&current[CPU_USER],&current[CPU_NICE],&current[CPU_SYS],&current[CPU_IDLE],
                                                                  &cpu_iowait,&cpu_irq,&cpu_softirq,&cpu_steal);
 
-    while(l && line[0]=='c') /* kernel version > ~2.1.84 */
-       l=fgets(line,BUFFLEN,f); /* cpu or disk or page or intr */
+    /* cpu or disk or page or intr */
+    while(fgets_realloc(&line,&length,f) && line[0]=='c') /* kernel version > ~2.1.84 */
+       ;
 
     if(available[DISK] && !kernel_version_240) /* kernel version < ~2.4.0-test4 */
       {
@@ -455,9 +454,8 @@ int Update(time_t now,ProcMeterOutput *output)
        if(available[DISK])
          {sscanf(line,"disk %llu %llu %llu %llu",&d0,&d1,&d2,&d3);current[DISK]=d0+d1+d2+d3;}
 
-       l=fgets(line,BUFFLEN,f); /* disk_* or page */
-
-       while(line[0]=='d') /* kernel version > ~1.3.x */
+       /* disk_* or page */
+       while(fgets_realloc(&line,&length,f) && line[0]=='d') /* kernel version > ~1.3.x */
          {
           if(available[DISK_READ])
              if(sscanf(line,"disk_rblk %llu %llu %llu %llu",&d0,&d1,&d2,&d3)==4)
@@ -465,26 +463,25 @@ int Update(time_t now,ProcMeterOutput *output)
           if(available[DISK_WRITE])
              if(sscanf(line,"disk_wblk %llu %llu %llu %llu",&d0,&d1,&d2,&d3)==4)
                {current[DISK_WRITE]=d0+d1+d2+d3;}
-          l=fgets(line,BUFFLEN,f); /* disk_* or page */
          }
       }
 
     if(available[PAGE])
       {
        sscanf(line,"page %llu %llu",&current[PAGE_IN],&current[PAGE_OUT]);
-       l=fgets(line,BUFFLEN,f); /* swap */
+       fgets_realloc(&line,&length,f); /* swap */
       }
 
     if(available[SWAP])
       {
        sscanf(line,"swap %llu %llu",&current[SWAP_IN],&current[SWAP_OUT]);
-       l=fgets(line,BUFFLEN,f); /* intr */
+       fgets_realloc(&line,&length,f); /* intr */
       }
 
     if(available[INTR])
       {
        sscanf(line,"intr %llu",&current[INTR]);
-       l=fgets(line,BUFFLEN,f); /* disk_io or ctxt */
+       fgets_realloc(&line,&length,f); /* disk_io or ctxt */
       }
 
     if(kernel_version_240 && available[DISK]) /* kernel version > ~2.4.0-test4 */
@@ -515,7 +512,7 @@ int Update(time_t now,ProcMeterOutput *output)
        if(available[DISK])
           current[DISK]=current[DISK_READ]+current[DISK_WRITE];
 
-       l=fgets(line,BUFFLEN,f); /* ctxt */
+       fgets_realloc(&line,&length,f); /* ctxt */
       }
 
     if(available[CONTEXT])
@@ -590,4 +587,6 @@ int Update(time_t now,ProcMeterOutput *output)
 
 void Unload(void)
 {
+ if(line)
+    free(line);
 }

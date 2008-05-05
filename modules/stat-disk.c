@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.13 2005-04-30 14:36:35 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.14 2008-05-05 18:45:36 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4d.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Disk statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000,02,04,05 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -31,9 +31,6 @@
 #define DISK_READ   1
 #define DISK_WRITE  2
 #define N_OUTPUTS   3
-
-/*+ The length of the buffer for reading in lines. +*/
-#define BUFFLEN 2048
 
 /* The interface information.  */
 
@@ -165,17 +162,24 @@ ProcMeterModule module=
 };
 
 
-static int add_disk(char *devname);
+/* The line buffer */
+static char *line=NULL;
+static size_t length=0;
 
+/* The current and previous information about the disk */
 static unsigned long long *current,*previous,*values[2];
 
+/* The information about the disks */
+static int ndisks=4;
 static unsigned *majors=NULL,*minors=NULL,*indexes=NULL;
 
-static int ndisks=4;
-
+/* The estimated kernel version based on the file format */
 static int kernel_version_130=0;
 static int kernel_version_240=0;
 static int kernel_version_260=0;
+
+/* A function to add a disk */
+static int add_disk(char *devname);
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -201,7 +205,6 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[BUFFLEN+1],*l;
 
  disk_outputs=(ProcMeterOutput*)malloc((N_OUTPUTS*ndisks)*sizeof(ProcMeterOutput));
 
@@ -221,15 +224,16 @@ ProcMeterOutput **Initialise(char *options)
        fprintf(stderr,"ProcMeter(%s): Could not open '/proc/stat'.\n",__FILE__);
     else
       {
-       l=fgets(line,256,f); /* cpu */
-       if(!l)
+       /* cpu */
+       if(!fgets_realloc(&line,&length,f))
           fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
        else
          {
-          while(l && !(line[0]=='d' && line[1]=='i' && line[2]=='s' && line[3]=='k'))
-             l=fgets(line,BUFFLEN,f); /* cpu or disk or page or swap or intr or disk_io */
+          while(fgets_realloc(&line,&length,f)) /* cpu or disk or page or swap or intr or disk_io */
+             if(line[0]=='d' && line[1]=='i' && line[2]=='s' && line[3]=='k')
+                break;
 
-          if(!l)
+          if(!line[0])
              fprintf(stderr,"ProcMeter(%s): Unexpected 'disk' line in '/proc/stat'.\n"
                      "    expected: 'disk ...' or 'disk_io ...'\n"
                      "    found:    EOF\n",__FILE__);
@@ -243,14 +247,13 @@ ProcMeterOutput **Initialise(char *options)
                 int read_avail=0,write_avail=0;
                 int n=0;
 
-                l=fgets(line,BUFFLEN,f); /* disk_* or page */
-                while(l && line[0]=='d') /* kernel version > ~1.3.0 */
+                /* disk_* or page */
+                while(fgets_realloc(&line,&length,f) && line[0]=='d') /* kernel version > ~1.3.0 */
                   {
                    if(sscanf(line,"disk_rblk %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
                       read_avail=1;
                    if(sscanf(line,"disk_wblk %llu %llu %llu %llu",&d1,&d2,&d3,&d4)==4)
                       write_avail=1;
-                   l=fgets(line,BUFFLEN,f); /* disk_* or page */
                   }
 
                 if(read_avail && write_avail)
@@ -384,8 +387,7 @@ ProcMeterOutput **Initialise(char *options)
    }
  else /* Found /proc/diskstats in kernel 2.6.x */
    {
-    l=fgets(line,256,f); /* cpu */
-    if(!l)
+    if(!fgets_realloc(&line,&length,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/diskstats'.\n",__FILE__);
     else
       {
@@ -452,7 +454,7 @@ ProcMeterOutput **Initialise(char *options)
              continue;
             }
          }
-       while(fgets(line,256,f));
+       while(fgets_realloc(&line,&length,f));
 
        if(devdir)
           closedir(devdir);
@@ -617,7 +619,6 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[BUFFLEN+1],*l;
     unsigned long long *temp;
 
     temp=current;
@@ -633,7 +634,7 @@ int Update(time_t now,ProcMeterOutput *output)
        current[DISK_READ]=0;
        current[DISK_WRITE]=0;
 
-       while((l=fgets(line,BUFFLEN,f)))
+       while(fgets_realloc(&line,&length,f))
          {
           int maj,min,nr;
           unsigned long long d1,d2,d3,d4,d5,dr,dw;
@@ -674,7 +675,7 @@ int Update(time_t now,ProcMeterOutput *output)
        if(!f)
           return(-1);
 
-       while((l=fgets(line,BUFFLEN,f))) /* cpu or disk or page or swap or intr or disk_io */
+       while(fgets_realloc(&line,&length,f)) /* cpu or disk or page or swap or intr or disk_io */
           if(line[0]=='d' && line[1]=='i' && line[2]=='s' && line[3]=='k')
              break;
 
@@ -688,9 +689,8 @@ int Update(time_t now,ProcMeterOutput *output)
                            current[N_OUTPUTS*3+DISK]+current[N_OUTPUTS*4+DISK];
             }
 
-          l=fgets(line,BUFFLEN,f); /* disk_* or page */
-
-          while(l && line[0]=='d') /* kernel version > ~1.3.0 */
+          /* disk_* or page */
+          while(fgets_realloc(&line,&length,f) && line[0]=='d') /* kernel version > ~1.3.0 */
             {
              if(sscanf(line,"disk_rblk %llu %llu %llu %llu",&current[N_OUTPUTS*1+DISK_READ],&current[N_OUTPUTS*2+DISK_READ],
                                                             &current[N_OUTPUTS*3+DISK_READ],&current[N_OUTPUTS*4+DISK_READ])==4)
@@ -700,7 +700,6 @@ int Update(time_t now,ProcMeterOutput *output)
                                                             &current[N_OUTPUTS*3+DISK_WRITE],&current[N_OUTPUTS*4+DISK_WRITE])==4)
                 current[DISK_WRITE]=current[N_OUTPUTS*1+DISK_WRITE]+current[N_OUTPUTS*2+DISK_WRITE]+
                                     current[N_OUTPUTS*3+DISK_WRITE]+current[N_OUTPUTS*4+DISK_WRITE];
-             fgets(line,BUFFLEN,f); /* disk_* or page */
             }
 
           if(kernel_version_130)
@@ -794,4 +793,7 @@ void Unload(void)
 
  free(values[0]);
  free(values[1]);
+
+ if(line)
+    free(line);
 }

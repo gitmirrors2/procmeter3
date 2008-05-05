@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/apm.c,v 1.5 2002-12-07 19:38:59 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/apm.c,v 1.6 2008-05-05 18:45:17 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Advanced Power Management module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,2002 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -97,7 +97,6 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[80];
  int n;
 
  for(n=0;n<sizeof(outputs)/sizeof(outputs[0]);n++)
@@ -107,10 +106,13 @@ ProcMeterOutput **Initialise(char *options)
 
  f=fopen("/proc/apm","r");
  if(!f)
-    ;                           /* Don't bother giving an error message for 99% of systems. */
+    ;                           /* Don't bother giving an error message for majority of systems. */
  else
    {
-    if(!fgets(line,80,f))
+    char *line=NULL;
+    size_t length=64;
+
+    if(!fgets_realloc(&line,&length,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/apm'.\n",__FILE__);
     else
       {
@@ -126,6 +128,9 @@ ProcMeterOutput **Initialise(char *options)
        else
           fprintf(stderr,"ProcMeter(%s): Unexpected line in '/proc/apm'.\n",__FILE__);
       }
+
+    if(line)
+       free(line);
 
     fclose(f);
    }

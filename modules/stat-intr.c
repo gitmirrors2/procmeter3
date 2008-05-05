@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.11 2008-05-04 18:19:08 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.12 2008-05-05 18:45:36 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
@@ -21,9 +21,6 @@
 #include "procmeter.h"
 
 #define N_INTR 256
-
-/*+ The length of the buffer for reading in lines. +*/
-#define BUFFLEN 4096
 
 /* The interface information.  */
 
@@ -66,9 +63,15 @@ ProcMeterModule module=
  /* char *description;     */ "Interrupt statistics. [From /proc/stat]",
 };
 
+
+/* The line buffer */
+static char *line=NULL;
+static size_t length=0;
+
 /*+ The number of interrupts. +*/
 static int nintr=0;
 
+/* The current and previous information about the interrupts */
 static unsigned long long *current,*previous,values[2][N_INTR+1];
 
 
@@ -95,7 +98,6 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[BUFFLEN+1],*l;
  int n=0;
 
  outputs[0]=NULL;
@@ -110,18 +112,19 @@ ProcMeterOutput **Initialise(char *options)
     fprintf(stderr,"ProcMeter(%s): Could not open '/proc/stat'.\n",__FILE__);
  else
    {
-    l=fgets(line,256,f); /* cpu */
-    if(!l)
+    /* cpu */
+    if(!fgets_realloc(&line,&length,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/stat'.\n",__FILE__);
     else
       {
        unsigned long long intr;
        int i,p,pp;
 
-       while(l && !(line[0]=='i' && line[1]=='n' && line[2]=='t' && line[3]=='r'))
-          l=fgets(line,BUFFLEN,f); /* cpu or disk or page or swap or intr */
+       while(fgets_realloc(&line,&length,f)) /* cpu or disk or page or swap or intr */
+          if(line[0]=='i' && line[1]=='n' && line[2]=='t' && line[3]=='r')
+             break;
 
-       if(!l)
+       if(!line[0])
           fprintf(stderr,"ProcMeter(%s): Unexpected 'intr' line in '/proc/stat'.\n"
                          "    expected: 'intr ...'\n"
                          "    found:    EOF",__FILE__);
@@ -210,7 +213,6 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[BUFFLEN+1],*l;
     unsigned long long *temp;
     int p,pp;
 
@@ -222,7 +224,7 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    while((l=fgets(line,BUFFLEN,f))) /* cpu or disk or page or swap or intr */
+    while(fgets_realloc(&line,&length,f)) /* cpu or disk or page or swap or intr */
        if(line[0]=='i' && line[1]=='n' && line[2]=='t' && line[3]=='r')
           break;
 
@@ -268,4 +270,7 @@ void Unload(void)
 
  for(i=0;i<nintr;i++)
     free(intr_outputs[i].description);
+
+ if(line)
+    free(line);
 }

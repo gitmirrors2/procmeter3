@@ -1,13 +1,14 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.10 2005-10-15 18:16:46 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.11 2008-05-05 18:45:36 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4e.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Wireless network devices info source file.
   ******************/ /******************
   Written by Joey Hess (with heavy borrowing from netdev.c)
 
-  This file Copyright 2001 Joey Hess
+  Original file Copyright 2001 Joey Hess
+  Parts of this file Copyright 2001-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -75,10 +76,16 @@ ProcMeterModule module=
  * was updated since last read. */
 static char *proc_net_wireless_format="%*i %i%*1[. ] %i%*1[. ] %i";
 
+/* The line buffer */
+static char *line=NULL;
+static size_t length=0;
+
+/* Information about the devices and the current and previous values */
 static int ndevices=0;
 static unsigned long *current=NULL,*previous=NULL;
 static char **device=NULL;
 
+/* Add a new device */
 static void add_device(char *dev);
 
 
@@ -105,7 +112,6 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- char line[256];
 
  outputs=(ProcMeterOutput**)malloc(sizeof(ProcMeterOutput*));
  outputs[0]=NULL;
@@ -117,7 +123,7 @@ ProcMeterOutput **Initialise(char *options)
     ;                           /* Don't bother giving an error message for 99% of systems. */
  else
    {
-    if(!fgets(line,256,f))
+    if(!fgets_realloc(&line,&length,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/net/wireless'.\n",__FILE__);
     else
        if(strcmp(line,"Inter-| sta-|   Quality        |   Discarded packets               | Missed\n") == 0 &&
@@ -125,13 +131,13 @@ ProcMeterOutput **Initialise(char *options)
           fprintf(stderr,"ProcMeter(%s): Unexpected header line 1 in '/proc/net/wireless'.\n",__FILE__);
        else
          {
-          fgets(line,256,f);
+          fgets_realloc(&line,&length,f);
           if(strcmp(line," face | tus | link level noise |  nwid  crypt   frag  retry   misc | beacon\n") == 0 &&
              strcmp(line," face | tus | link level noise |  nwid  crypt   frag  retry   misc | beacon | 16\n") == 0)
              fprintf(stderr,"ProcMeter(%s): Unexpected header line 2 in '/proc/net/wireless'.\n",__FILE__);
           else
             {
-             while(fgets(line,256,f))
+             while(fgets_realloc(&line,&length,f))
                {
                 int i;
                 char *dev=line;
@@ -245,7 +251,6 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    char line[256];
     unsigned long *temp;
 
     temp=current;
@@ -259,9 +264,9 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    fgets(line,256,f);
-    fgets(line,256,f);
-    while(fgets(line,256,f))
+    fgets_realloc(&line,&length,f);
+    fgets_realloc(&line,&length,f);
+    while(fgets_realloc(&line,&length,f))
       {
        int i;
        signed int link=0;
@@ -343,4 +348,7 @@ void Unload(void)
        free(device[i]);
     free(device);
    }
+
+ if(line)
+    free(line);
 }

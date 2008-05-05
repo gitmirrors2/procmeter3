@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.23 2007-12-16 14:51:43 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/procmeter.h,v 1.24 2008-05-05 18:45:17 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.5a.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Global public header file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2007 Andrew M. Bishop
+  This file Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -18,9 +18,10 @@
 #define PROCMETER_H    /*+ To stop multiple inclusions. +*/
 
 #include <time.h>
+#include <stdio.h>
 
 
-#define PROCMETER_VERSION "3.5a"
+#define PROCMETER_VERSION "3.5b"
 
 
 #define PROCMETER_MAJOR_VERSION 3
@@ -75,7 +76,7 @@ typedef struct _ProcMeterModule
 ProcMeterModule;
 
 
-/* The funtions exported from the modules. */
+/* The funtions that must be exported from the modules. */
 
 ProcMeterModule *Load(void);
 
@@ -84,6 +85,11 @@ ProcMeterOutput** Initialise(char *options);
 int Update(time_t now,ProcMeterOutput *output);
 
 void Unload(void);
+
+
+/* The functions available to the modules. */
+
+char *fgets_realloc(char **buffer,size_t *length,FILE *file);
 
 
 #endif /* PROCMETER_H */
