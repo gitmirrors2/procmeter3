@@ -8,12 +8,16 @@
 path=modules
 
 ##
-## The outputs to start
+## The outputs to start (formatted as <module>.<output>[-g|-t|-b])
+## Run 'procmeter3 --help' to get a full list of available modules.
 ##
 
 [startup]
 
-order=ProcMeter.Version Date_Time.Time_HM Date_Time.Date_DM
+order=ProcMeter.Version-t \
+      Date_Time.Time_HM-t Date_Time.Date_DM-t \
+      Statistics.CPU-b \
+      Memory.Mem_Avail-g
 
 ##
 ## The global default resources, mainly X-Windows resources
