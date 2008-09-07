@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.16 2002-12-07 19:34:32 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.17 2008-09-07 14:51:08 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   X Window menus.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000,01,02 Andrew M. Bishop
+  This file Copyright 1998,99,2000,01,02,08 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -581,7 +581,7 @@ static void SelectOutputMenuCallback(Widget widget,XtPointer clientData,XtPointe
 
 static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPointer callData)
 {
- if((int)clientData==0)         /* Properties */
+ if(clientData==(XtPointer)0)         /* Properties */
    {
     Window root_return, child_return;
     int root_x_return, root_y_return;
@@ -598,17 +598,17 @@ static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPoi
     XtPopup(properties_dialog,XtGrabNone);
     properties_popped_up=True;
    }
- else if((int)clientData==1 || (int)clientData==2) /* Above / Below */
+ else if(clientData==(XtPointer)1 || clientData==(XtPointer)2) /* Above / Below */
    {
     doing_move=(int)clientData;
 
     XtGrabPointer(pane,True,ButtonPressMask|ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,XCreateFontCursor(XtDisplay(pane),XC_hand1),CurrentTime);
    }
- else if((int)clientData==3)    /* Delete */
+ else if(clientData==(XtPointer)3)    /* Delete */
    {
     AddRemoveOutput(function_output);
    }
- else if((int)clientData==4)    /* Run */
+ else if(clientData==(XtPointer)4)    /* Run */
    {
     if(function_output->menu_run.flag)
        RunProgram(&function_output->menu_run);
