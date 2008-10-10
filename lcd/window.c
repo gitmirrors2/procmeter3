@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/lcd/window.c,v 1.4 2008-04-27 15:21:30 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/lcd/window.c,v 1.5 2008-10-10 17:29:26 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
@@ -89,7 +89,7 @@ static int LCD_screen_height=4;         /*+ The height of the LCD in characters 
 static int LCD_char_width=5;            /*+ The width of the character in pixels +*/
 static int LCD_char_height=8;           /*+ The height of the character in pixels +*/
 static int LCD_duration=8;              /*+ How long each display stays on screen. +*/
-static int LCD_priority=128;            /*+ The display priority for each display. +*/
+static char *LCD_priority=NULL;         /*+ The display priority for each display. +*/
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -136,7 +136,10 @@ void Start(int *argc,char **argv)
  string=GetProcMeterRC("LCD","priority");
 
  if(string)
-    LCD_priority=atoi(string);
+   {
+    LCD_priority=(char*)malloc(strlen(string)+1);
+    strcpy(LCD_priority,string);
+   }
 
  /* Make the socket connection */
 
@@ -347,7 +350,10 @@ void CreateGraph(Output output)
  graph->data_index=0;
 
  send_command("screen_add %s_g",output->output->name);
- send_command("screen_set %s_g -name {%s} -duration %d -priority %d",output->output->name,output->output->name,LCD_duration,LCD_priority);
+ send_command("screen_set %s_g -name {%s}",output->output->name,output->output->name);
+ send_command("screen_set %s_g -duration %d",output->output->name,LCD_duration);
+ if(LCD_priority)
+    send_command("screen_set %s_g -priority %s",output->output->name,LCD_priority);
 
  send_command("widget_add %s_g title title",output->output->name);
  send_command("widget_set %s_g title {%s}",output->output->name,output->label);
@@ -375,7 +381,10 @@ void CreateGraph(Output output)
 void CreateText(Output output)
 {
  send_command("screen_add %s_t",output->output->name);
- send_command("screen_set %s_t -name {%s} -duration %d -priority %d",output->output->name,output->output->name,LCD_duration,LCD_priority);
+ send_command("screen_set %s_t -name {%s}",output->output->name,output->output->name);
+ send_command("screen_set %s_t -duration %d",output->output->name,LCD_duration);
+ if(LCD_priority)
+    send_command("screen_set %s_t -priority %s",output->output->name,LCD_priority);
 
  send_command("widget_add %s_t title title",output->output->name);
  send_command("widget_set %s_t title {%s}",output->output->name,output->label);
@@ -426,7 +435,10 @@ void CreateBar(Output output)
  bar->data_index=0;
 
  send_command("screen_add %s_b",output->output->name);
- send_command("screen_set %s_b -name {%s} -duration %d -priority %d",output->output->name,output->output->name,LCD_duration,LCD_priority);
+ send_command("screen_set %s_b -name {%s}",output->output->name,output->output->name);
+ send_command("screen_set %s_b -duration %d",output->output->name,LCD_duration);
+ if(LCD_priority)
+    send_command("screen_set %s_b -priority %s",output->output->name,LCD_priority);
 
  send_command("widget_add %s_b title title",output->output->name);
  send_command("widget_set %s_b title {%s}",output->output->name,output->label);

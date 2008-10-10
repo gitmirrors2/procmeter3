@@ -1,17 +1,17 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.17 2007-12-15 19:33:53 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.18 2008-10-10 17:29:44 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.5a.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.5b.
 .\"
 .\"  Manual page for .procmeterrc file
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998-2007 Andrew M. Bishop
+.\"  This file Copyright 1998-2008 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETERRC 5 "December 15, 2007"
+.TH PROCMETERRC 5 "September 7, 2008"
 
 .SH NAME
 
@@ -165,7 +165,10 @@ display for before cycling to the next.
 .TP
 .BR priority=...
 The priority of all of the ProcMeter outputs when they are displayed on the LCD
-display.
+display.  This values should be a numeric value for LCDd verions before 0.5 or
+priority names for later versions.  Using numeric values will likely fail for
+LCDd versions after 0.5 due to a bug in LCDd.  The safest solution is not to use
+this option unless you are sure what value to use.
 
 .SH MODULE SECTION
 
