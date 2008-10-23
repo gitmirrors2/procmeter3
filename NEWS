@@ -1,3 +1,19 @@
+Version 3.5b of ProcMeter3 released : Thu Oct 23 19:30:00 2008
+--------------------------------------------------------------
+
+Bug Fixes
+ Be more careful looking for modules (check '.' and '..').
+ Set the locale to "C" to avoid problems parsing numbers.
+ Ensure that graph-min and graph-max options are used properly.
+ Extended the line buffer size for parsing /proc/interrupts.
+ Remove fixed size line buffers in modules (realloc more space as needed).
+ Allow LCD version to specify priority as a string or numeric value.
+
+New Features
+ Extended Window Manager Hints can be specified with a -w option.
+ Increase the number of interrupts possible in stat-intr.
+
+
 Version 3.5a of ProcMeter3 released : Sun Dec 16 15:00:00 2007
 --------------------------------------------------------------
 
