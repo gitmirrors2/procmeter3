@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.14 2008-05-05 18:45:36 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/stat-disk.c,v 1.15 2008-12-07 17:35:47 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.5c.
 
   Disk statistics source file.
   ******************/ /******************
@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include <unistd.h>
 #include <dirent.h>
@@ -158,7 +159,7 @@ ProcMeterOutput **outputs=NULL;
 ProcMeterModule module=
 {
  /* char name[];            */ "Stat-Disk",
- /* char *description;      */ "Disk usage statistics. [From /proc/stat]",
+ /* char *description;      */ "Disk usage statistics. [From /proc/diskstats or /proc/stat]",
 };
 
 
@@ -658,7 +659,36 @@ int Update(time_t now,ProcMeterOutput *output)
                 current[N_OUTPUTS*(j+1)+DISK]=dr+dw;
                }
 
-          if(nr==7) /* Count the disks, not the partitions */
+          /* Add up the values to get the total, but ignore any 'whole disk' devices */
+
+          if(((maj==IDE0_MAJOR || maj==IDE1_MAJOR || maj==IDE2_MAJOR || maj==IDE3_MAJOR ||
+               maj==IDE4_MAJOR || maj==IDE5_MAJOR || maj==IDE6_MAJOR || maj==IDE7_MAJOR ||
+               maj==IDE8_MAJOR || maj==IDE9_MAJOR) && (min%64)==0) ||
+             ((maj==SCSI_DISK0_MAJOR || (maj>=SCSI_DISK1_MAJOR && maj<=SCSI_DISK7_MAJOR) ||
+               (maj>=SCSI_DISK8_MAJOR && maj<=SCSI_DISK15_MAJOR)) && (min%16)==0) ||
+             (maj==XT_DISK_MAJOR    && (min%64)==0) ||
+             (maj==14               && (min%64)==0) ||
+             (maj==MFM_ACORN_MAJOR  && (min%64)==0) ||
+             (maj==ACSI_MAJOR       && (min%16)==0) ||
+             (maj==PS2ESDI_MAJOR    && (min%64)==0) ||
+             (maj==44               && (min%16)==0) ||
+             (maj==45               && (min%16)==0) ||
+             (maj>=48 && maj<=55    && (min%8)==0)  ||
+             (maj>=COMPAQ_SMART2_MAJOR && maj<=COMPAQ_SMART2_MAJOR7 && (min%16)==0) ||
+             (maj>=I2O_MAJOR && maj<=(I2O_MAJOR+7) && (min%16)==0) ||
+             (maj==92               && (min%16)==0) ||
+             (maj==UBD_MAJOR        && (min%16)==0) ||
+             (maj==101              && (min%16)==0) ||
+             (maj==102              && (min%16)==0) ||
+             (maj>=COMPAQ_CISS_MAJOR && maj<=COMPAQ_CISS_MAJOR7 && (min%16)==0) ||
+             (maj==VIODASD_MAJOR    && (min%8)==0)  ||
+             (maj==ATARAID_MAJOR    && (min%16)==0) ||
+             (maj>=136 && maj<=143  && (min%8)==0)  ||
+             (maj==153              && (min%16)==0) ||
+             (maj>=160 && maj<=161  && (min%32)==0) ||
+             (maj==XENVBD_MAJOR     && (min%16)==0))
+             ;
+          else
             {
              current[DISK_READ] +=dr;
              current[DISK_WRITE]+=dw;
