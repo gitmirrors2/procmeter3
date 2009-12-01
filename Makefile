@@ -1,12 +1,12 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.26 2008-05-05 18:45:17 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.27 2009-12-01 18:37:53 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.5b.
+# ProcMeter - A system monitoring program for Linux - Version 3.5c.
 #
 # Makefile.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994-2008 Andrew M. Bishop
+# This file Copyright 1994-2009 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -78,25 +78,25 @@ procmeterrc.o : procmeterrc.c procmeterp.h procmeter.h
 .PHONY : procmeter3.modules
 
 procmeter3.modules :
-	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C modules
+	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS)" LD="$(LD)" LDFLAGS="$(LDFLAGS)" -C modules
 
 ########
 
 procmeter3-xaw  :
-	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C xaw
+	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS)" LD="$(LD)" LDFLAGS="$(LDFLAGS)" -C xaw
 	[ -f procmeter3 ] || ln -s procmeter3-xaw procmeter3
 
 procmeter3-gtk1 :
-	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C gtk1
+	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS)" LD="$(LD)" LDFLAGS="$(LDFLAGS)" -C gtk1
 
 procmeter3-gtk2 :
-	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C gtk2
+	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS)" LD="$(LD)" LDFLAGS="$(LDFLAGS)" -C gtk2
 
 procmeter3-log  :
-	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C log
+	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS)" LD="$(LD)" LDFLAGS="$(LDFLAGS)" -C log
 
 procmeter3-lcd  :
-	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C lcd
+	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS)" LD="$(LD)" LDFLAGS="$(LDFLAGS)" -C lcd
 
 ########
 
