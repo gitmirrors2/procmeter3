@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.16 2008-05-05 18:45:17 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/module.c,v 1.17 2009-12-01 18:38:22 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.5c.
 
   Module handling functions.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2008 Andrew M. Bishop
+  This file Copyright 1998-2009 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -44,6 +44,7 @@ void LoadAllModules(void)
  struct stat buf;
  char lib[PATH_MAX+1],*libp;
  char *library;
+ int i;
 
  Modules=(Module*)malloc(16*sizeof(Module));
  *Modules=NULL;
@@ -129,6 +130,12 @@ void LoadAllModules(void)
        l=r;
       }
    }
+
+ /* Add to the menus */
+
+ for(i=0;Modules[i];i++)
+    AddModuleToMenu(Modules[i]);
+
 }
 
 
@@ -159,9 +166,8 @@ Module LoadModule(char* filename)
 {
  ProcMeterModule *(*Load)(void);
  ProcMeterOutput **(*Initialise)(char *),**outputs,*output;
- Module *modules;
  Module new=NULL;
- int noutputs,i;
+ int noutputs,i,m,c;
 
  new=(Module)malloc(sizeof(struct _Module));
 
@@ -200,16 +206,17 @@ Module LoadModule(char* filename)
     return(NULL);
    }
 
- if(Modules)
-    for(modules=Modules;*modules;modules++)
-       if(!strcmp((*modules)->module->name,new->module->name))
-         {
-          fprintf(stderr,"ProcMeter: Duplicate module name '%s' ignoring '%s'.\n",new->module->name,new->filename);
-          dlclose(new->dlhandle);
-          free(new->filename);
-          free(new);
-          return(NULL);
-         }
+ for(m=-1,i=0;Modules[i];i++)
+    if(!(c=strcmp(Modules[i]->module->name,new->module->name)))
+      {
+       fprintf(stderr,"ProcMeter: Duplicate module name '%s' ignoring '%s'.\n",new->module->name,new->filename);
+       dlclose(new->dlhandle);
+       free(new->filename);
+       free(new);
+       return(NULL);
+      }
+    else if(c<0)
+       m=i;
 
  /* Get the Intialise() fuction and call it. */
 
@@ -248,18 +255,9 @@ Module LoadModule(char* filename)
 
  /* Insert the new module. */
 
- modules=Modules;
- while(*modules)
-    modules++;
-
- Modules=(Module*)realloc((void*)Modules,(modules-Modules+2)*sizeof(Module));
-
- modules=Modules;
- while(*modules)
-    modules++;
-
- *modules=new;
- *++modules=NULL;
+ Modules=(Module*)realloc((void*)Modules,(i+2)*sizeof(Module));
+ memmove(Modules+m+2, Modules+m+1, (i-m)*sizeof(Module));
+ Modules[m+1]=new;
 
  /* Add the outputs */
 
@@ -332,12 +330,8 @@ Module LoadModule(char* filename)
       }
    }
 
- /* Add to the menus */
-
  new->menu_item_widget=NULL;
  new->submenu_widget=NULL;
-
- AddModuleToMenu(new);
 
  return(new);
 }
@@ -423,8 +417,6 @@ char *fgets_realloc(char **buffer,size_t *length,FILE *file)
 
     *buffer=(char*)malloc(*length);
 
-//    fprintf(stderr,"Pointer %p allocated    %4u bytes\n",buffer,*length);
-
     if(!*buffer)
       {*length=0;return(NULL);}
    }
@@ -440,8 +432,6 @@ char *fgets_realloc(char **buffer,size_t *length,FILE *file)
       {
        *length+=INCSIZE;
        *buffer=(char*)realloc(*buffer,*length);
-
-//       fprintf(stderr,"Pointer %p re-allocated %4u bytes\n",buffer,*length);
 
        if(!*buffer)
          {*length=0;return(NULL);}
