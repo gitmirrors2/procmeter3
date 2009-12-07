@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.17 2008-09-07 14:51:08 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.18 2009-12-07 20:00:41 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.5c.
 
   X Window menus.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000,01,02,08 Andrew M. Bishop
+  This file Copyright 1998-2009 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -70,7 +70,8 @@ static Widget func_run;
 static Widget prop_modname,prop_moddesc,
               prop_outname,prop_outdesc,
               prop_label,prop_type,prop_interval,prop_scale;
-static Boolean properties_popped_up=False,doing_move=False;
+static Boolean properties_popped_up=False;
+static int doing_move=0;
 
 XtActionsRec MenuActions[]={{"ModuleMenuStart",ModuleMenuStart},
                             {"OutputMenuStart",OutputMenuStart},
@@ -600,7 +601,7 @@ static void SelectFunctionsMenuCallback(Widget widget,XtPointer clientData,XtPoi
    }
  else if(clientData==(XtPointer)1 || clientData==(XtPointer)2) /* Above / Below */
    {
-    doing_move=(int)clientData;
+    doing_move=(long)clientData;
 
     XtGrabPointer(pane,True,ButtonPressMask|ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,XCreateFontCursor(XtDisplay(pane),XC_hand1),CurrentTime);
    }

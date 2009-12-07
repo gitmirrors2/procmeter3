@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/menus.c,v 1.1 2007-09-19 19:06:34 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk2/menus.c,v 1.2 2009-12-07 20:01:04 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.5c.
 
   X Window menus (GTK version).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000,01,02 Andrew M. Bishop
+  This file Copyright 1998-2009 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -53,7 +53,8 @@ static GtkWidget *prop_modname,*prop_moddesc,
                  *prop_outname,*prop_outdesc,
                  *prop_label,*prop_type,*prop_interval,*prop_scale;
 static GtkTextBuffer *prop_moddesc_text,*prop_outdesc_text;
-static gboolean properties_popped_up=FALSE,doing_move=FALSE;
+static gboolean properties_popped_up=FALSE;
+static gint doing_move=0;
 
 
 /*+ The output that was used for the Functions menu. +*/
@@ -469,23 +470,23 @@ static void SelectOutputMenuCallback(gpointer clientData)
 
 static void SelectFunctionsMenuCallback(gpointer clientData)
 {
- if((int)clientData==0)         /* Properties */
+ if(clientData==(gpointer)0)         /* Properties */
    {
     gtk_widget_show(GTK_WIDGET(properties_dialog));
 
     properties_popped_up=TRUE;
    }
- else if((int)clientData==1 || (int)clientData==2) /* Above / Below */
+ else if(clientData==(gpointer)1 || clientData==(gpointer)2) /* Above / Below */
    {
-    doing_move=(int)clientData;
+    doing_move=(glong)clientData;
 
     gdk_pointer_grab(GTK_WIDGET(pane)->window,TRUE,GDK_BUTTON_PRESS_MASK|GDK_BUTTON_RELEASE_MASK,NULL,gdk_cursor_new(GDK_HAND1),GDK_CURRENT_TIME);
    }
- else if((int)clientData==3)    /* Delete */
+ else if(clientData==(gpointer)3)    /* Delete */
    {
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(function_output->menu_item_widget),FALSE);
    }
- else if((int)clientData==4)    /* Run */
+ else if(clientData==(gpointer)4)    /* Run */
    {
     if(function_output->menu_run.flag)
        RunProgram(&function_output->menu_run);
