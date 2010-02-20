@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.10 2008-05-05 18:45:36 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/sensors.c,v 1.11 2010-02-20 13:32:10 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
@@ -8,7 +8,7 @@
   ******************/ /******************
   Written by Matt Kemner, Andrew M. Bishop
 
-  This file Copyright 1999 Matt Kemner, Andrew M. Bishop
+  This file Copyright 1999, 2010 Matt Kemner, Andrew M. Bishop
   parts of it are Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
@@ -94,7 +94,8 @@ static int nfans=0;
 /*+ A flag to indicate if it is kernel version 2.6.0 or later +*/
 int kernel_2_6_0=0;
 
-/* Functions to add a temperature monitor or a fan */
+/* Functions to find and add a temperature monitor or a fan */
+static void search_directory(const char *dirname);
 static void add_temperature(char *filename);
 static void add_fan(char *filename);
 
@@ -121,11 +122,10 @@ ProcMeterModule *Load(void)
 
 ProcMeterOutput **Initialise(char *options)
 {
- DIR *d1,*d2;
- struct dirent* ent1,*ent2;
+ DIR *d1;
+ struct dirent *ent1;
  char *dirstart=NULL;
- struct stat buf;
- int kernel_2_6_22 = 0;
+ int kernel_2_6_22=0;
  int n=0,i;
 
  /* Find the directory with the sensor information in it. */
@@ -158,60 +158,14 @@ ProcMeterOutput **Initialise(char *options)
        if(!strcmp(ent1->d_name,".."))
           continue;
 
-       if (kernel_2_6_22)     /* kernel >= 2.6.22 */
-         sprintf(dirname,"%s/%s/%s",dirstart,ent1->d_name,"device");
-       else                   /* kernel < 2.6.22 */
-         sprintf(dirname,"%s/%s",dirstart,ent1->d_name);
-
-       if(stat(dirname,&buf)==0 && S_ISDIR(buf.st_mode))
+       if(kernel_2_6_22)     /* kernel >= 2.6.22 */
          {
-          d2=opendir(dirname);
-          if(!d2)
-             fprintf(stderr,"ProcMeter(%s): The directory '%s' exists but cannot be read.\n",__FILE__,dirname);
-          else
-            {
-             while((ent2=readdir(d2)))
-               {
-                char filename[80];
-
-                if(!strcmp(ent2->d_name,"."))
-                   continue;
-                if(!strcmp(ent2->d_name,".."))
-                   continue;
-
-                sprintf(filename,"%s/%s",dirname,ent2->d_name);
-                if(stat(filename,&buf)!=0 || !S_ISREG(buf.st_mode))
-                   continue;
-
-                if(!strncmp(ent2->d_name,"temp",4))
-                  {
-                   if(!ent2->d_name[4])
-                      add_temperature(filename);
-                   else if(isdigit(ent2->d_name[4]) && !ent2->d_name[5]) /* kernel < 2.6.0 */
-                      add_temperature(filename);
-                   else if(isdigit(ent2->d_name[4]) && !strcmp(ent2->d_name+5,"_input")) /* kernel >= 2.6.0 */
-                      add_temperature(filename);
-                   else if(!strncmp(ent2->d_name+5,"_input",6) && isdigit(ent2->d_name[10]) && !ent2->d_name[11]) /* kernel >= 2.6.0 */
-                      add_temperature(filename);
-                  }
-                else if(!strcmp(ent2->d_name,"remote_temp"))
-                   add_temperature(filename);
-                else if(!strncmp(ent2->d_name,"fan",3))
-                  {
-                   if(!ent2->d_name[3])
-                      add_fan(filename);
-                   else if(isdigit(ent2->d_name[3]) && !ent2->d_name[4]) /* kernel < 2.6.0 */
-                      add_fan(filename);
-                   else if(isdigit(ent2->d_name[3]) && !strcmp(ent2->d_name+4,"_input")) /* kernel >= 2.6.0 */
-                      add_fan(filename);
-                   else if(!strncmp(ent2->d_name+4,"_input",6) && isdigit(ent2->d_name[9]) && !ent2->d_name[10]) /* kernel >= 2.6.0 */
-                      add_fan(filename);
-                  }
-               }
-
-             closedir(d2);
-            }
+          sprintf(dirname,"%s/%s/%s",dirstart,ent1->d_name,"device");
+          search_directory(dirname);
          }
+
+       sprintf(dirname,"%s/%s",dirstart,ent1->d_name);
+       search_directory(dirname);
       }
 
     closedir(d1);
@@ -225,6 +179,70 @@ ProcMeterOutput **Initialise(char *options)
  outputs[n]=NULL;
 
  return(outputs);
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Search through a given directory for any files that might be sensors.
+
+  const char *dirname The name of the directory to search.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+void search_directory(const char *dirname)
+{
+ struct stat buf;
+ DIR *d2;
+ struct dirent *ent2;
+
+ if(stat(dirname,&buf)==0 && S_ISDIR(buf.st_mode))
+   {
+    d2=opendir(dirname);
+    if(!d2)
+       fprintf(stderr,"ProcMeter(%s): The directory '%s' exists but cannot be read.\n",__FILE__,dirname);
+    else
+      {
+       while((ent2=readdir(d2)))
+         {
+          char filename[80];
+
+          if(!strcmp(ent2->d_name,"."))
+             continue;
+          if(!strcmp(ent2->d_name,".."))
+             continue;
+
+          sprintf(filename,"%s/%s",dirname,ent2->d_name);
+          if(stat(filename,&buf)!=0 || !S_ISREG(buf.st_mode))
+             continue;
+
+          if(!strncmp(ent2->d_name,"temp",4))
+            {
+             if(!ent2->d_name[4])
+                add_temperature(filename);
+             else if(isdigit(ent2->d_name[4]) && !ent2->d_name[5]) /* kernel < 2.6.0 */
+                add_temperature(filename);
+             else if(isdigit(ent2->d_name[4]) && !strcmp(ent2->d_name+5,"_input")) /* kernel >= 2.6.0 */
+                add_temperature(filename);
+             else if(!strncmp(ent2->d_name+5,"_input",6) && isdigit(ent2->d_name[10]) && !ent2->d_name[11]) /* kernel >= 2.6.0 */
+                add_temperature(filename);
+            }
+          else if(!strcmp(ent2->d_name,"remote_temp"))
+             add_temperature(filename);
+          else if(!strncmp(ent2->d_name,"fan",3))
+            {
+             if(!ent2->d_name[3])
+                add_fan(filename);
+             else if(isdigit(ent2->d_name[3]) && !ent2->d_name[4]) /* kernel < 2.6.0 */
+                add_fan(filename);
+             else if(isdigit(ent2->d_name[3]) && !strcmp(ent2->d_name+4,"_input")) /* kernel >= 2.6.0 */
+                add_fan(filename);
+             else if(!strncmp(ent2->d_name+4,"_input",6) && isdigit(ent2->d_name[9]) && !ent2->d_name[10]) /* kernel >= 2.6.0 */
+                add_fan(filename);
+            }
+         }
+
+       closedir(d2);
+      }
+   }
 }
 
 
@@ -328,9 +346,10 @@ static void add_fan(char *filename)
 
 int Update(time_t now,ProcMeterOutput *output)
 {
+ static int warn_temp=1,warn_fan=1;
  int i;
 
- /* Get the statistics from /proc/sys/dev/sensors/.../temp* */
+ /* Get the temperature statistics */
 
  for(i=0;i<ntemps;i++)
    {
@@ -338,6 +357,12 @@ int Update(time_t now,ProcMeterOutput *output)
       {
        FILE *f;
        double temp;
+
+       if(warn_temp)
+         {
+          fprintf(stderr,"ProcMeter(%s): The 'Sensors' module is old; try the new 'Temperature' module instead.\n",__FILE__);
+          warn_temp=0;
+         }
 
        f=fopen(temp_filename[i],"r");
        if(!f)
@@ -364,7 +389,7 @@ int Update(time_t now,ProcMeterOutput *output)
       }
    }
 
- /* Get the statistics from /proc/sys/dev/sensors/.../fan* */
+ /* Get the fan speed statistics */
 
  for(i=0;i<nfans;i++)
    {
@@ -372,6 +397,12 @@ int Update(time_t now,ProcMeterOutput *output)
       {
        FILE *f;
        int fan;
+
+       if(warn_fan)
+         {
+          fprintf(stderr,"ProcMeter(%s): The 'Sensors' module is old; try the new 'FanSpeed' module instead.\n",__FILE__);
+          warn_fan=0;
+         }
 
        f=fopen(fan_filename[i],"r");
        if(!f)
