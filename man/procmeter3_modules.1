@@ -1,17 +1,17 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3_modules.1,v 1.7 2007-12-15 19:33:53 amb Exp $
+.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3_modules.1,v 1.8 2010-02-20 13:30:38 amb Exp $
 .\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.5a.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.5c.
 .\"
 .\"  Manual page for ProcMeter modules.
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998-2007 Andrew M. Bishop
+.\"  This file Copyright 1998-2010 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETER3_MODULES 4 "December 15, 2007"
+.TH PROCMETER3_MODULES 4 "February 2, 2010"
 
 .SH NAME
 
@@ -96,8 +96,38 @@ The load average and the number of processes running and starting.
 Information about the procmeter program itself.
 .TP
 .BR Sensors
-Hardware sensors for temperature and fan speed.  (Requires kernel patch from
-http://www.netroedge.com/~lm78/ or version 2.6 kernel or later).
+Information from hardware sensors for temperature and fan speed (simple
+version with fixed scaling).
+.TP
+.BR FanSpeed
+Information from hardware sensors for fan speed (requires libsensors library
+installed but does read sensors.conf file for system customisation).  The
+.I options
+parameter in the
+.B .procmeterrc
+file can be used to specify an alternate sensors configuration filename to use
+instead of the default.  If this is used then it must be used in each of the
+FanSpeed, Temperature and Voltage modules.
+.TP
+.BR Temperature
+Information from hardware sensors for temperature (requires libsensors library
+installed but does read sensors.conf file for system customisation).  The
+.I options
+parameter in the
+.B .procmeterrc
+file can be used to specify an alternate sensors configuration filename to use
+instead of the default.  If this is used then it must be used in each of the
+FanSpeed, Temperature and Voltage modules.
+.TP
+.BR Voltage
+Information from hardware sensors for voltages (requires libsensors library
+installed but does read sensors.conf file for system customisation).  The
+.I options
+parameter in the
+.B .procmeterrc
+file can be used to specify an alternate sensors configuration filename to use
+instead of the default.  If this is used then it must be used in each of the
+FanSpeed, Temperature and Voltage modules.
 .TP
 .BR Statistics
 Low level system statistics.  For example CPU usage, context switches,
@@ -123,8 +153,7 @@ configuration file which is a space separated list of device names
 .TP
 .BR Stat-Intr
 More detailed statistics about individual interrupts including support for up to
-32 interrupts (more interrupts may be available from the kernel but not
-displayed).
+256 interrupts.
 .TP
 .BR Uname
 The system information, hostname and Linux kernel version, the same as the
