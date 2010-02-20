@@ -1,3 +1,32 @@
+Version 3.5c of ProcMeter3 released : Sat Feb 20 14:00:00 2010
+--------------------------------------------------------------
+
+Bug Fixes
+ Remove 64-bit compilation warnings and fix variable type mismatch.
+ Fixed df module to handle disks bigger than 2TB.
+ Fixed sensors module to handle new directory format.
+ Pass top-level Makefile variables down to sub directories.
+
+New features
+ Sort the module menu into alphabetical order.
+
+New modules
+ FanSpeed, Temperature & Voltage - Improved hardware sensors (see below).
+
+
+**** NOTE ****
+
+The new hardware sensor modules require the use of the libsensors library.
+
+The advantage is that it reads the system sensors.conf file (which can contain
+customisation of scaling and names - essential for some sensors).
+
+The existing "Sensors" module raises a warning when used and the module will be
+removed in a future version of the program.
+ 
+**** NOTE ****
+
+
 Version 3.5b of ProcMeter3 released : Thu Oct 23 19:30:00 2008
 --------------------------------------------------------------
 
