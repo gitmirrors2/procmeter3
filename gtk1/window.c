@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/window.c,v 1.8 2008-05-05 12:48:23 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/gtk1/window.c,v 1.9 2010-02-28 10:21:56 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.5d.
 
   X Windows interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997-2008 Andrew M. Bishop
+  This file Copyright 1997-2010 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -147,7 +147,7 @@ void Start(int *argc,char **argv)
        else if(sscanf(argv[i],"%dx%d",&w,&h)==2)
           gtk_widget_set_usize(GTK_WIDGET(toplevel),w,h);
        else
-          fprintf(stderr,"ProcMeter3: Cannot parse -geometry option: '%s'\n",argv[i]);
+          fprintf(stderr,"ProcMeter: Cannot parse -geometry option: '%s'\n",argv[i]);
       }
     else if((!strcmp(argv[i],"-w")) && (i+1<=*argc))
       {
@@ -169,7 +169,7 @@ void Start(int *argc,char **argv)
           else if(!strcmp(token,"sticky"))
              add_EWMH("_NET_WM_STATE_STICKY");
           else
-             fprintf(stderr,"ProcMeter3: Cannot parse -w option: '%s'\n",token);
+             fprintf(stderr,"ProcMeter: Cannot parse -w option: '%s'\n",token);
 
           token = strtok(NULL,",");
          }

@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.18 2010-02-28 10:07:28 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/module.c,v 1.19 2010-02-28 10:21:29 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.5d.
 
@@ -66,14 +66,14 @@ void LoadAllModules(void)
 
  if(stat(library,&buf) || !S_ISDIR(buf.st_mode))
    {
-    fprintf(stderr,"The library directory '%s' does not exist or is not a directory.\n",library);
+    fprintf(stderr,"ProcMeter: The library directory '%s' does not exist or is not a directory.\n",library);
     exit(1);
    }
 
  dir=opendir(library);
  if(!dir)
    {
-    fprintf(stderr,"The library directory '%s' cannot be opened.\n",library);
+    fprintf(stderr,"ProcMeter: The library directory '%s' cannot be opened.\n",library);
     exit(1);
    }
 
@@ -94,7 +94,7 @@ void LoadAllModules(void)
 
     if(!getcwd(lib,PATH_MAX))
       {
-       fprintf(stderr,"Cannot get current directory name.\n");
+       fprintf(stderr,"ProcMeter: Cannot get current directory name.\n");
        exit(1);
       }
 

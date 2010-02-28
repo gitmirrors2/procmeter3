@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.9 2010-02-28 10:08:16 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.10 2010-02-28 10:22:16 amb Exp $
 
   ProcMeter - A system monitoring program for Linux - Version 3.5d.
 
@@ -114,19 +114,19 @@ ProcMeterOutput **Initialise(char *options)
 
  if ((cpuid_fd = open(CPUID_DEVICE, O_RDONLY)) < 0) {
   /* Don't bother giving an error message for 99% of systems. */
-  //	 fprintf(stderr, "Procmeter(%s): cannot open " CPUID_DEVICE ". make sure your kernel was compiled with CONFIG_X86_CPUID=y, and make sure the device is readable\n", __FILE__);
+  //	 fprintf(stderr, "ProcMeter(%s): Cannot open " CPUID_DEVICE ". make sure your kernel was compiled with CONFIG_X86_CPUID=y, and make sure the device is readable\n", __FILE__);
 	 return outputs;
  }
  
  /* See if longrun is supported by this system. */
  read_cpuid(CPUID_TMx86_VENDOR_ID, &eax, &ebx, &ecx, &edx);
  if (ebx != 0x6e617254 || ecx != 0x55504361 || edx != 0x74656d73) {
-	 fprintf(stderr, "Procmeter(%s): not a Transmeta x86 CPU.\n", __FILE__);
+	 fprintf(stderr, "ProcMeter(%s): Not a Transmeta x86 CPU.\n", __FILE__);
 	 return outputs;
  }
  read_cpuid(CPUID_TMx86_PROCESSOR_INFO, &eax, &ebx, &ecx, &edx);
  if (!CPUID_TMx86_FEATURE_LONGRUN(edx)) {
-	 fprintf(stderr, "Procmeter(%s): longrun unsupported.\n", __FILE__);
+	 fprintf(stderr, "ProcMeter(%s): Longrun unsupported.\n", __FILE__);
 	 return outputs;
  }
  

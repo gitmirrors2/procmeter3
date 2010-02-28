@@ -1,7 +1,7 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.16 2007-12-28 15:43:04 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.17 2010-02-28 10:22:11 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.5d.
 
   ACPI source file.
   ******************/ /******************
@@ -299,7 +299,7 @@ int acpi_supported (void) {
 	}
 	num = atoi(version);
 	if (num < ACPI_VERSION) {
-		fprintf(stderr, "ACPI subsystem %s too is old, consider upgrading to %i.\n",
+		fprintf(stderr, "ProcMeter(%s): ACPI subsystem %s too is old, consider upgrading to %i.\n",__FILE__,
 				version, ACPI_VERSION);
 		return 0;
 	}
@@ -340,8 +340,7 @@ int acpi_read (int battery, apm_info *info) {
 	
 	buf = get_acpi_file(acpi_batt_status[battery]);
 	if (buf == NULL) {
-		fprintf(stderr, "unable to read %s\n", acpi_batt_status[battery]);
-		perror("read");
+                fprintf(stderr, "ProcMeter(%s): Unable to read %s\n",__FILE__, acpi_batt_status[battery]);
 		exit(1);
 	}
 
@@ -412,7 +411,7 @@ int acpi_read (int battery, apm_info *info) {
 				info->ac_line_status = 1;
 			}
 			else {
-				fprintf(stderr, "unknown battery state: %s\n", state);
+                                fprintf(stderr, "ProcMeter(%s): Unknown battery state: %s\n", __FILE__, state);
 			}
 		}
 		else {

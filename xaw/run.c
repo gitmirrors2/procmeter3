@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/run.c,v 1.4 2000-12-16 16:50:29 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/xaw/run.c,v 1.5 2010-02-28 10:22:21 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.3.
+  ProcMeter - A system monitoring program for Linux - Version 3.5d.
 
   Run external programs.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1999,2000 Andrew M. Bishop
+  This file Copyright 1999-2010 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -68,7 +68,7 @@ void ParseRunCommand(char *string,RunOption *run)
     l++;
  if(offset && *l!='(')
    {
-    fprintf(stderr,"ProcMeter3: Cannot parse run command '%s'\n",string);
+    fprintf(stderr,"ProcMeter: Cannot parse run command '%s'\n",string);
     run->flag=RUN_NONE;
     return;
    }       
@@ -81,7 +81,7 @@ void ParseRunCommand(char *string,RunOption *run)
     r--;
  if(offset && *r!=')')
    {
-    fprintf(stderr,"ProcMeter3: Cannot parse run command '%s'\n",string);
+    fprintf(stderr,"ProcMeter: Cannot parse run command '%s'\n",string);
     run->flag=RUN_NONE;
     return;
    }       
@@ -117,7 +117,7 @@ void RunProgram(RunOption *run)
     pid_t pid=fork();
 
     if(pid==-1)
-       fprintf(stderr,"ProcMeter3: Cannot fork child process %s\n",strerror(errno));
+       fprintf(stderr,"ProcMeter: Cannot fork child process %s\n",strerror(errno));
     else if(pid==0)
       {
        char *string,*displayname,*displayenv;
