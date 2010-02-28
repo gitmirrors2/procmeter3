@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/loadavg.c,v 1.7 2008-05-05 18:45:35 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/loadavg.c,v 1.8 2010-02-28 10:08:08 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.5d.
 
   Load average and number of processes module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2008 Andrew M. Bishop
+  This file Copyright 1998-2010 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -169,7 +169,8 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    fscanf(f,"%f %*f %*f %*d/%ld %ld",&l,&n,&p2);
+    if(fscanf(f,"%f %*f %*f %*d/%ld %ld",&l,&n,&p2)!=3)
+       return(-1);
 
     fclose(f);
 

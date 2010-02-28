@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/lcd/window.c,v 1.5 2008-10-10 17:29:26 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/lcd/window.c,v 1.6 2010-02-28 10:07:46 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.5d.
 
   LCD driver daemon interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997-2008 Andrew M. Bishop
+  This file Copyright 1997-2010 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -171,15 +171,18 @@ void Start(int *argc,char **argv)
 
  if(connect(server,(struct sockaddr*)&sockaddr,sizeof(sockaddr))==-1)
    {
-    close(server);
-
     fprintf(stderr,"ProcMeter: Failed to connect socket to '%s' port '%d'.\n",host,port);
     exit(1);
    }
 
  /* Say hello and parse the result */
 
- write(server,"hello\n",sizeof("hello"));
+ if(write(server,"hello\n",sizeof("hello"))!=sizeof("hello"))
+   {
+    fprintf(stderr,"ProcMeter: Failed to write socket to '%s' port '%d'.\n",host,port);
+    exit(1);
+   }
+
  replylen=read(server,reply,128);
 
  reply[replylen-1]=0;
@@ -662,7 +665,11 @@ void send_command(char *format, ...)
  printf("-> %s",buffer);
 #endif
 
- write(server,buffer,len+1);
+ if(write(server,buffer,len+1)!=len+1)
+   {
+    fprintf(stderr,"ProcMeter: Failed to write socket.\n");
+    exit(1);
+   }
 
  usleep(100);
 

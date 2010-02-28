@@ -1,13 +1,13 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/apm.c,v 1.6 2008-05-05 18:45:17 amb Exp $
+  $Header: /home/amb/CVS/procmeter3/modules/apm.c,v 1.7 2010-02-28 10:08:00 amb Exp $
 
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.5d.
 
   Advanced Power Management module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2008 Andrew M. Bishop
+  This file Copyright 1998-2010 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -116,7 +116,8 @@ ProcMeterOutput **Initialise(char *options)
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/apm'.\n",__FILE__);
     else
       {
-       long status,life,remain;
+       unsigned long status;
+       long life,remain;
        char remainunits[8];
 
        if(sscanf(line,"%*s %*f %*x %*x %*x %lx %ld%% %ld %7s",&status,&life,&remain,remainunits)==4)
@@ -152,7 +153,8 @@ ProcMeterOutput **Initialise(char *options)
 int Update(time_t now,ProcMeterOutput *output)
 {
  time_t last=0;
- static long status,life,remain;
+ static unsigned long status;
+ static long life,remain;
  static char remainunits[8];
 
  /* Get the statistics from /proc/apm */
@@ -165,7 +167,8 @@ int Update(time_t now,ProcMeterOutput *output)
     if(!f)
        return(-1);
 
-    fscanf(f,"%*s %*f %*x %*x %*x %lx %ld%% %ld %7s",&status,&life,&remain,remainunits);
+    if(fscanf(f,"%*s %*f %*x %*x %*x %lx %ld%% %ld %7s",&status,&life,&remain,remainunits)!=4)
+       return(-1);
 
     fclose(f);
 
