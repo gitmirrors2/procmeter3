@@ -1,12 +1,12 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.27 2009-12-01 18:37:53 amb Exp $
+# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.28 2010-07-03 12:56:59 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.5c.
+# ProcMeter - A system monitoring program for Linux - Version 3.5d.
 #
 # Makefile.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994-2009 Andrew M. Bishop
+# This file Copyright 1994-2010 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -18,7 +18,7 @@
 INSTDIR=/usr/local
 
 # MANDIR - the directory to install man pages to
-MANDIR=$(INSTDIR)/man
+MANDIR=$(INSTDIR)/share/man
 
 # LIB_PATH - the root dir for library files
 LIB_PATH=$(INSTDIR)/lib/X11/ProcMeter3
