@@ -1,0 +1,582 @@
+2010-02-20  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5c released.
+
+2010-02-20  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeter.h, NEWS, README: Updated for version 3.5c.
+
+2009-12-01  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* module.c:
+	Sort the module menu into alphabetical order (patch by Mike T. Liang).
+
+	* Makefile:
+	Pass the LD and CC variables down to the sub-Makefiles (patch inspired by Mike
+	T. Liang).
+
+2008-10-23  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5b released.
+
+2008-10-23  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS: Update for version 3.5b.
+
+2008-07-23  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeterrc:
+	Change the startup section to have text, graph and bar chart as well as a
+	comment referring to 'ProcMeter3 --help'.
+
+2008-05-05  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile, module.c, procmeter.h, procmeterrc.c:
+	Provide a function fgets_realloc() that all modules can call instead of fgets.
+	This avoids any buffer overrun that might occur with fgets(), removes the need
+	for deciding buffer sizes in advance and handles some file format changes.
+
+	* README:
+	Add Extended Window Manager Hints command line option (based on GTK2 patch from
+	Wolfgang Kroener).
+
+2008-04-13  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* module.c:
+	Set the locale to "C" to avoid problems parsing numbers (patch from Wolfgang
+	Kroener).
+
+2007-12-20  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* module.c:
+	Don't ignore the first two directory entries, they might not be '.' and '..'.
+
+2007-12-16  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5a Released.
+
+2007-12-16  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeter.h, NEWS: Updated for version 3.5a.
+
+2007-11-21  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile:
+	Only create the link from procmeter3-xaw to procmeter3 if it doesn't already
+	exist.
+
+2007-11-20  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5 Released.
+
+2007-11-20  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, procmeter.c, procmeter.h: Updated to version 3.5.
+
+2007-09-27  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* README: Update README for version 3.5.
+
+2007-09-26  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile: Added DESTDIR option for installation location.
+
+	* Makefile:
+	Rename executables for each version named after the source directory.
+	Create symbolic links procmeter3-xaw -> procmeter3 and procmeter3-gtk[12] -> gprocmeter3.
+	Change the installation targets appropriately for the renamed executables.
+
+2007-09-19  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile: Make both GTK1 and GTK2 versions.
+
+2007-09-09  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4g Released.
+
+2007-09-09  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, README, procmeter.h: Update to version 3.4g.
+
+2007-06-21  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* README: Add note about being GTK 1 only.
+
+2007-02-16  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4f Released.
+
+2007-02-16  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, procmeter.h: Update to version 3.4f.
+
+2006-04-29  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4e Released.
+
+2006-04-29  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, procmeter.h: Update to version 3.4e.
+
+2005-11-19  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeterp.h:
+	Make the label long enough to contain the string inserted when loading the
+	module.
+
+2005-06-14  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeterrc: Set the default scaling to 20% and 5 divisions.
+
+2005-04-30  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4d Released.
+
+2005-04-30  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, procmeter.h: Update to version 3.4d.
+
+2004-09-05  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4c Released.
+
+2004-09-05  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, procmeter.h: Updated for version 3.4c.
+
+2004-04-25  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4b Released.
+
+2004-04-25  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, procmeter.h: Update for version 3.4b.
+
+2003-06-28  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4a Released.
+
+2003-06-28  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, procmeter.h: Updated for version 3.4a.
+
+2003-06-21  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeter.c: Fix memory corruption bug.
+
+2003-01-17  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile:
+	Don't overwrite the procmeterrc file if it already exists, but do always copy the procmeterrc.install file.
+
+2003-01-12  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4 Released.
+
+2003-01-12  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS: Updated for version 3.4.
+
+2002-12-07  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeter.c:
+	Handle the longer name output when displaying the '-h' information.
+
+	* procmeter.h:
+	Add #defines for the maximum length of the text string and the graph units.
+
+	* module.c: Change PROCMETER_NAME_LEN for PROCMETER_NAME_LEN+1.
+
+2002-12-01  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeter.h, README: Updated to version 3.4.
+
+	* procmeterp.h: Renamed no-x to log.
+
+	* procmeterrc.c: Don't crash if the .procmeterrc file cannot be read.
+
+2002-11-30  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile:
+	Added procmeter3-lcd, renamed procmeter3-no-x to procmeter3-log.
+	Added the extra manual pages.
+
+2002-08-24  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile: Added an extra variable to set the man pages directory.
+
+2002-08-10  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.3b Released.
+
+2002-08-10  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS: Updated for version 3.3b.
+
+2002-07-06  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* module.c: Fix potential pointer problem (patch inspired by Nix).
+
+	* procmeterrc.c:
+	Avoid walking off the start of the line on completely blank lines (patch from Nix).
+
+2002-06-30  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile: Make the clean target go into the no-x directory.
+
+2002-06-16  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile:
+	Make the RC_PATH Makefile variable and CPP definition a pathname and not a filename.
+	Install the procmeterrc.install file in all cases and also as procmeterrc if not existing.
+
+	* procmeterp.h, procmeterrc.c:
+	Make the RC_PATH Makefile variable and CPP definition a pathname and not a filename.
+
+2002-06-04  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile: Delete the executables when doing 'make distclean'.
+
+	* module.c, procmeter.h, procmeterp.h:
+	Make the length of the output name be a compile time variable rather than a hard-coded constant.
+
+	* Makefile: Added procmeter3-no-x program.
+
+	* procmeter.c:
+	Move common code here, change names of functions to start, stop X windows part.
+
+	* procmeterp.h:
+	Add prototypes for the moved code and wrapper functions for widget updates.
+	Change prototypes/names of functions to start, stop X windows part.
+
+	* module.c: Initialise all parts of the Output and Module structures.
+
+2002-04-14  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* README: Add acknowledgement of the Joey Hess contributed modules.
+
+Sun May 27 07:45:00 2001  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.3a Released.
+
+Sun May 27 07:38:44 2001  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, procmeter.h: Updated to version 3.3a.
+
+Fri Feb  2 09:22:38 2001  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile: Fix the installation directory.
+
+Fri Jan  5 20:00:00 2001  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.3 Released.
+
+Fri Jan  5 19:55:38 2001  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS: Updated to version 3.3.
+
+	* README: Update with information about gprocmeter3.
+
+	* Makefile: Allow compilation of the programs individually.
+	Improve the installation procedure.
+
+	* procmeterrc:
+	Updated with a note about the options that don't work with GTK.
+
+	* gprocmeter3.1: Initial revision
+
+	* procmeter3.1, procmeterrc.5: Updated the manual pages.
+
+Thu Jan  4 19:25:45 2001  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile: Pass the LDFLAGS into the xaw and gtk sub-directories.
+
+Sat Dec 16 16:32:30 2000  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeterrc.c: Removed a gcc compilation warning.
+
+	* procmeterp.h: Updated the comments to include the new file names.
+
+	* procmeter.h: Updated to version 3.3.
+
+	* Makefile: Added gtk, moved xaw parts to sub-directory.
+
+Wed Dec 13 17:45:00 2000  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.2b Released.
+
+Wed Dec 13 17:34:48 2000  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, procmeter.h: Updated to version 3.2b.
+
+Sun Oct 22 15:30:00 2000  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.2a Released.
+
+Sun Oct 22 15:26:04 2000  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, procmeter.h: Updated for version 3.2a.
+
+	* procmeterrc.c: Remove a gcc compilation warning.
+
+	* procmeter.c: Update the usage information.
+
+Tue Mar 21 19:12:41 2000  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeter.1: Make more clear about the command line options.
+
+Thu Dec 16 19:09:05 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeterrc.c: Close the .procmeterrc file after reading from it.
+
+Sun Dec 12 14:15:00 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.2 Released.
+
+Sun Dec 12 14:11:23 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS: Updated to version 3.2.
+
+Wed Dec  8 19:40:53 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeter.c: Updated the usage information.
+
+Mon Dec  6 20:16:36 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* README: Updated to version 3.2.
+
+	* procmeterp.h, procmeterrc.5, procmeterrc.c, procmeter.1, procmeter.c:
+	Allow command line options to override the .procmeterrc file.
+	The sections and parameters in the .procmeterrc file are not case sensitive.
+
+Sun Dec  5 17:16:52 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* run.c: Set the display environment variable before forking.
+
+Sat Dec  4 16:57:31 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* run.c: Fix bug with memory allocation.
+
+	* procmeterp.h, procmeterrc.c, procmeter.c:
+	Free the procmeterrc file memory at the end.
+
+	* module.c: Free the memory for the run command.
+
+Tue Nov 30 19:48:57 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* run.c: Initial revision
+
+	* procmeterp.h, procmeterrc, procmeterrc.5, xmenus.c, Makefile, module.c:
+	Add in simplified method of specifying programs to run.
+
+Tue Oct  5 17:55:44 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeterrc.5: Add a note about grid-min and bar charts.
+
+	* xwindow.c: Resize the widget in the same way as the graph.
+
+Thu Sep 30 17:46:01 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeterrc.5: Added a bar chart widget.
+
+Wed Sep 29 19:00:10 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* xwindow.h, xbitmap.c, xmenus.c, xwindow.c, procmeter.1, procmeter.c, procmeter.h, Makefile:
+	Added a bar chart widget.
+
+Tue Sep 28 18:42:39 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* xmenus.c: Add a third level of menus to select the type of output.
+
+Mon Sep 27 19:02:08 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile, xmenus.c:
+	Abstract the submenu operations in new files widgets/SubMenus.[ch].
+
+Fri Sep 24 19:15:52 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* xmenus.c: Add a delete option to the function menu.
+
+	* module.c, procmeterrc.5:
+	Allow the update interval to be specified globally in the resources section of the config file.
+
+	* procmeterp.h, procmeterrc.5, xmenus.c, xwindow.c, module.c:
+	Allow the labels on the outputs to be changed.
+
+	* module.c: Don't change to the library directory when running.
+
+Tue Aug 31 18:22:33 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* xresources.c, xwindow.h: Simpler parsing of config file options.
+
+	* xwindow.c: Better handling of colour options in the config file.
+
+	* xmenus.c: Better handling of colour options in the config file.
+	Force the dialog box labels to be flat even with Xaw3d.
+
+Mon Aug 30 16:06:05 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeterrc:
+	Changed the white background to almost-white to work better with Xaw3d.
+
+Sun Aug 22 13:00:00 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.1c Released.
+
+Sun Aug 22 11:56:43 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, procmeter.h: Updated to version 3.1c.
+
+Wed Jul 28 19:55:06 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeter.1: Added in the sensors module.
+
+Sat Jun 19 16:30:00 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.1b Released.
+
+Sat Jun 19 16:28:34 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS, procmeter.h: Updated to version 3.1b.
+
+Sat Jun 19 12:52:17 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeter.c:
+	List the available formats (graph or text) in the '-h' output.
+
+	* procmeter.1, procmeterrc.5: Improve the manual page documentation.
+
+Thu May 20 17:51:04 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile: Change the XINCLUDE path to use X11R6.
+
+Sun Apr 18 10:15:00 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.1a Released.
+
+Sun Apr 18 09:12:42 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeter.h, NEWS: Updated to version 3.1a.
+
+Sun Mar  7 14:02:59 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile: Change the X library path.
+
+Sat Mar  6 15:00:00 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.1 Released.
+
+Sat Mar  6 14:56:15 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS: Updated to version 3.1.
+
+Wed Mar  3 19:48:56 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* xwindow.c, procmeterrc, procmeterrc.5:
+	Add a new startup section with an order option instead of the start-text/graph options.
+
+	* procmeter.1: Add in the multiple CPU, disk and interrupt outputs.
+
+Sat Feb 13 11:38:57 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* xmenus.c, xwindow.c, module.c, procmeterrc.5:
+	Allow the grid-max, update and graph-scale parameters to be user specified in the .procmeterrc file.
+
+	* procmeter.h:
+	Change the graph_units parameter to allow different graph_scale values to be user specified.
+
+	* Makefile:
+	Rename the default .procmeterrc to procmeterrc since system defaults don't normally have a '.'.
+
+Fri Feb 12 16:37:53 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeterrc.5:
+	Rename the default .procmeterrc to procmeterrc since system defaults don't normally have a '.'.
+
+Tue Feb  9 19:56:18 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* xmenus.c:
+	Add a configuration file option to specify a program to run from the menu.
+	Change the popping up of menus to make sure they are on screen.
+
+	* .procmeterrc: More information and preconfigured options.
+
+	* procmeterrc.5, procmeterp.h, module.c, procmeter.c:
+	Add a configuration file option to specify a program to run from the menu.
+
+Sun Feb  7 17:16:20 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* xwindow.c:
+	Allow the output displays to be moved around while running.
+
+	* procmeterp.h, Makefile:
+	Updated the way that the paths are specified and compiled into the program.
+
+Sun Feb  7 14:20:27 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* xmenus.c, xwindow.c, procmeterp.h:
+	Allow the output displays to be moved around while running.
+
+Sat Feb  6 18:47:37 1999  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* xmenus.c: Add more information to the properties display window.
+
+Sat Oct 24 13:15:00 1998  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.0a Released.
+
+Sat Oct 24 13:13:11 1998  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* NEWS: Initial revision
+
+	* procmeter.h: Updated to version 3.0a.
+
+	* README: More information about the Internet resources.
+
+	* procmeter.1: A slight re-order of the information.
+
+	* procmeter.c: Format the 'procmeter3 -h' output nicely.
+
+Sat Oct 24 09:04:56 1998  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* .procmeterrc: Default to having the version number visible.
+
+	* xwindow.c:
+	Use an inclusive OR not and exclusive or when adding the default graphs.
+
+Fri Oct 09 15:10:00 1998  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.0 Released.
+
+Sat Sep 26 09:44:59 1998  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* xmenus.c:
+	Ensure that the menus popup in the correct place first time.
+
+	* procmeter.1: Add the LogFile and DiskUsage modules.
+
+	* xwindow.c: Clamp the graph values to 0<=x<=65535.
+
+	* module.c: Bug fix in options parsing.
+
+	* Makefile: Improve the makefile.
+
+Mon Sep 21 18:32:22 1998  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeter.1: Added the biff module.
+
+Sat Sep 19 15:50:00 1998  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version	3.0-beta released.
+	
+Sat Sep 19 15:44:00 1998  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* procmeterp.h, Makefile: Fix the make install problems.
+
+Sat Sep 19 15:22:23 1998  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* xwindow.h, xwindow.c, xresources.c, xmenus.c, xbitmap.c,
+	procmeterrc.c, procmeterrc.5, procmeterp.h, procmeter.h, procmeter.c,
+	procmeter.1, module.c, README, Makefile:
+	Initial revision
+

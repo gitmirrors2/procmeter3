@@ -1,0 +1,141 @@
+                              PROCMETER V3.5c
+                              ===============
+
+The ProcMeter program itself is a framework on which a number of modules
+(plugins) are loaded.  More modules can be written as required to perform more
+monitoring and informational functions.
+
+The statistics that are displayed are grouped by module, with a menu allowing
+selection of module and a sub-menu for each output available for that module.
+
+APM
+        Advanced Power Management information.  These outputs are only available
+        if you have configured the kernel to have the APM feature.
+
+Biff
+        Monitors the e-mail inbox (in /var/spool/mail/<username> or
+        /var/mail/<username>) and indicates the number of e-mails that are
+        waiting and the size.
+
+Date_Time
+        The current date and time and the amount of time since the system was
+        last booted.
+
+DiskUsage
+        Shows the percentage of the disk that is used and the amount of free
+        space for each of the local disks that it finds are mounted or can be
+        mounted when the program starts.
+
+LogFile
+        Monitors the size and number of lines and the rate of increase of these
+        in a set of log files.
+
+Memory
+        The amount of memory that is used for programs, buffers, cache and the
+        amount that is free.
+
+Network
+        The network devices and the amount of traffic on each of them.  It will
+        automatically pick up available devices when it starts.
+
+Processes
+        The load average and the number of processes running and starting.
+
+ProcMeter
+        Information about the procmeter program itself.
+
+Sensors
+        Information from hardware sensors for temperature and fan speed (simple
+        version with fixed scaling).
+
+FanSpeed
+        Information from hardware sensors for fan speed (requires libsensors
+        library installed but does read sensors.conf file for system
+        customisation).
+
+Temperature
+        Information from hardware sensors for temperature (requires libsensors
+        library installed but does read sensors.conf file for system
+        customisation).
+
+Voltage
+        Information from hardware sensors for voltages (requires libsensors
+        library installed but does read sensors.conf file for system
+        customisation).
+
+Statistics
+        Low level system statistics.  For example CPU usage, disk usage,
+        swapping and paging.
+
+VM_Statistics
+        Low level system statistics about virtual memory (swaping and paging)
+        for kernel version 2.5 where the information has moved from the Statistics
+        section.
+
+Stat-CPU
+        Statistics about individual CPU usage including support for SMP
+        machines.
+
+Stat-Disk
+        Statistics about individual disk usage (bytes read and written), with
+        version 2.6 kernels individual partition information is included.
+
+Stat-Intr
+        Statistics about individual interrupts.
+
+Uname
+        The system information from the uname program, hostname and Linux kernel
+        version.
+
+Wireless
+        Information about wireless network devices. It will automatically pick
+        up available devices when it starts.
+
+Longrun
+        For systems with the Transmeta Crueso processor, information about
+        longrun.  Will not work unless the kernel is compiled with CPUID
+        support, and /dev/cpu/0/cpuid must be readable by procmeter.
+
+ACPI
+        Advanced Configuration and Power Interface information. These outputs
+        are only available if you have enabled ACPI in the Linux kernel and you
+        have the appropriate hardware.  ACPI can report various information
+        about a system's battery, and may also have thermal outputs available.
+
+CPUInfo
+        Information about the CPUs in the system, currently only the CPU speed
+        in MHz.
+
+
+Changes
+-------
+
+Since version 3.5b:
+
+Bug Fixes
+ Remove 64-bit compilation warnings and fix variable type mismatch.
+ Fixed df module to handle disks bigger than 2TB.
+ Fixed sensors module to handle new directory format.
+ Pass top-level Makefile variables down to sub directories.
+
+New features
+ Sort the module menu into alphabetical order.
+
+New modules
+ FanSpeed, Temperature & Voltage - Improved hardware sensors.
+
+
+Availability
+------------
+
+Web page: http://www.gedanken.demon.co.uk/procmeter3/
+
+
+Author & Copyright
+------------------
+
+This program is copyright Andrew M. Bishop 1994-2010 (amb@gedanken.demon.co.uk)
+and distributed under GPL.
+
+email: amb@gedanken.demon.co.uk
+[Please put procmeter in the subject line]
