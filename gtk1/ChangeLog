@@ -1,0 +1,109 @@
+2010-02-20  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5c released.
+
+2009-12-07  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* menus.c:
+	Remove 64-bit compilation warnings (patch by Mike T. Liang) as well as fix usage
+	of Boolean/integer data type.
+
+2008-10-23  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5b released.
+
+2008-05-05  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c:
+	Add Extended Window Manager Hints command line option (based on GTK2 patch from
+	Wolfgang Kroener).
+
+2007-12-16  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5a Released.
+
+2007-11-24  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c:
+	Set minimum size for graph window.  Make main window resize like Xaw version
+	depending on contents or when user requests a resize.
+
+2007-11-21  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c:
+	Make sure that the right mouse button menu appears even if there are no outputs
+	displayed.
+
+2007-11-20  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5 Released.
+
+2007-09-26  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile:
+	Rename executables for each version named after the source directory.
+
+2007-09-19  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* run.c: Change to look more like GTK2 version.
+
+	* Makefile: Makefile specifically labelled as being for GTK1.
+
+2007-02-16  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4f Released.
+
+2006-05-18  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile: Check for GTK1 libraries before trying to compile.
+
+2006-04-29  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4e Released.
+
+2005-10-15  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* bitmap.c: Remove gcc-4.0 signed/unsigned pointer warnings.
+
+2004-09-05  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4c Released.
+
+2004-09-05  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c: Make sure setting grid-min and grid-max works.
+
+2003-01-12  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4 Released.
+
+2002-12-07  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c, menus.c: Size strings based on the #define value.
+
+2002-08-10  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.3b Released.
+
+2002-06-04  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c:
+	Make the length of the output name be a compile time variable rather than a hard-coded constant.
+
+	* window.c:
+	Remove the common parts to ../procmeter.c and add wrapper functions for widget updates.
+
+	* window.h: Add prototypes for Resize() and MoveOutput().
+
+	* menus.c:
+	Don't try and do anything if X has not been initialised (e.g. gprocmeter3 -h).
+
+Fri Jan  5 20:00:00 2001  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.3 Released.
+
+Sat Dec 16 16:36:48 2000  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.h, window.c, run.c, resources.c, menus.c, bitmap.c, Makefile:
+	Initial revision
+

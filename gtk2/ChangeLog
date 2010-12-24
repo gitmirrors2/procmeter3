@@ -1,0 +1,54 @@
+2010-02-20  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5c released.
+
+2009-12-07  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* menus.c:
+	Remove 64-bit compilation warnings (patch by Mike T. Liang) as well as fix usage
+	of Boolean/integer data type.
+
+2008-10-23  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5b released.
+
+2008-05-05  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c:
+	Add Extended Window Manager Hints command line option (based on GTK2 patch from
+	Wolfgang Kroener).
+
+2007-12-16  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5a Released.
+
+2007-11-24  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c:
+	Set minimum size for graph window.  Make main window resize like Xaw version
+	depending on contents or when user requests a resize.
+
+2007-11-21  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c:
+	Make sure that the right mouse button menu appears even if there are no outputs
+	displayed.
+
+2007-11-20  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5 Released.
+
+2007-09-26  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile:
+	Rename executables for each version named after the source directory.
+
+2007-09-20  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c: Fix the window resizing (different from GTK1).
+
+2007-09-19  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.h, window.c, run.c, resources.c, menus.c, bitmap.c, Makefile:
+	New file.
+

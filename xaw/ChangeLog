@@ -1,0 +1,90 @@
+2010-02-20  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5c released.
+
+2009-12-07  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* menus.c:
+	Remove 64-bit compilation warnings (patch by Mike T. Liang) as well as fix usage
+	of Boolean/integer data type.
+
+2008-10-23  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5b released.
+
+2008-09-07  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* menus.c: Be more careful with comparisons of different data types.
+
+2008-05-05  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c:
+	Add Extended Window Manager Hints command line option (based on GTK2 patch from
+	Wolfgang Kroener).
+
+2007-11-20  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5 Released.
+
+2007-09-26  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile:
+	Rename executables for each version named after the source directory.
+
+2006-04-29  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4e Released.
+
+2005-10-15  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* bitmap.c: Remove gcc-4.0 signed/unsigned pointer warnings.
+
+2003-01-12  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4 Released.
+
+2002-12-07  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* menus.c, window.c: Size strings based on the #define value.
+
+2002-08-10  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.3b Released.
+
+2002-06-04  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c:
+	Make the length of the output name be a compile time variable rather than a hard-coded constant.
+
+	* window.c:
+	Remove the common parts to ../procmeter.c and add wrapper functions for widget updates.
+
+	* window.h: Add prototypes for Resize() and MoveOutput().
+
+	* menus.c:
+	Don't try and do anything if X has not been initialised (e.g. procmeter3 -h).
+
+Fri Jan  5 20:00:00 2001  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.3 Released.
+
+Sat Dec 16 16:54:23 2000  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile: Initial revision
+
+	* window.c: Change the name of the files.
+	Use display as an extern variable and not pane.
+	Change some functions to match the GTK version.
+
+	* run.c: Change the name of the files.
+	Use display as an extern variable and not pane.
+
+	* menus.c: Change the name of the files.
+	Make some small changes to match up with the GTK version.
+
+	* window.h, resources.c, bitmap.c: Change the name of the files.
+
+Wed Dec 13 17:45:00 2000  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.2b Released - see ../ChangeLog for previous changes.
+

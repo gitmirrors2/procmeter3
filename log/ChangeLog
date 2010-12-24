@@ -1,0 +1,29 @@
+2003-06-28  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4a Released.
+
+2003-04-12  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c: Flush stdout after printing each line.
+
+2003-01-12  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4 Released.
+
+2002-11-30  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile, window.c:
+	Updated now that it is no-longer called 'no-x' but is 'log'.
+
+2002-11-29  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* Makefile: Remove unneeded widget.o entry.
+
+2002-08-10  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.3b Released.
+
+2002-06-04  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c, Makefile: New file.
+

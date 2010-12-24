@@ -1,0 +1,28 @@
+2008-10-23  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.5b released.
+
+2008-10-10  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c: The LCD priority parameter is now a string, not an integer.
+
+2008-04-27  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c: Ensure that graph-min and graph-max get updated correctly.
+
+2003-01-12  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	Version 3.4 Released.
+
+2002-12-08  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c: Fix some out-by-one errors in text positioning.
+
+2002-12-01  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c: Finished the graph and bar chart outputs.
+
+2002-11-30  Andrew M. Bishop  <amb@gedanken.demon.co.uk>
+
+	* window.c, Makefile: New file.
+
