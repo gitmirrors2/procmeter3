@@ -1,0 +1,33 @@
+                        ProcMeter3 - Contributed files
+                        ==============================
+
+These are some miscellaneous files that are useful with procmeter but do not
+form part of the program itself.  Those that were not written by myself have the
+author or contributor noted in the description.
+
+
+procmeter3-3.3a.spec
+--------------------
+
+(By Christopher Barton cpbarton@uiuc.edu)
+
+This is a .spec file for building ProcMeter3 RPMs (written for version 3.3a).
+
+
+
+procmeter3-3.4a.spec
+--------------------
+
+(By matthias brill <matthias.brill@akamail.com>)
+
+This is an alternative .spec file for building ProcMeter3 RPMs (written for
+version 3.4a).
+
+
+procmeter3-3.4a2.spec
+--------------------
+
+(By Tarun@rallydevelopment.com)
+
+This is a .spec file for building ProcMeter3 RPMs (an update for version 3.4a
+based on the version 3.3a one above).
