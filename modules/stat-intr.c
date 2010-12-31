@@ -1,5 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/stat-intr.c,v 1.12 2008-05-05 18:45:36 amb Exp $
+  $Id$
 
   ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
@@ -7,7 +7,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2008 Andrew M. Bishop
+  This file Copyright 1998-2010 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -139,9 +139,10 @@ ProcMeterOutput **Initialise(char *options)
                 f2=fopen("/proc/interrupts","r");
                 if(f2)
                   {
-                   char line2[64];
+                   char *line2=NULL;
+                   size_t length2=0;
 
-                   while(fgets(line2,64,f2))
+                   while(fgets_realloc(&line2,&length2,f2))
                      {
                       int j,p2;
 
@@ -154,6 +155,9 @@ ProcMeterOutput **Initialise(char *options)
                          break;
                         }
                      }
+
+                   if(line2)
+                      free(line2);
 
                    fclose(f2);
                   }
