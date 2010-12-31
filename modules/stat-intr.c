@@ -1,6 +1,4 @@
 /***************************************
-  $Id$
-
   ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Interrupt statistics source file.
