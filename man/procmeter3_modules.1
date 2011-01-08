@@ -1,12 +1,10 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeter3_modules.1,v 1.9 2010-07-03 13:03:12 amb Exp $
-.\"
 .\"  ProcMeter - A system monitoring program for Linux - Version 3.5d.
 .\"
 .\"  Manual page for ProcMeter modules.
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998-2010 Andrew M. Bishop
+.\"  This file Copyright 1998-2011 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
@@ -154,6 +152,11 @@ configuration file which is a space separated list of device names
 .BR Stat-Intr
 More detailed statistics about individual interrupts including support for up to
 256 interrupts.
+If fewer interrupts are wanted then the
+.I options
+parameter in the
+.B .procmeterrc
+configuration file can be set to the maximum number to display.
 .TP
 .BR Uname
 The system information, hostname and Linux kernel version, the same as the

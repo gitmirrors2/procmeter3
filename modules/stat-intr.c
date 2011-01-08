@@ -1,5 +1,5 @@
 /***************************************
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.5d.
 
   Interrupt statistics source file.
   ******************/ /******************
@@ -96,7 +96,14 @@ ProcMeterModule *Load(void)
 ProcMeterOutput **Initialise(char *options)
 {
  FILE *f;
- int n=0;
+ int n;
+ int n_intr=N_INTR;
+
+ if(options)
+    if(sscanf(options,"%d",&n)==1 && n>0 && n<N_INTR)
+       n_intr=n;
+
+ n=0;
 
  outputs[0]=NULL;
 
@@ -128,7 +135,7 @@ ProcMeterOutput **Initialise(char *options)
                          "    found:    EOF",__FILE__);
        else if(sscanf(line,"intr %llu%n",&intr,&p)==1)
          {
-          for(i=0;i<N_INTR;i++)
+          for(i=0;i<n_intr;i++)
              if(sscanf(line+p,"%llu%n",&intr,&pp)==1)
                {
                 char *type="unknown";
@@ -181,7 +188,7 @@ ProcMeterOutput **Initialise(char *options)
           for(i=0;i<nintr;i++)
              outputs[n++]=&intr_outputs[i];
 
-          for(i=0;i<N_INTR+1;i++)
+          for(i=0;i<n_intr+1;i++)
              current[i]=previous[i]=0;
 
           outputs[n]=NULL;

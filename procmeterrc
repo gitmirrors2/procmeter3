@@ -131,6 +131,15 @@ grid-min = 5
 run = XTermWait(df)
 
 ##
+## The resources for the 'Stat-Intr' module
+##
+
+[Stat-Intr]
+
+# To limit the number of interrupts that are processed.
+#options=30
+
+##
 ## The resources for the 'LogFile' module
 ##
 
