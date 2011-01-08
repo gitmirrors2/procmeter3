@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/module.c,v 1.19 2010-02-28 10:21:29 amb Exp $
-
   ProcMeter - A system monitoring program for Linux - Version 3.5d.
 
   Module handling functions.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2010 Andrew M. Bishop
+  This file Copyright 1998-2011 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -434,11 +432,15 @@ char *fgets_realloc(char **buffer,size_t *length,FILE *file)
        break;
     else
       {
-       *length+=INCSIZE;
-       *buffer=(char*)realloc(*buffer,*length);
+       char *newbuffer;
 
-       if(!*buffer)
-         {*length=0;return(NULL);}
+       *length+=INCSIZE;
+       newbuffer=(char*)realloc(*buffer,*length);
+
+       if(!newbuffer)
+         {free(*buffer);*buffer=NULL;*length=0;return(NULL);}
+       else
+          *buffer=newbuffer;
       }
    }
 
