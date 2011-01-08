@@ -5,7 +5,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2010 Andrew M. Bishop
+  This file Copyright 1998-2011 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -142,11 +142,15 @@ ProcMeterOutput **Initialise(char *options)
 
                    while(fgets_realloc(&line2,&length2,f2))
                      {
-                      int j,p2;
+                      int j,p2,pp2;
 
-                      if(sscanf(line2,"%d: %*d%n",&j,&p2)==1 && j==nintr)
+                      if(sscanf(line2,"%d:%n",&j,&p2)==1 && j==nintr)
                         {
+                         unsigned long long ii;
+
                          line2[strlen(line2)-1]=0;
+                         while(sscanf(line2+p2," %llu%n",&ii,&pp2)==1)
+                            p2+=pp2;
                          while(line2[p2]!=0 && (line2[p2]==' ' || line2[p2]=='+'))
                             p2++;
                          type=line2+p2;
