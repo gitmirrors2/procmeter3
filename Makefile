@@ -1,4 +1,3 @@
-# $Header: /home/amb/CVS/procmeter3/Makefile,v 1.28 2010-07-03 12:56:59 amb Exp $
 #
 # ProcMeter - A system monitoring program for Linux - Version 3.5d.
 #
@@ -6,7 +5,7 @@
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994-2010 Andrew M. Bishop
+# This file Copyright 1994-2011 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -125,7 +124,7 @@ distclean : clean
 
 ########
 
-.PHONY : install
+.PHONY : install install-strip
 
 install :
 	@[ -f procmeter3-xaw ] || [ -f procmeter3-gtk1 ] || [ -f procmeter3-gtk2 ] || [ -f procmeter3-log ] || [ -f procmeter3-lcd ] || \
@@ -134,21 +133,21 @@ install :
 	install -d $(DESTDIR)$(MOD_PATH)
 	install -d $(DESTDIR)$(RC_PATH)
 #
-	$(MAKE) -C modules install INSTDIR=$(INSTDIR) MOD_PATH=$(MOD_PATH) LIB_PATH=$(LIB_PATH)
+	$(MAKE) -C modules install STRIP=$(STRIP) INSTDIR=$(INSTDIR) MOD_PATH=$(MOD_PATH) LIB_PATH=$(LIB_PATH)
 #
 	install -d $(DESTDIR)$(INSTDIR)/bin
-	[ ! -f procmeter3-xaw ]  || install -m 755 procmeter3-xaw $(DESTDIR)$(INSTDIR)/bin
+	[ ! -f procmeter3-xaw ]  || install $(STRIP) -m 755 procmeter3-xaw $(DESTDIR)$(INSTDIR)/bin
 	@[ -f procmeter3-xaw ]   || (echo "" ; echo "*** The procmeter3-xaw program has not been installed (it does not exist)." ; echo "")
-	[ ! -f procmeter3-xaw ]  || ln -s procmeter3-xaw $(DESTDIR)$(INSTDIR)/bin/procmeter3
-	[ ! -f procmeter3-gtk1 ] || install -m 755 procmeter3-gtk1 $(DESTDIR)$(INSTDIR)/bin
+	[ ! -f procmeter3-xaw ]  || ln -sf procmeter3-xaw $(DESTDIR)$(INSTDIR)/bin/procmeter3
+	[ ! -f procmeter3-gtk1 ] || install $(STRIP) -m 755 procmeter3-gtk1 $(DESTDIR)$(INSTDIR)/bin
 	@[ -f procmeter3-gtk1 ]  || (echo "" ; echo "*** The procmeter3-gtk1 program has not been installed (it does not exist)." ; echo "")
-	[ ! -f procmeter3-gtk2 ] || install -m 755 procmeter3-gtk2 $(DESTDIR)$(INSTDIR)/bin
+	[ ! -f procmeter3-gtk2 ] || install $(STRIP) -m 755 procmeter3-gtk2 $(DESTDIR)$(INSTDIR)/bin
 	@[ -f procmeter3-gtk2 ]  || (echo "" ; echo "*** The procmeter3-gtk2 program has not been installed (it does not exist)." ; echo "")
-	[ -f procmeter3-gtk2 ]   || [ ! -f procmeter3-gtk1 ] || ln -s procmeter3-gtk1 $(DESTDIR)$(INSTDIR)/bin/gprocmeter3
-	[ -f procmeter3-gtk1 ]   || [ ! -f procmeter3-gtk2 ] || ln -s procmeter3-gtk2 $(DESTDIR)$(INSTDIR)/bin/gprocmeter3
-	[ ! -f procmeter3-log ]  || install -m 755 procmeter3-log $(DESTDIR)$(INSTDIR)/bin
+	[ -f procmeter3-gtk2 ]   || [ ! -f procmeter3-gtk1 ] || ln -sf procmeter3-gtk1 $(DESTDIR)$(INSTDIR)/bin/gprocmeter3
+	[ ! -f procmeter3-gtk2 ] || ln -sf procmeter3-gtk2 $(DESTDIR)$(INSTDIR)/bin/gprocmeter3
+	[ ! -f procmeter3-log ]  || install $(STRIP) -m 755 procmeter3-log $(DESTDIR)$(INSTDIR)/bin
 	@[ -f procmeter3-log ]   || (echo "" ; echo "*** The procmeter3-log program has not been installed (it does not exist)." ; echo "")
-	[ ! -f procmeter3-lcd ]  || install -m 755 procmeter3-lcd $(DESTDIR)$(INSTDIR)/bin
+	[ ! -f procmeter3-lcd ]  || install $(STRIP) -m 755 procmeter3-lcd $(DESTDIR)$(INSTDIR)/bin
 	@[ -f procmeter3-lcd ]   || (echo "" ; echo "*** The procmeter3-lcd program has not been installed (it does not exist)." ; echo "")
 #
 	install -d $(DESTDIR)$(MANDIR)/man1
@@ -168,3 +167,6 @@ install :
 #
 	install -d $(DESTDIR)$(LIB_PATH)/include
 	install -m 644 procmeter.h $(DESTDIR)$(LIB_PATH)/include
+
+install-strip :
+	$(MAKE) install STRIP=-s

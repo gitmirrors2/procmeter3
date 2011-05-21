@@ -1,12 +1,11 @@
-# $Header: /home/amb/CVS/procmeter3/modules/Makefile,v 1.8 2010-02-20 13:38:18 amb Exp $
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.5c.
+# ProcMeter - A system monitoring program for Linux - Version 3.5d.
 #
 # Makefile for the modules.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994-2010 Andrew M. Bishop
+# This file Copyright 1994-2011 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -70,7 +69,7 @@ install :
 	install -d $(DESTDIR)$(MOD_PATH)
 	install -d $(DESTDIR)$(LIB_PATH)/example
 	for module in *.so ; do \
-	   [ $$module = template.so ] || install -m 755 $$module $(DESTDIR)$(MOD_PATH) ;\
+	   [ $$module = template.so ] || install $(STRIP) -m 755 $$module $(DESTDIR)$(MOD_PATH) ;\
 	done
 	install -m 644 README $(DESTDIR)$(LIB_PATH)/example
 	install -m 644 template.c $(DESTDIR)$(LIB_PATH)/example
