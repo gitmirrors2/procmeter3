@@ -1,4 +1,4 @@
-                              PROCMETER V3.5c
+                              PROCMETER V3.5d
                               ===============
 
 The ProcMeter program itself is a framework on which a number of modules
@@ -110,19 +110,17 @@ CPUInfo
 Changes
 -------
 
-Since version 3.5b:
+Since version 3.5c:
 
 Bug Fixes
- Remove 64-bit compilation warnings and fix variable type mismatch.
- Fixed df module to handle disks bigger than 2TB.
- Fixed sensors module to handle new directory format.
- Pass top-level Makefile variables down to sub directories.
+ Remove gcc-4.4 compilation warnings.
+ Make error messages consistent.
+ Fix several errors in manual pages.
+ Don't crash if /proc/interrupts has very long lines.
 
 New features
- Sort the module menu into alphabetical order.
-
-New modules
- FanSpeed, Temperature & Voltage - Improved hardware sensors.
+ Added an option to limit the number of interrupts listed.
+ Allow installation of stripped executables.
 
 
 Availability
@@ -134,7 +132,7 @@ Web page: http://www.gedanken.demon.co.uk/procmeter3/
 Author & Copyright
 ------------------
 
-This program is copyright Andrew M. Bishop 1994-2010 (amb@gedanken.demon.co.uk)
+This program is copyright Andrew M. Bishop 1994-2011 (amb@gedanken.demon.co.uk)
 and distributed under GPL.
 
 email: amb@gedanken.demon.co.uk
