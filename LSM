@@ -1,7 +1,7 @@
 Begin3
 Title:          Procmeter3 - Linux system monitoring program
-Version:        3.5c [Feb-20-10]
-Entered-date:   20FEB10
+Version:        3.5d [Oct-03-11]
+Entered-date:   03OCT11
 Description:    Displays in a series of graph (using X windows) statistics about
                 the system status (amount of CPU, memory, disk accesses,
                 IP packets) and user level information (date, time, mailbox size).
@@ -13,7 +13,7 @@ Author:         amb@gedanken.demon.co.uk
 Maintained-by:  amb@gedanken.demon.co.uk
 Primary-site:   http://www.gedanken.demon.co.uk/download-procmeter
                 145 kB procmeter3-3.5c.tgz
-Alternate-site: http://gedanken.demon.co.uk/download-procmeter
+Alternate-site: http://gedanken.org.uk/software/procmeter3
 Original-site:  
 Platforms:      Linux X-Windows
 Copying-policy: GPL
