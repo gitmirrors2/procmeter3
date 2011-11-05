@@ -1,5 +1,5 @@
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.5d.
+# ProcMeter - A system monitoring program for Linux - Version 3.5e.
 #
 # Makefile.
 #
@@ -36,7 +36,7 @@ LD=gcc
 # Program options
 
 CFLAGS=-g -O2 -Wall
-LDFLAGS=-rdynamic
+LDFLAGS=-rdynamic -lX11
 
 PATHDEFS=-DINSTDIR=\"$(INSTDIR)\"   -DLIB_PATH=\"$(LIB_PATH)\" \
          -DMOD_PATH=\"$(MOD_PATH)\" -DRC_PATH=\"$(RC_PATH)\"
