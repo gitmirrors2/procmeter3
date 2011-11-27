@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/menus.c,v 1.18 2009-12-07 20:00:41 amb Exp $
-
   ProcMeter - A system monitoring program for Linux - Version 3.5c.
 
   X Window menus.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2009 Andrew M. Bishop
+  This file Copyright 1998-2011 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -154,6 +152,8 @@ void CreateMenus(Widget parent)
                                   XtVaNestedList,resources,
                                   NULL);
 
+ XtSetValues(menuline,args,nargs);
+
  /* The functions menu */
 
  functions_menu=XtVaCreatePopupShell("FunctionsMenu",simpleMenuWidgetClass,parent,
@@ -167,6 +167,8 @@ void CreateMenus(Widget parent)
  menuline=XtVaCreateManagedWidget("line",smeLineObjectClass,functions_menu,
                                   XtVaNestedList,resources,
                                   NULL);
+
+ XtSetValues(menuline,args,nargs);
 
  /* The functions menu items */
 
