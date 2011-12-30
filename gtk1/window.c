@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/window.c,v 1.9 2010-02-28 10:21:56 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5d.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   X Windows interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997-2010 Andrew M. Bishop
+  This file Copyright 1997-2011 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -92,10 +90,6 @@ void Start(int *argc,char **argv)
  toplevel=gtk_window_new(GTK_WINDOW_TOPLEVEL);
  gtk_window_set_title(GTK_WINDOW(toplevel),procmeter_version);
  gtk_window_set_policy(GTK_WINDOW(toplevel),TRUE,TRUE,TRUE);
-
- /* Create the bitmaps */
-
- CreateBitmaps(toplevel);
 
  /* Create the menu widgets */
 

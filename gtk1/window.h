@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/window.h,v 1.2 2002-06-04 12:52:27 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.3b.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   Global X windows header file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2000 Andrew M. Bishop
+  This file Copyright 1998-2011 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -37,14 +35,5 @@ GdkColor StringToPixel(char *string);
 gboolean StringToBoolean(char *string);
 int StringToInt(char *string);
 int StringToLabelPosition(char *string);
-
-/* In bitmap.c */
-
-extern GdkPixmap *CircleBitmap;
-extern GdkPixmap *TextBitmap;
-extern GdkPixmap *GraphBitmap;
-extern GdkPixmap *BarBitmap;
-
-void CreateBitmaps(GtkWidget *w);
 
 #endif /* WINDOW_H */

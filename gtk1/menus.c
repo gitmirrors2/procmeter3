@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/menus.c,v 1.4 2009-12-07 20:01:23 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5c.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   X Window menus (GTK version).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2009 Andrew M. Bishop
+  This file Copyright 1998-2011 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -330,7 +328,6 @@ void AddModuleToMenu(Module module)
  for(i=0;module->outputs[i];i++)
    {
     GtkWidget *sme;
- //    GdkPixmap *bitmap=CircleBitmap;
 
     if(module->outputs[i]->output!=prevoutput)
       {
@@ -354,13 +351,6 @@ void AddModuleToMenu(Module module)
 
        prevoutput=module->outputs[i]->output;
       }
-
- //   if(module->outputs[i]->type==PROCMETER_GRAPH)
- //      bitmap=GraphBitmap;
- //   else if(module->outputs[i]->type==PROCMETER_TEXT)
- //      bitmap=TextBitmap;
- //   else if(module->outputs[i]->type==PROCMETER_BAR)
- //      bitmap=BarBitmap;
 
     string="";
     if(module->outputs[i]->type==PROCMETER_GRAPH)

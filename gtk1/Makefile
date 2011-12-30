@@ -1,12 +1,10 @@
-# $Header: /home/amb/CVS/procmeter3/gtk1/Makefile,v 1.4 2007-09-26 18:31:46 amb Exp $
-#
-# ProcMeter - A system monitoring program for Linux - Version 3.5.
+# ProcMeter - A system monitoring program for Linux - Version 3.6.
 #
 # Makefile for gtk1 parts.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994-2007 Andrew M. Bishop
+# This file Copyright 1994-2011 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -69,7 +67,6 @@ all-gtk1 : $(OBJ) procmeter.widget \
 %.o:%.c
 	$(CC) -c $(CFLAGS) $< -o $@ $(X_CFLAGS) -I..
 
-bitmap.o    : bitmap.c    ../procmeterp.h ../procmeter.h window.h
 resources.o : resources.c ../procmeterp.h ../procmeter.h window.h
 menus.o     : menus.c     ../procmeterp.h ../procmeter.h window.h
 window.o    : window.c    ../procmeterp.h ../procmeter.h window.h
