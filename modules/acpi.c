@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/acpi.c,v 1.17 2010-02-28 10:22:11 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5d.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   ACPI source file.
   ******************/ /******************
   Written by Joey Hess.
 
-  This file Copyright 2001-2007 Joey Hess
+  This file Copyright 2001-2011 Joey Hess
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -616,12 +614,11 @@ ProcMeterOutput **Initialise(char *options)
 		 l++;
 
 	 if(*l) {
-		 char *r=l,pr;
+		 char *r=l;
 
 		 while(*r && *r!=' ')
 			 r++;
 
-		 pr=*r;
 		 *r=0;
 
 		 if (strcmp(l, "C") == 0) {
