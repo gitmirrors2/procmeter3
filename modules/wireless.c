@@ -1,6 +1,4 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/wireless.c,v 1.11 2008-05-05 18:45:36 amb Exp $
-
   ProcMeter - A system monitoring program for Linux - Version 3.5b.
 
   Wireless network devices info source file.
@@ -8,7 +6,7 @@
   Written by Joey Hess (with heavy borrowing from netdev.c)
 
   Original file Copyright 2001 Joey Hess
-  Parts of this file Copyright 2001-2008 Andrew M. Bishop
+  Parts of this file Copyright 2001-2011 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -34,7 +32,7 @@ ProcMeterOutput _outputs[3]=
   /* char  text_value[];    */ "0",
   /* long  graph_value;     */ 0,
   /* short graph_scale;     */ 10,
-  /* char  graph_units[];   */ "(%d dBm)"
+  /* char  graph_units[];   */ "%d"
  },
  /*+ Signal level +*/
  {
@@ -84,6 +82,7 @@ static size_t length=0;
 static int ndevices=0;
 static unsigned long *current=NULL,*previous=NULL;
 static char **device=NULL;
+static int nstats=3;
 
 /* Add a new device */
 static void add_device(char *dev);
@@ -126,14 +125,13 @@ ProcMeterOutput **Initialise(char *options)
     if(!fgets_realloc(&line,&length,f))
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/net/wireless'.\n",__FILE__);
     else
-       if(strcmp(line,"Inter-| sta-|   Quality        |   Discarded packets               | Missed\n") == 0 &&
-          strcmp(line,"Inter-| sta-|   Quality        |   Discarded packets               | Missed | WE\n") == 0)
+       if(strcmp(line,"Inter-| sta-|   Quality        |   Discarded packets               | Missed\n") &&
+          strcmp(line,"Inter-| sta-|   Quality        |   Discarded packets               | Missed | WE\n"))
           fprintf(stderr,"ProcMeter(%s): Unexpected header line 1 in '/proc/net/wireless'.\n",__FILE__);
        else
          {
           fgets_realloc(&line,&length,f);
-          if(strcmp(line," face | tus | link level noise |  nwid  crypt   frag  retry   misc | beacon\n") == 0 &&
-             strcmp(line," face | tus | link level noise |  nwid  crypt   frag  retry   misc | beacon | 16\n") == 0)
+          if(strncmp(line," face | tus | link level noise |  nwid  crypt   frag  retry   misc | beacon",75))
              fprintf(stderr,"ProcMeter(%s): Unexpected header line 2 in '/proc/net/wireless'.\n",__FILE__);
           else
             {
@@ -201,7 +199,6 @@ ProcMeterOutput **Initialise(char *options)
 
 static void add_device(char *dev)
 {
- int nstats=3;
  int i;
 
  for(i=0;i<ndevices;i++)
@@ -211,7 +208,7 @@ static void add_device(char *dev)
  outputs=(ProcMeterOutput**)realloc((void*)outputs,(ndevices+nstats+1)*sizeof(ProcMeterOutput*));
  device=(char**)realloc((void*)device,(ndevices+nstats+1)*sizeof(char*));
 
- for(i=0;nstats;nstats--)
+ for(i=0;i<nstats;i++)
    {
     outputs[ndevices]=(ProcMeterOutput*)malloc(sizeof(ProcMeterOutput));
     device[ndevices]=(char*)malloc(strlen(dev)+1);
@@ -224,8 +221,6 @@ static void add_device(char *dev)
     strcpy(device[ndevices],dev);
 
     ndevices++;
-
-    i++;
    }
 
  outputs[ndevices]=NULL;
@@ -277,32 +272,25 @@ int Update(time_t now,ProcMeterOutput *output)
        for(i=strlen(line);i>6 && line[i]!=':';i--); line[i++]=0;
        sscanf(&line[i],proc_net_wireless_format,&link,&level,&noise);
 
-       /* The kernel (2.4.17) misreports negative link values due to
-	* underflow, so ignore what it reports for now, and calculate
-	* link from level and noise. */
-       link = level - noise;
-       if (link < 0)
-	       link = 0;
-       
        for(j=0;outputs[j];j++)
           if(!strcmp(device[j],dev))
-            {
-             current[  j]=link;
-	     /* FIXME This is not really right. 
-	      * Subtracting this constant should only be done if
-	      * the stats are in dBm. If they are in relative values, no
-	      * substraction should be done. However, to find that out
-	      * would require a complex ioctl, and I have no cards that
-	      * use this latter style of reporting.
-	      */
-	     current[++j]=level - 0x100;
-             current[++j]=noise - 0x100;
-             break;
-            }
+             switch(j%nstats)
+               {
+               case 0:
+                current[j]=link;
+                break;
+               case 1:
+                current[j]=level;
+                break;
+               case 2:
+                current[j]=noise;
+                break;
+               default:
+                ;
+               }
       }
 
     fclose(f);
-    
 
     last=now;
    }
@@ -312,7 +300,19 @@ int Update(time_t now,ProcMeterOutput *output)
       {
        float val = (float)((float)(abs(current[j]))/output->graph_scale);
        output->graph_value=PROCMETER_GRAPH_FLOATING(val);
-       sprintf(output->text_value,"%li dBm",current[j]);
+
+       switch(j%nstats)
+         {
+         case 0:
+          sprintf(output->text_value,"%li",current[j]);
+          break;
+         case 1:
+         case 2:
+          sprintf(output->text_value,"%li dBm",current[j]);
+          break;
+         default:
+          ;
+         }
 
        return(0);
       }
