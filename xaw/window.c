@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/xaw/window.c,v 1.16 2010-02-28 10:22:25 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5d.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   X Windows interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997-2010 Andrew M. Bishop
+  This file Copyright 1997-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -538,7 +536,7 @@ void MoveOutput(Output output1,Output output2,int direction)
 
 void Resize(void)
 {
- Dimension psize,size;
+ Dimension psize;
  int gsize,msize;
  int i,ngraphs=0;
 
@@ -582,7 +580,7 @@ void Resize(void)
    {
     if(displayed[i]->type==PROCMETER_GRAPH || displayed[i]->type==PROCMETER_BAR)
       {
-       size=gsize/ngraphs;
+       Dimension size=gsize/ngraphs;
        gsize-=size;
        ngraphs--;
       }
