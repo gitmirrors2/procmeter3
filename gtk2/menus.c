@@ -5,7 +5,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2011 Andrew M. Bishop
+  This file Copyright 1998-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -155,6 +155,7 @@ void CreateMenus(GtkWidget *parent)
  properties_dialog=gtk_dialog_new();
  gtk_window_set_title(GTK_WINDOW(properties_dialog),"ProcMeter Properties");
  gtk_widget_set_usize(GTK_WIDGET(properties_dialog),300,400);
+ gtk_window_set_resizable(GTK_WINDOW(properties_dialog),FALSE);
 
  /* The properties dialog elements. */
 
