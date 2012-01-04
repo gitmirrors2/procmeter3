@@ -76,7 +76,6 @@ void Start(int *argc,char **argv)
 {
  static char procmeter_version[]="ProcMeter V" PROCMETER_VERSION;
  char *string;
- GtkWidget *event_box;
  int i,j=0;
 
  if((string=GetProcMeterRC("resources","horizontal")) &&
@@ -97,10 +96,6 @@ void Start(int *argc,char **argv)
 
  /* Create the pane widget */
 
- event_box=gtk_event_box_new();
- gtk_container_add(GTK_CONTAINER(toplevel),event_box);
- gtk_widget_show(event_box);
-
  if(vertical)
     pane=gtk_vbox_new(FALSE,0);
  else
@@ -108,13 +103,13 @@ void Start(int *argc,char **argv)
 
  gtk_box_set_spacing(GTK_BOX(pane),2);
 
- gtk_container_add(GTK_CONTAINER(event_box),pane);
+ gtk_container_add(GTK_CONTAINER(toplevel),pane);
  gtk_widget_show(GTK_WIDGET(pane));
 
  gtk_signal_connect(GTK_OBJECT(toplevel),"configure_event",
                     GTK_SIGNAL_FUNC(ResizePaneCallback),NULL);
 
- AddMenuToOutput(event_box,NULL);
+ AddMenuToOutput(pane,NULL);
 
  /* Show the widgets */
 
