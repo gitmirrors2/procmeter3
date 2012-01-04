@@ -5,7 +5,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997-2011 Andrew M. Bishop
+  This file Copyright 1997-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -97,6 +97,13 @@ void Start(int *argc,char **argv)
  event_box=gtk_event_box_new();
  gtk_container_add(GTK_CONTAINER(toplevel),event_box);
  gtk_widget_show(event_box);
+
+ if((string=GetProcMeterRC("resources","foreground")))
+   {
+    GdkColor color=StringToPixel(string);
+
+    gtk_widget_modify_bg(GTK_WIDGET(event_box),GTK_STATE_NORMAL,&color);
+   }
 
  if(vertical)
     pane=gtk_vbox_new(FALSE,0);
@@ -507,7 +514,7 @@ void MoveOutput(Output output1,Output output2,int direction)
 
 void Resize(void)
 {
- gushort psize,size;
+ gushort psize;
  gint width,height;
  int gsize,msize;
  int i,ngraphs=0;
@@ -569,33 +576,33 @@ void Resize(void)
     return;
    }
 
- for(i=0;i<ndisplayed;i++)
-   {
-    if(displayed[i]->type==PROCMETER_GRAPH || displayed[i]->type==PROCMETER_BAR)
-      {
-       size=gsize/ngraphs;
-       gsize-=size;
-       ngraphs--;
-
-       if(vertical)
-          height=size;
-       else
-          width=size;
-      }
-    else
-      {
-       GtkRequisition request;
-
-       gtk_widget_size_request(GTK_WIDGET(displayed[i]->output_widget),&request);
-
-       if(vertical)
-          height=request.height;
-       else
-          width=request.width;
-      }
-
-    //gtk_widget_set_size_request(GTK_WIDGET(displayed[i]->output_widget),width,height);
-   }
+// for(i=0;i<ndisplayed;i++)
+//   {
+//    if(displayed[i]->type==PROCMETER_GRAPH || displayed[i]->type==PROCMETER_BAR)
+//      {
+//       gushort size=gsize/ngraphs;
+//       gsize-=size;
+//       ngraphs--;
+//
+//       if(vertical)
+//          height=size;
+//       else
+//          width=size;
+//      }
+//    else
+//      {
+//       GtkRequisition request;
+//
+//       gtk_widget_size_request(GTK_WIDGET(displayed[i]->output_widget),&request);
+//
+//       if(vertical)
+//          height=request.height;
+//       else
+//          width=request.width;
+//      }
+//
+//    gtk_widget_set_size_request(GTK_WIDGET(displayed[i]->output_widget),width,height);
+//   }
 
  gtk_container_resize_children(GTK_CONTAINER(pane));
 }
