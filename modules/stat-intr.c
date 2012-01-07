@@ -1,11 +1,11 @@
 /***************************************
-  ProcMeter - A system monitoring program for Linux - Version 3.5d.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   Interrupt statistics source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2011 Andrew M. Bishop
+  This file Copyright 1998-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -138,7 +138,7 @@ ProcMeterOutput **Initialise(char *options)
           for(i=0;i<n_intr;i++)
              if(sscanf(line+p,"%llu%n",&intr,&pp)==1)
                {
-                char *type="unknown";
+                char *type=NULL;
                 FILE *f2;
 
                 f2=fopen("/proc/interrupts","r");
@@ -160,7 +160,7 @@ ProcMeterOutput **Initialise(char *options)
                             p2+=pp2;
                          while(line2[p2]!=0 && (line2[p2]==' ' || line2[p2]=='+'))
                             p2++;
-                         type=line2+p2;
+                         type=strcpy(malloc(strlen(line2+p2)+1),line2+p2);
                          break;
                         }
                      }
@@ -175,8 +175,11 @@ ProcMeterOutput **Initialise(char *options)
 
                 intr_outputs[nintr]=_intr_output;
                 sprintf(intr_outputs[nintr].name,_intr_output.name,nintr);
-                intr_outputs[nintr].description=(char*)malloc(strlen(_intr_output.description)+8+strlen(type));
-                sprintf(intr_outputs[nintr].description,_intr_output.description,nintr,type);
+                intr_outputs[nintr].description=(char*)malloc(strlen(_intr_output.description)+8+strlen(type?type:"unknown"));
+                sprintf(intr_outputs[nintr].description,_intr_output.description,nintr,type?type:"unknown");
+
+                if(type)
+                   free(type);
 
                 nintr++;
                }
