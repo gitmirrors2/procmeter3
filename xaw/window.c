@@ -578,9 +578,11 @@ void Resize(void)
 
  for(i=0;i<ndisplayed;i++)
    {
+    Dimension size;
+
     if(displayed[i]->type==PROCMETER_GRAPH || displayed[i]->type==PROCMETER_BAR)
       {
-       Dimension size=gsize/ngraphs;
+       size=gsize/ngraphs;
        gsize-=size;
        ngraphs--;
       }
