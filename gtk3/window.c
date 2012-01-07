@@ -604,7 +604,7 @@ void Resize(void)
 //    gtk_widget_set_size_request(GTK_WIDGET(displayed[i]->output_widget),width,height);
 //   }
 
- gtk_container_resize_children(GTK_CONTAINER(pane));
+ gtk_widget_queue_resize(GTK_WIDGET(pane));
 }
 
 
