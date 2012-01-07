@@ -350,7 +350,7 @@ static void BarResize(ProcMeterBar *pmw)
 
  cairo_destroy(cr);
 
- pmw->grid_units_x=allocation_width-width;
+ pmw->grid_units_x=allocation_width-width-2;
 
  pmw->grid_maxvis=allocation_width/3;
 

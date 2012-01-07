@@ -226,7 +226,7 @@ static void get_preferred_width(GtkWidget *widget,gint *minimal_width,gint *natu
  else
     pango_layout_set_font_description(layout,gtk_style_context_get_font(gtk_widget_get_style_context(&pmw->generic.widget),GTK_STATE_FLAG_NORMAL));
 
- pango_layout_set_text(layout,"NNNNNNNNNNNNNNN",-1);
+ pango_layout_set_text(layout,"NNNNNNNNNNNNN",-1);
  pango_layout_get_pixel_size(layout,&width,&height);
 
  cairo_destroy(cr);
@@ -267,12 +267,12 @@ static void get_preferred_height(GtkWidget *widget,gint *minimal_height,gint *na
  else
     pango_layout_set_font_description(layout,gtk_style_context_get_font(gtk_widget_get_style_context(&pmw->generic.widget),GTK_STATE_FLAG_NORMAL));
 
- pango_layout_set_text(layout,"AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789",-1);
+ pango_layout_set_text(layout,"AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789()/",-1);
  pango_layout_get_pixel_extents(layout,&ink_rect,NULL);
 
  cairo_destroy(cr);
 
- *minimal_height=*natural_height=(1+PANGO_ASCENT(ink_rect))+(1+PANGO_DESCENT(ink_rect))+2+pmw->generic.label_height;
+ *minimal_height=*natural_height=PANGO_ASCENT(ink_rect)+PANGO_DESCENT(ink_rect)+2+pmw->generic.label_height;
 }
 
 
@@ -358,14 +358,14 @@ static void TextResize(ProcMeterText *pmw)
  else
     pango_layout_set_font_description(layout,gtk_style_context_get_font(gtk_widget_get_style_context(&pmw->generic.widget),GTK_STATE_FLAG_NORMAL));
 
- pango_layout_set_text(layout,"AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789",-1);
+ pango_layout_set_text(layout,"AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789()/",-1);
  pango_layout_get_pixel_size(layout,&width,&height);
  pango_layout_get_pixel_extents(layout,&ink_rect,NULL);
 
  cairo_destroy(cr);
 
  pmw->text_x=(gtk_widget_get_allocated_width(&pmw->generic.widget)-width)/2;
- pmw->text_y=pmw->generic.body_start+1+(1+PANGO_ASCENT(ink_rect));
+ pmw->text_y=pmw->generic.body_start+1+PANGO_ASCENT(ink_rect);
 }
 
 

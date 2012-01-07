@@ -339,7 +339,7 @@ static void GenericResize(ProcMeterGeneric *pmw)
 
     cairo_destroy(cr);
 
-    pmw->label_height=(1+PANGO_ASCENT(ink_rect))+(1+PANGO_DESCENT(ink_rect))+2;
+    pmw->label_height=PANGO_ASCENT(ink_rect)+(1+PANGO_DESCENT(ink_rect))+2;
     pmw->label_x=(allocation_width-width)/2;
     if(pmw->label_pos==ProcMeterLabelTop)
        pmw->label_y=pmw->label_height-1-(1+PANGO_DESCENT(ink_rect));

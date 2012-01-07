@@ -383,7 +383,7 @@ static void GraphResize(ProcMeterGraph *pmw)
 
  cairo_destroy(cr);
 
- pmw->grid_units_x=allocation_width-width;
+ pmw->grid_units_x=allocation_width-width-2;
 
  pmw->grid_maxvis=pmw->generic.body_height/3;
 
