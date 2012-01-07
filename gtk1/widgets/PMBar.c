@@ -1,11 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMBar.c,v 1.4 2008-04-27 15:21:30 amb Exp $
-
-  ProcMeter Bar Widget Source file (for ProcMeter3 3.5b).
+  ProcMeter Bar Widget Source file (for ProcMeter3 3.6).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996-2008 Andrew M. Bishop
+  This file Copyright 1996-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -563,5 +561,5 @@ void ProcMeterBarAddDatum(ProcMeterBar *pmw,gushort datum)
        pmw->grid_drawn=1;
    }
 
- BarUpdate(pmw,TRUE);
+ BarUpdate(pmw,FALSE);
 }
