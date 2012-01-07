@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for prog in gtk1 gtk2 xaw log lcd; do
+for prog in gtk1 gtk2 gtk3 xaw log lcd; do
 
     make distclean
 
