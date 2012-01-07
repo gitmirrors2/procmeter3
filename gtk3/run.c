@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/run.c,v 1.2 2010-02-28 10:22:03 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5d.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   Run external programs.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1999-2010 Andrew M. Bishop
+  This file Copyright 1999-2011 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -21,7 +19,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include <gtk/gtkwidget.h>
+#include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 
 #include "procmeterp.h"

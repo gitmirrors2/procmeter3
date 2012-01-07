@@ -1,11 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/widgets/PMBar.c,v 1.3 2008-04-27 15:21:30 amb Exp $
-
-  ProcMeter Bar Widget Source file (for ProcMeter3 3.5b).
+  ProcMeter Bar Widget Source file (for ProcMeter3 3.6).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996-2008 Andrew M. Bishop
+  This file Copyright 1996-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -22,11 +20,12 @@
 
 static void procmeterbar_class_init(ProcMeterBarClass *class);
 static void procmeterbar_init(ProcMeterBar *pmw);
-static void destroy(GtkObject *object);
+static void destroy(GtkWidget *widget);
 static void realize(GtkWidget *widget);
-static void size_request(GtkWidget *widget,GtkRequisition *requisition);
+static void get_preferred_width(GtkWidget *widget,gint *minimal_width,gint *natural_width);
+static void get_preferred_height(GtkWidget *widget,gint *minimal_height,gint *natural_height);
 static void size_allocate(GtkWidget *widget,GtkAllocation *allocation);
-static gint expose(GtkWidget *widget,GdkEventExpose *event);
+static gboolean draw(GtkWidget *widget,cairo_t *cr);
 
 static void BarResize(ProcMeterBar *pmw);
 static void BarUpdate(ProcMeterBar *pmw,gboolean all);
@@ -48,16 +47,18 @@ guint gtk_procmeterbar_get_type(void)
 
  if(!pmw_type)
    {
-    GtkTypeInfo pmw_info={"ProcMeterBar",
-                          sizeof(ProcMeterBar),
-                          sizeof(ProcMeterBarClass),
-                          (GtkClassInitFunc) procmeterbar_class_init,
-                          (GtkObjectInitFunc) procmeterbar_init,
-                          (gpointer) NULL,
-                          (gpointer) NULL,
-                          (GtkClassInitFunc) NULL};
+    GTypeInfo pmw_info={sizeof(ProcMeterBarClass),
+                        NULL,
+                        NULL,
+                        (GClassInitFunc) procmeterbar_class_init,
+                        NULL,
+                        NULL,
+                        sizeof(ProcMeterBar),
+                        0,
+                        (GInstanceInitFunc) procmeterbar_init,
+                        NULL};
 
-    pmw_type=gtk_type_unique(gtk_procmetergeneric_get_type(),&pmw_info);
+    pmw_type=g_type_register_static(gtk_procmetergeneric_get_type(),"ProcMeterBar",&pmw_info,0);
    }
 
  return(pmw_type);
@@ -72,24 +73,22 @@ guint gtk_procmeterbar_get_type(void)
 
 static void procmeterbar_class_init(ProcMeterBarClass *class)
 {
- GtkObjectClass *object_class;
  GtkWidgetClass *widget_class;
 
  g_return_if_fail(class!=NULL);
 
- object_class=(GtkObjectClass*)class;
  widget_class=(GtkWidgetClass*)class;
 
  class->resize=BarResize;
  class->update=BarUpdate;
 
- parent_class=gtk_type_class(gtk_procmetergeneric_get_type());
+ parent_class=g_type_class_ref(gtk_procmetergeneric_get_type());
 
- object_class->destroy=destroy;
-
+ widget_class->destroy=destroy;
  widget_class->realize=realize;
- widget_class->expose_event=expose;
- widget_class->size_request=size_request;
+ widget_class->draw=draw;
+ widget_class->get_preferred_width=get_preferred_width;
+ widget_class->get_preferred_height=get_preferred_height;
  widget_class->size_allocate=size_allocate;
 }
 
@@ -110,7 +109,7 @@ static void procmeterbar_init(ProcMeterBar *pmw)
 
  pmw->grid_units=empty_string;
 
- pmw->grid_gc=NULL;
+ gtk_style_context_get_color(gtk_widget_get_style_context(&pmw->generic.widget),GTK_STATE_FLAG_NORMAL,&pmw->grid_color);
 
  pmw->grid_drawn=1;
  pmw->grid_min=1;
@@ -144,7 +143,7 @@ GtkWidget* gtk_procmeterbar_new(void)
 {
  ProcMeterBar *pmw;
 
- pmw=gtk_type_new(gtk_procmeterbar_get_type());
+ pmw=g_object_new(gtk_procmeterbar_get_type(),NULL);
 
  return(GTK_WIDGET(pmw));
 }
@@ -153,31 +152,26 @@ GtkWidget* gtk_procmeterbar_new(void)
 /*++++++++++++++++++++++++++++++++++++++
   Destroy a Widget
 
-  GtkObject *object The widget to destroy.
+  GtkWidget *widget The widget to destroy.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void destroy(GtkObject *object)
+static void destroy(GtkWidget *widget)
 {
  ProcMeterBar *pmw;
 
- g_return_if_fail(object!=NULL);
- g_return_if_fail(GTK_IS_PROCMETERBAR(object));
+ g_return_if_fail(widget!=NULL);
+ g_return_if_fail(GTK_IS_PROCMETERBAR(widget));
 
- pmw=GTK_PROCMETERBAR(object);
+ pmw=GTK_PROCMETERBAR(widget);
 
- if(pmw->grid_gc)
-   {
-    gdk_gc_destroy(pmw->grid_gc);
-    pmw->grid_gc=NULL;
-   }
  if(pmw->grid_units!=empty_string)
    {
     free(pmw->grid_units);
     pmw->grid_units=empty_string;
    }
 
- if(GTK_OBJECT_CLASS(parent_class)->destroy)
-    (*GTK_OBJECT_CLASS(parent_class)->destroy)(object);
+ if(GTK_WIDGET_CLASS(parent_class)->destroy)
+    (*GTK_WIDGET_CLASS(parent_class)->destroy)(widget);
 }
 
 
@@ -191,60 +185,78 @@ static void realize(GtkWidget *widget)
 {
  ProcMeterBar *pmw;
  GdkWindowAttr attributes;
+ GtkAllocation allocation;
  gint attributes_mask;
 
  g_return_if_fail(widget!=NULL);
  g_return_if_fail(GTK_IS_PROCMETERBAR(widget));
 
- GTK_WIDGET_SET_FLAGS(widget,GTK_REALIZED);
+ gtk_widget_set_realized(widget,TRUE);
  pmw=GTK_PROCMETERBAR(widget);
 
- attributes.x=widget->allocation.x;
- attributes.y=widget->allocation.y;
- attributes.width=widget->allocation.width;
- attributes.height=widget->allocation.height;
+ gtk_widget_get_allocation(widget,&allocation);
+
+ attributes.x=allocation.x;
+ attributes.y=allocation.y;
+ attributes.width=allocation.width;
+ attributes.height=allocation.height;
  attributes.wclass=GDK_INPUT_OUTPUT;
  attributes.window_type=GDK_WINDOW_CHILD;
  attributes.event_mask=gtk_widget_get_events(widget)|GDK_EXPOSURE_MASK|GDK_BUTTON_PRESS_MASK;
  attributes.visual=gtk_widget_get_visual(widget);
- attributes.colormap=gtk_widget_get_colormap(widget);
 
- attributes_mask=GDK_WA_X|GDK_WA_Y|GDK_WA_VISUAL|GDK_WA_COLORMAP;
- widget->window=gdk_window_new(widget->parent->window,&attributes,attributes_mask);
+ attributes_mask=GDK_WA_X|GDK_WA_Y|GDK_WA_VISUAL;
+ gtk_widget_set_window(widget,gdk_window_new(gtk_widget_get_parent_window(widget),&attributes,attributes_mask));
 
- widget->style=gtk_style_attach(widget->style,widget->window);
-
- gdk_window_set_user_data(widget->window,widget);
-
- gtk_style_set_background(widget->style,widget->window,GTK_STATE_ACTIVE);
-
- if(pmw->generic.body_bg_set)
-    gdk_window_set_background(widget->window,&pmw->generic.body_bg_color);
+ gdk_window_set_user_data(gtk_widget_get_window(widget),widget);
 
  BarUpdate(pmw,TRUE);
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  Choose the size that the widget wants to be.
+  Return the preferred width of the widget
 
-  GtkWidget *widget The widget to be resized.
+  GtkWidget *widget The widget whose width is requested.
 
-  GtkRequisition *requisition Returns the request for the size.
+  gint *minimal_width Returns the minimal width.
+
+  gint *natural_width Returns the preferred width.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void size_request(GtkWidget *widget,GtkRequisition *requisition)
+static void get_preferred_width(GtkWidget *widget,gint *minimal_width,gint *natural_width)
+{
+ g_return_if_fail(widget!=NULL);
+ g_return_if_fail(GTK_IS_PROCMETERBAR(widget));
+ g_return_if_fail(minimal_width!=NULL);
+ g_return_if_fail(natural_width!=NULL);
+
+ *minimal_width=*natural_width=50; /* arbitrary */
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Return the preferred height of the widget
+
+  GtkWidget *widget The widget whose height is requested.
+
+  gint *minimal_height Returns the minimal height.
+
+  gint *natural_height Returns the preferred height.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+static void get_preferred_height(GtkWidget *widget,gint *minimal_height,gint *natural_height)
 {
  ProcMeterBar *pmw;
 
  g_return_if_fail(widget!=NULL);
  g_return_if_fail(GTK_IS_PROCMETERBAR(widget));
- g_return_if_fail(requisition!=NULL);
+ g_return_if_fail(minimal_height!=NULL);
+ g_return_if_fail(natural_height!=NULL);
 
  pmw=GTK_PROCMETERBAR(widget);
 
- requisition->height=20+pmw->generic.label_height;
- requisition->width=50;
+ *minimal_height=*natural_height=20+pmw->generic.label_height;
 }
 
 
@@ -262,12 +274,12 @@ static void size_allocate(GtkWidget *widget,GtkAllocation *allocation)
  g_return_if_fail(GTK_IS_PROCMETERBAR(widget));
  g_return_if_fail(allocation!=NULL);
 
- widget->allocation=*allocation;
- if(GTK_WIDGET_REALIZED(widget))
+ gtk_widget_set_allocation(widget,allocation);
+ if(gtk_widget_get_realized(widget))
    {
     ProcMeterBar *pmw=GTK_PROCMETERBAR(widget);
 
-    gdk_window_move_resize(widget->window,
+    gdk_window_move_resize(gtk_widget_get_window(widget),
                            allocation->x,allocation->y,
                            allocation->width,allocation->height);
 
@@ -279,23 +291,19 @@ static void size_allocate(GtkWidget *widget,GtkAllocation *allocation)
 /*++++++++++++++++++++++++++++++++++++++
   Redisplay the ProcMeter Bar Widget.
 
-  gint expose Returns false
+  gboolean draw Returns false
 
   GtkWidget *widget The Widget to redisplay.
 
-  GdkEventExpose *event The event that caused the redisplay.
+  cairo_t *cr A cairo object describing the position to draw.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static gint expose(GtkWidget *widget,GdkEventExpose *event)
+static gboolean draw(GtkWidget *widget,cairo_t *cr)
 {
  ProcMeterBar *pmw;
 
  g_return_val_if_fail(widget!=NULL,FALSE);
  g_return_val_if_fail(GTK_IS_PROCMETERBAR(widget),FALSE);
- g_return_val_if_fail(event!=NULL,FALSE);
-
- if(event->count>0)
-    return(FALSE);
 
  pmw=GTK_PROCMETERBAR(widget);
 
@@ -313,21 +321,38 @@ static gint expose(GtkWidget *widget,GdkEventExpose *event)
 
 static void BarResize(ProcMeterBar *pmw)
 {
- GdkFont *label_font;
+ int allocation_width;
+ cairo_t *cr;
+ PangoLayout *layout;
+ int width,height;
 
  g_return_if_fail(pmw!=NULL);
 
- (parent_class->resize)(&pmw->generic);
+ if(parent_class->resize)
+    parent_class->resize(&pmw->generic);
 
  pmw->generic.label_x=2;
 
  /* The grid parts. */
 
- label_font=pmw->generic.label_font?pmw->generic.label_font:gtk_style_get_font(pmw->generic.widget.style);
+ allocation_width=gtk_widget_get_allocated_width(&pmw->generic.widget);
 
- pmw->grid_units_x=pmw->generic.widget.allocation.width-gdk_string_width(label_font,pmw->grid_units);
+ cr=gdk_cairo_create(gtk_widget_get_root_window(&pmw->generic.widget));
 
- pmw->grid_maxvis=pmw->generic.widget.allocation.width/3;
+ layout=pango_cairo_create_layout(cr);
+ if(pmw->generic.label_font)
+    pango_layout_set_font_description(layout,pmw->generic.label_font);
+ else
+    pango_layout_set_font_description(layout,gtk_style_context_get_font(gtk_widget_get_style_context(&pmw->generic.widget),GTK_STATE_FLAG_NORMAL));
+
+ pango_layout_set_text(layout,pmw->grid_units,-1);
+ pango_layout_get_pixel_size(layout,&width,&height);
+
+ cairo_destroy(cr);
+
+ pmw->grid_units_x=allocation_width-width;
+
+ pmw->grid_maxvis=allocation_width/3;
 
  if(pmw->generic.label_pos==ProcMeterLabelTop)
     pmw->generic.body_start=pmw->generic.label_height;
@@ -353,68 +378,89 @@ static void BarUpdate(ProcMeterBar *pmw,gboolean all)
 {
  g_return_if_fail(pmw!=NULL);
 
- if(GTK_WIDGET_VISIBLE(&pmw->generic.widget))
+ if(gtk_widget_get_visible(&pmw->generic.widget))
    {
-    GdkGC *grid_gc=pmw->grid_gc?pmw->grid_gc:pmw->generic.widget.style->fg_gc[GTK_STATE_NORMAL];
-    GdkGC *body_gc=pmw->generic.body_gc?pmw->generic.body_gc:pmw->generic.widget.style->fg_gc[GTK_STATE_NORMAL];
-    GdkFont *label_font=pmw->generic.label_font?pmw->generic.label_font:gtk_style_get_font(pmw->generic.widget.style);
-
+    int allocation_width;
+    cairo_t *cr;
     int i;
     int scale=PROCMETER_GRAPH_SCALE*pmw->grid_num;
     gshort pos;
     gshort top_average_bottom,bottom_average_top,average_size;
 
+    cr=gdk_cairo_create(gtk_widget_get_window(&pmw->generic.widget));
+    cairo_set_line_width(cr,1.0);
+
+    allocation_width=gtk_widget_get_allocated_width(&pmw->generic.widget);
+
     if(all)
       {
-       (parent_class->update)(&pmw->generic);
+       if(parent_class->update)
+          parent_class->update(&pmw->generic);
 
        if(pmw->generic.label_pos!=ProcMeterLabelNone)
-          gdk_draw_string(pmw->generic.widget.window,label_font,pmw->generic.label_gc,
-                          pmw->grid_units_x,pmw->generic.label_y,
-                          pmw->grid_units);
+         {
+          PangoLayout *layout;
+
+          cairo_set_source_rgb(cr,pmw->generic.label_color.red,pmw->generic.label_color.green,pmw->generic.label_color.blue);
+
+          layout=pango_cairo_create_layout(cr);
+          if(pmw->generic.label_font)
+             pango_layout_set_font_description(layout,pmw->generic.label_font);
+          else
+             pango_layout_set_font_description(layout,gtk_style_context_get_font(gtk_widget_get_style_context(&pmw->generic.widget),GTK_STATE_FLAG_NORMAL));
+
+          cairo_move_to(cr,pmw->grid_units_x,pmw->generic.label_y);
+          pango_layout_set_text(layout,pmw->grid_units,-1);
+          pango_cairo_show_layout(cr,layout);
+         }
       }
     else
-       gdk_window_clear_area(pmw->generic.widget.window,
-                             0,pmw->generic.body_start,
-                             pmw->generic.widget.allocation.width,pmw->generic.body_height);
+      {
+       cairo_set_source_rgb(cr,pmw->generic.body_bg_color.red,pmw->generic.body_bg_color.green,pmw->generic.body_bg_color.blue);
 
+       cairo_rectangle(cr,0,pmw->generic.body_start,allocation_width,pmw->generic.body_height);
+       cairo_fill(cr);
+      }
 
-    pos=pmw->data_sum*pmw->generic.widget.allocation.width/(scale*2);
+    pos=pmw->data_sum*allocation_width/(scale*2);
 
     top_average_bottom=pmw->generic.body_start+2*(pmw->generic.body_height>>3);
     bottom_average_top=pmw->generic.body_start+pmw->generic.body_height-2*(pmw->generic.body_height>>3);
     average_size=pmw->generic.body_height>>3;
 
-    gdk_draw_rectangle(pmw->generic.widget.window,body_gc,1,
-                       pos-average_size,top_average_bottom-average_size,
-                       average_size    ,average_size);
+    cairo_set_source_rgb(cr,pmw->generic.body_fg_color.red,pmw->generic.body_fg_color.green,pmw->generic.body_fg_color.blue);
 
-    gdk_draw_rectangle(pmw->generic.widget.window,body_gc,1,
-                       pos-average_size,bottom_average_top,
-                       average_size    ,average_size);
+    cairo_rectangle(cr,pos-average_size,top_average_bottom-average_size,average_size,average_size);
+    cairo_fill(cr);
 
-    pos=pmw->data[pmw->data_index]*pmw->generic.widget.allocation.width/scale;
+    cairo_rectangle(cr,pos-average_size,bottom_average_top             ,average_size,average_size);
+    cairo_fill(cr);
 
-    gdk_draw_rectangle(pmw->generic.widget.window,body_gc,1,
-                       0  ,top_average_bottom+1,
-                       pos,bottom_average_top-top_average_bottom-2);
+    pos=pmw->data[pmw->data_index]*allocation_width/scale;
+
+    cairo_rectangle(cr,0,top_average_bottom+1,pos,bottom_average_top-top_average_bottom-2);
+    cairo_fill(cr);
+
+    cairo_set_source_rgb(cr,pmw->grid_color.red,pmw->grid_color.green,pmw->grid_color.blue);
 
     if(pmw->grid_drawn==1)
        for(i=1;i<pmw->grid_num;i++)
          {
-          pos=i*pmw->generic.widget.allocation.width/pmw->grid_num;
-          gdk_draw_line(pmw->generic.widget.window,grid_gc,
-                        pos,pmw->generic.body_start,
-                        pos,pmw->generic.body_height+pmw->generic.body_start);
+          pos=i*allocation_width/pmw->grid_num;
+          cairo_move_to(cr,pos+0.5,pmw->generic.body_start);
+          cairo_line_to(cr,pos+0.5,pmw->generic.body_height+pmw->generic.body_start);
+          cairo_stroke(cr);
          }
     else
        if(pmw->grid_drawn==-1)
          {
-          pos=pmw->grid_maxvis*pmw->generic.widget.allocation.width/pmw->grid_num;
-          gdk_draw_line(pmw->generic.widget.window,grid_gc,
-                        pos,pmw->generic.body_start,
-                        pos,pmw->generic.body_height+pmw->generic.body_start);
+          pos=pmw->grid_maxvis*allocation_width/pmw->grid_num;
+          cairo_move_to(cr,pos+0.5,pmw->generic.body_start);
+          cairo_line_to(cr,pos+0.5,pmw->generic.body_height+pmw->generic.body_start);
+          cairo_stroke(cr);
          }
+
+    cairo_destroy(cr);
    }
 }
 
@@ -424,22 +470,12 @@ static void BarUpdate(ProcMeterBar *pmw,gboolean all)
 
   ProcMeterBar *pmw The widget to set.
 
-  GdkColor grid_color The grid.
+  GdkRGBA *grid_color The grid.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void ProcMeterBarSetGridColour(ProcMeterBar *pmw,GdkColor grid_color)
+void ProcMeterBarSetGridColour(ProcMeterBar *pmw,GdkRGBA *grid_color)
 {
- pmw->grid_color=grid_color;
-
- if(pmw->grid_gc)
-    gdk_gc_set_foreground(pmw->grid_gc,&pmw->grid_color);
- else
-   {
-    GdkGCValues values;
-
-    values.foreground=pmw->grid_color;
-    pmw->grid_gc=gdk_gc_new_with_values(pmw->generic.widget.parent->window,&values,GDK_GC_FOREGROUND);
-   }
+ pmw->grid_color=*grid_color;
 
  BarUpdate(pmw,TRUE);
 }
@@ -570,5 +606,5 @@ void ProcMeterBarAddDatum(ProcMeterBar *pmw,gushort datum)
        pmw->grid_drawn=1;
    }
 
- BarUpdate(pmw,TRUE);
+ BarUpdate(pmw,FALSE);
 }

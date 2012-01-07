@@ -1,31 +1,29 @@
-.\" $Header: /home/amb/CVS/procmeter3/man/procmeterrc.5,v 1.19 2010-07-03 12:55:31 amb Exp $
-.\"
-.\"  ProcMeter - A system monitoring program for Linux - Version 3.5d.
+.\"  ProcMeter - A system monitoring program for Linux - Version 3.6.
 .\"
 .\"  Manual page for .procmeterrc file
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998-2010 Andrew M. Bishop
+.\"  This file Copyright 1998-2011 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETERRC 5 "July 3, 2010"
+.TH PROCMETERRC 5 "December 30, 2011"
 
 .SH NAME
 
-procmetetrc \- The procmeterrc configuration file for procmeter3, procmeter3-xaw,
-gprocmeter3, procmeter3-gtk1, procmeter3-gtk2, procmeter3-log and procmeter3-lcd
-programs.
+procmetetrc \- The procmeterrc configuration file for procmeter3,
+procmeter3-xaw, gprocmeter3, procmeter3-gtk1, procmeter3-gtk2, procmeter3-gtk3,
+procmeter3-log and procmeter3-lcd programs.
 
 .SH SYNOPSIS
 
 This file contains the run-time options for the procmeter3, procmeter3-xaw,
-gprocmeter3, procmeter3-gtk1, procmeter3-gtk2, procmeter3-log and procmeter3-lcd
-programs.  These include the outputs that are displayed, the colours and fonts
-that are used (for X window outputs), the LCDproc server (for the procmeter-lcd
-version) and other program options.
+gprocmeter3, procmeter3-gtk1, procmeter3-gtk2, procmeter3-gtk3, procmeter3-log
+and procmeter3-lcd programs.  These include the outputs that are displayed, the
+colours and fonts that are used (for X window outputs), the LCDproc server (for
+the procmeter-lcd version) and other program options.
 
 .SH DESCRIPTION
 
@@ -34,7 +32,8 @@ instead of using X resources.  This gives more flexibility and allows for much
 simpler customisation.
 .LP
 When the procmeter3, procmeter3-xaw, gprocmeter3, procmeter3-gtk1,
-procmeter3-gtk2, procmeter3-log or procmeter3-lcd programs start the
+procmeter3-gtk2, procmeter3-gtk3, procmeter3-log or procmeter3-lcd programs
+start the
 .B .procmeterrc
 file is searched for in the current directory, the current users home directory
 or the system default installation directory (named procmeterrc).  The file is
@@ -302,8 +301,9 @@ or
 .SH SEE ALSO
 
 procmeter3(1), procmeter3-xaw(1), gprocmeter3(1), procmeter3-gtk1(1),
-procmeter3-gtk2(1), procmeter3-log(1), procmeter3-lcd(1), procmeter3_modules(1).
+procmeter3-gtk2(1), procmeter3-gtk3(1), procmeter3-log(1), procmeter3-lcd(1),
+procmeter3_modules(1).
 
 .SH AUTHOR
 
-Andrew M. Bishop 1998-2007
+Andrew M. Bishop (c) 1998-2011

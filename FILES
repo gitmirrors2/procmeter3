@@ -14,6 +14,7 @@ procmeter3-3.5d/man/ChangeLog
 procmeter3-3.5d/man/procmeter3-xaw.1
 procmeter3-3.5d/man/procmeter3-gtk1.1
 procmeter3-3.5d/man/procmeter3-gtk2.1
+procmeter3-3.5d/man/procmeter3-gtk3.1
 procmeter3-3.5d/man/procmeter3-log.1
 procmeter3-3.5d/man/procmeter3-lcd.1
 procmeter3-3.5d/man/gprocmeter3.1
@@ -22,7 +23,6 @@ procmeter3-3.5d/man/procmeter3_modules.1
 procmeter3-3.5d/man/procmeterrc.5
 procmeter3-3.5d/gtk1/ChangeLog
 procmeter3-3.5d/gtk1/Makefile
-procmeter3-3.5d/gtk1/bitmap.c
 procmeter3-3.5d/gtk1/menus.c
 procmeter3-3.5d/gtk1/resources.c
 procmeter3-3.5d/gtk1/run.c
@@ -40,7 +40,6 @@ procmeter3-3.5d/gtk1/widgets/PMText.c
 procmeter3-3.5d/gtk1/widgets/PMText.h
 procmeter3-3.5d/gtk2/ChangeLog
 procmeter3-3.5d/gtk2/Makefile
-procmeter3-3.5d/gtk2/bitmap.c
 procmeter3-3.5d/gtk2/menus.c
 procmeter3-3.5d/gtk2/resources.c
 procmeter3-3.5d/gtk2/run.c
@@ -56,6 +55,23 @@ procmeter3-3.5d/gtk2/widgets/PMGraph.c
 procmeter3-3.5d/gtk2/widgets/PMGraph.h
 procmeter3-3.5d/gtk2/widgets/PMText.c
 procmeter3-3.5d/gtk2/widgets/PMText.h
+procmeter3-3.5d/gtk3/ChangeLog
+procmeter3-3.5d/gtk3/Makefile
+procmeter3-3.5d/gtk3/menus.c
+procmeter3-3.5d/gtk3/resources.c
+procmeter3-3.5d/gtk3/run.c
+procmeter3-3.5d/gtk3/window.c
+procmeter3-3.5d/gtk3/window.h
+procmeter3-3.5d/gtk3/widgets/ChangeLog
+procmeter3-3.5d/gtk3/widgets/Makefile
+procmeter3-3.5d/gtk3/widgets/PMBar.c
+procmeter3-3.5d/gtk3/widgets/PMBar.h
+procmeter3-3.5d/gtk3/widgets/PMGeneric.c
+procmeter3-3.5d/gtk3/widgets/PMGeneric.h
+procmeter3-3.5d/gtk3/widgets/PMGraph.c
+procmeter3-3.5d/gtk3/widgets/PMGraph.h
+procmeter3-3.5d/gtk3/widgets/PMText.c
+procmeter3-3.5d/gtk3/widgets/PMText.h
 procmeter3-3.5d/xaw/ChangeLog
 procmeter3-3.5d/xaw/Makefile
 procmeter3-3.5d/xaw/bitmap.c
@@ -133,6 +149,8 @@ procmeter3-3.5d/contrib
 !procmeter3-3.5d/gtk1/widgets/.svn
 !procmeter3-3.5d/gtk2/.svn
 !procmeter3-3.5d/gtk2/widgets/.svn
+!procmeter3-3.5d/gtk3/.svn
+!procmeter3-3.5d/gtk3/widgets/.svn
 !procmeter3-3.5d/modules/.svn
 !procmeter3-3.5d/man/.svn
 !procmeter3-3.5d/contrib/.svn

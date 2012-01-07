@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/menus.c,v 1.2 2009-12-07 20:01:04 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5c.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   X Window menus (GTK version).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2009 Andrew M. Bishop
+  This file Copyright 1998-2011 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -95,11 +93,11 @@ void CreateMenus(GtkWidget *parent)
 
  menulabel=gtk_menu_item_new_with_label("Modules");
  gtk_widget_set_sensitive(GTK_WIDGET(menulabel),FALSE);
- gtk_menu_append(GTK_MENU(module_menu),menulabel);
+ gtk_menu_shell_append(GTK_MENU_SHELL(module_menu),menulabel);
  gtk_widget_show(GTK_WIDGET(menulabel));
 
  menuline=gtk_menu_item_new();
- gtk_menu_append(GTK_MENU(module_menu),menuline);
+ gtk_menu_shell_append(GTK_MENU_SHELL(module_menu),menuline);
  gtk_widget_show(GTK_WIDGET(menuline));
 
  /* The functions menu */
@@ -108,59 +106,55 @@ void CreateMenus(GtkWidget *parent)
 
  menulabel=gtk_menu_item_new_with_label("Functions");
  gtk_widget_set_sensitive(GTK_WIDGET(menulabel),FALSE);
- gtk_menu_append(GTK_MENU(functions_menu),menulabel);
+ gtk_menu_shell_append(GTK_MENU_SHELL(functions_menu),menulabel);
  gtk_widget_show(GTK_WIDGET(menulabel));
 
  menuline=gtk_menu_item_new();
- gtk_menu_append(GTK_MENU(functions_menu),menuline);
+ gtk_menu_shell_append(GTK_MENU_SHELL(functions_menu),menuline);
  gtk_widget_show(GTK_WIDGET(menuline));
 
  /* The functions menu items */
 
  func_prop=gtk_menu_item_new_with_label("Properties");
- gtk_menu_append(GTK_MENU(functions_menu),func_prop);
+ gtk_menu_shell_append(GTK_MENU_SHELL(functions_menu),func_prop);
  gtk_widget_show(GTK_WIDGET(func_prop));
 
- gtk_signal_connect_object(GTK_OBJECT(func_prop),"activate",
-                           GTK_SIGNAL_FUNC(SelectFunctionsMenuCallback),(gpointer)0);
+ g_signal_connect_swapped(func_prop,"activate",G_CALLBACK(SelectFunctionsMenuCallback),(gpointer)0);
 
  func_above=gtk_menu_item_new_with_label(vertical?"Move To Above":"Move To Left Of");
- gtk_menu_append(GTK_MENU(functions_menu),func_above);
+ gtk_menu_shell_append(GTK_MENU_SHELL(functions_menu),func_above);
  gtk_widget_show(GTK_WIDGET(func_above));
 
- gtk_signal_connect_object(GTK_OBJECT(func_above),"activate",
-                           GTK_SIGNAL_FUNC(SelectFunctionsMenuCallback),(gpointer)1);
+ g_signal_connect_swapped(func_above,"activate",G_CALLBACK(SelectFunctionsMenuCallback),(gpointer)1);
 
  func_below=gtk_menu_item_new_with_label(vertical?"Move To Below":"Move To Right Of");
- gtk_menu_append(GTK_MENU(functions_menu),func_below);
+ gtk_menu_shell_append(GTK_MENU_SHELL(functions_menu),func_below);
  gtk_widget_show(GTK_WIDGET(func_below));
 
- gtk_signal_connect_object(GTK_OBJECT(func_below),"activate",
-                           GTK_SIGNAL_FUNC(SelectFunctionsMenuCallback),(gpointer)2);
+ g_signal_connect_swapped(func_below,"activate",G_CALLBACK(SelectFunctionsMenuCallback),(gpointer)2);
 
  func_delete=gtk_menu_item_new_with_label("Delete");
- gtk_menu_append(GTK_MENU(functions_menu),func_delete);
+ gtk_menu_shell_append(GTK_MENU_SHELL(functions_menu),func_delete);
  gtk_widget_show(GTK_WIDGET(func_delete));
 
- gtk_signal_connect_object(GTK_OBJECT(func_delete),"activate",
-                           GTK_SIGNAL_FUNC(SelectFunctionsMenuCallback),(gpointer)3);
+ g_signal_connect_swapped(func_delete,"activate",G_CALLBACK(SelectFunctionsMenuCallback),(gpointer)3);
 
  func_run=gtk_menu_item_new_with_label("Run");
- gtk_menu_append(GTK_MENU(functions_menu),func_run);
+ gtk_menu_shell_append(GTK_MENU_SHELL(functions_menu),func_run);
  gtk_widget_show(GTK_WIDGET(func_run));
 
- gtk_signal_connect_object(GTK_OBJECT(func_run),"activate",
-                           GTK_SIGNAL_FUNC(SelectFunctionsMenuCallback),(gpointer)4);
+ g_signal_connect_swapped(func_run,"activate",G_CALLBACK(SelectFunctionsMenuCallback),(gpointer)4);
 
  /* The properties_dialog */
 
  properties_dialog=gtk_dialog_new();
  gtk_window_set_title(GTK_WINDOW(properties_dialog),"ProcMeter Properties");
- gtk_widget_set_usize(GTK_WIDGET(properties_dialog),300,400);
+ gtk_widget_set_size_request(GTK_WIDGET(properties_dialog),300,400);
+ gtk_window_set_resizable(GTK_WINDOW(properties_dialog),FALSE);
 
  /* The properties dialog elements. */
 
- prop_form=gtk_hbox_new(FALSE,0);
+ prop_form=gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
 
  prop_modlabel=gtk_label_new("Module: ");
  gtk_label_set_justify(GTK_LABEL(prop_modlabel),GTK_JUSTIFY_LEFT);
@@ -172,7 +166,7 @@ void CreateMenus(GtkWidget *parent)
  gtk_box_pack_start(GTK_BOX(prop_form),prop_modname,FALSE,FALSE,0);
  gtk_widget_show(GTK_WIDGET(prop_modname));
 
- gtk_box_pack_start(GTK_BOX(GTK_DIALOG(properties_dialog)->vbox),prop_form,FALSE,FALSE,0);
+ gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(properties_dialog))),prop_form,FALSE,FALSE,0);
  gtk_widget_show(GTK_WIDGET(prop_form));
 
  prop_moddesc=gtk_text_view_new();
@@ -180,11 +174,11 @@ void CreateMenus(GtkWidget *parent)
  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(prop_moddesc),GTK_WRAP_WORD);
  prop_moddesc_text=gtk_text_buffer_new(NULL);
  gtk_text_view_set_buffer(GTK_TEXT_VIEW(prop_moddesc),GTK_TEXT_BUFFER(prop_moddesc_text));
- gtk_box_pack_start(GTK_BOX(GTK_DIALOG(properties_dialog)->vbox),prop_moddesc,FALSE,FALSE,0);
- gtk_widget_set_usize(GTK_WIDGET(prop_moddesc),250,100);
+ gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(properties_dialog))),prop_moddesc,FALSE,FALSE,0);
+ gtk_widget_set_size_request(GTK_WIDGET(prop_moddesc),250,100);
  gtk_widget_show(GTK_WIDGET(prop_moddesc));
 
- prop_form=gtk_hbox_new(FALSE,0);
+ prop_form=gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
 
  prop_outlabel=gtk_label_new("Output: ");
  gtk_label_set_justify(GTK_LABEL(prop_outlabel),GTK_JUSTIFY_LEFT);
@@ -196,7 +190,7 @@ void CreateMenus(GtkWidget *parent)
  gtk_box_pack_start(GTK_BOX(prop_form),prop_outname,FALSE,FALSE,0);
  gtk_widget_show(GTK_WIDGET(prop_outname));
 
- gtk_box_pack_start(GTK_BOX(GTK_DIALOG(properties_dialog)->vbox),prop_form,FALSE,FALSE,0);
+ gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(properties_dialog))),prop_form,FALSE,FALSE,0);
  gtk_widget_show(GTK_WIDGET(prop_form));
 
  prop_outdesc=gtk_text_view_new();
@@ -204,13 +198,14 @@ void CreateMenus(GtkWidget *parent)
  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(prop_outdesc),GTK_WRAP_WORD);
  prop_outdesc_text=gtk_text_buffer_new(NULL);
  gtk_text_view_set_buffer(GTK_TEXT_VIEW(prop_outdesc),GTK_TEXT_BUFFER(prop_outdesc_text));
- gtk_box_pack_start(GTK_BOX(GTK_DIALOG(properties_dialog)->vbox),prop_outdesc,FALSE,FALSE,0);
- gtk_widget_set_usize(GTK_WIDGET(prop_outdesc),250,100);
+ gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(properties_dialog))),prop_outdesc,FALSE,FALSE,0);
+ gtk_widget_set_size_request(GTK_WIDGET(prop_outdesc),250,100);
  gtk_widget_show(GTK_WIDGET(prop_outdesc));
 
- prop_form=gtk_hbox_new(FALSE,0);
+ prop_form=gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
 
- prop_form1=gtk_vbox_new(TRUE,0);
+ prop_form1=gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+ gtk_box_set_homogeneous(GTK_BOX(prop_form1),TRUE);
 
  prop_lbllabel=gtk_label_new("Label:");
  gtk_label_set_justify(GTK_LABEL(prop_lbllabel),GTK_JUSTIFY_LEFT);
@@ -235,7 +230,8 @@ void CreateMenus(GtkWidget *parent)
  gtk_box_pack_start(GTK_BOX(prop_form),prop_form1,TRUE,TRUE,0);
  gtk_widget_show(GTK_WIDGET(prop_form1));
 
- prop_form2=gtk_vbox_new(TRUE,0);
+ prop_form2=gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+ gtk_box_set_homogeneous(GTK_BOX(prop_form2),TRUE);
 
  prop_label=gtk_label_new("NNNNNNNNNNNNNNN");
  gtk_label_set_justify(GTK_LABEL(prop_label),GTK_JUSTIFY_LEFT);
@@ -260,20 +256,18 @@ void CreateMenus(GtkWidget *parent)
  gtk_box_pack_start(GTK_BOX(prop_form),prop_form2,TRUE,TRUE,0);
  gtk_widget_show(GTK_WIDGET(prop_form2));
 
- gtk_box_pack_start(GTK_BOX(GTK_DIALOG(properties_dialog)->vbox),prop_form,TRUE,TRUE,0);
+ gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(properties_dialog))),prop_form,TRUE,TRUE,0);
  gtk_widget_show(GTK_WIDGET(prop_form));
 
  prop_done=gtk_button_new_with_label("Done");
- gtk_box_pack_start(GTK_BOX(GTK_DIALOG(properties_dialog)->action_area),prop_done,TRUE,TRUE,0);
+ gtk_box_pack_start(GTK_BOX(gtk_dialog_get_action_area(GTK_DIALOG(properties_dialog))),prop_done,TRUE,TRUE,0);
  gtk_widget_show(GTK_WIDGET(prop_done));
 
- gtk_signal_connect_object(GTK_OBJECT(prop_done),"clicked",
-                           GTK_SIGNAL_FUNC(PropertiesDialogDoneCallback),NULL);
+ g_signal_connect_swapped(prop_done,"clicked",G_CALLBACK(PropertiesDialogDoneCallback),NULL);
 
  /* Fixup the properties dialog box */
 
- gtk_signal_connect_object(GTK_OBJECT(properties_dialog),"delete_event",
-                           GTK_SIGNAL_FUNC(PropertiesDialogCloseCallback),NULL);
+ g_signal_connect_swapped(properties_dialog,"delete_event",G_CALLBACK(PropertiesDialogCloseCallback),NULL);
 }
 
 
@@ -315,18 +309,18 @@ void AddModuleToMenu(Module module)
 
  menulabel=gtk_menu_item_new_with_label(module->module->name);
  gtk_widget_set_sensitive(GTK_WIDGET(menulabel),FALSE);
- gtk_menu_append(GTK_MENU(module->submenu_widget),menulabel);
+ gtk_menu_shell_append(GTK_MENU_SHELL(module->submenu_widget),menulabel);
  gtk_widget_show(GTK_WIDGET(menulabel));
 
  menuline=gtk_menu_item_new();
- gtk_menu_append(GTK_MENU(module->submenu_widget),menuline);
+ gtk_menu_shell_append(GTK_MENU_SHELL(module->submenu_widget),menuline);
  gtk_widget_show(GTK_WIDGET(menuline));
 
  /* Add an entry to the module menu */
 
  module->menu_item_widget=gtk_menu_item_new_with_label(module->module->name);
 
- gtk_menu_append(GTK_MENU(module_menu),module->menu_item_widget);
+ gtk_menu_shell_append(GTK_MENU_SHELL(module_menu),module->menu_item_widget);
  gtk_widget_show(GTK_WIDGET(module->menu_item_widget));
  gtk_menu_item_set_submenu(GTK_MENU_ITEM(module->menu_item_widget),module->submenu_widget);
 
@@ -341,7 +335,7 @@ void AddModuleToMenu(Module module)
       {
        menuitem=gtk_menu_item_new_with_label(module->outputs[i]->output->name);
 
-       gtk_menu_append(GTK_MENU(module->submenu_widget),menuitem);
+       gtk_menu_shell_append(GTK_MENU_SHELL(module->submenu_widget),menuitem);
        gtk_widget_show(GTK_WIDGET(menuitem));
 
  //       if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-foreground")) ||
@@ -377,11 +371,10 @@ void AddModuleToMenu(Module module)
 
     sme=gtk_check_menu_item_new_with_label(string);
 
-    gtk_menu_append(GTK_MENU(submenu),sme);
+    gtk_menu_shell_append(GTK_MENU_SHELL(submenu),sme);
     gtk_widget_show(GTK_WIDGET(sme));
 
-    gtk_signal_connect_object(GTK_OBJECT(sme),"activate",
-                              GTK_SIGNAL_FUNC(SelectOutputMenuCallback),(gpointer)module->outputs[i]);
+    g_signal_connect_swapped(sme,"activate",G_CALLBACK(SelectOutputMenuCallback),(gpointer)module->outputs[i]);
 
  //    if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-foreground")) ||
  //        (string=GetProcMeterRC(module->module->name,"menu-foreground")) ||
@@ -409,8 +402,7 @@ void AddMenuToOutput(GtkWidget *widget,Module module)
  if(!pane)
     return;
 
- gtk_signal_connect(GTK_OBJECT(widget),"button_press_event",
-                    GTK_SIGNAL_FUNC(MenuStart),module?module->module->name:NULL);
+ g_signal_connect(widget,"button_press_event",G_CALLBACK(MenuStart),module?module->module->name:NULL);
 }
 
 
@@ -428,7 +420,7 @@ void RemoveModuleFromMenu(Module module)
     return;
 
  gtk_widget_destroy(GTK_WIDGET(module->submenu_widget));
- gtk_object_destroy(GTK_OBJECT(module->menu_item_widget));
+ gtk_widget_destroy(GTK_WIDGET(module->menu_item_widget));
 }
 
 
@@ -480,7 +472,7 @@ static void SelectFunctionsMenuCallback(gpointer clientData)
    {
     doing_move=(glong)clientData;
 
-    gdk_pointer_grab(GTK_WIDGET(pane)->window,TRUE,GDK_BUTTON_PRESS_MASK|GDK_BUTTON_RELEASE_MASK,NULL,gdk_cursor_new(GDK_HAND1),GDK_CURRENT_TIME);
+    gdk_device_grab(gtk_get_current_event_device(),gtk_widget_get_window(GTK_WIDGET(pane)),GDK_OWNERSHIP_APPLICATION,TRUE,GDK_BUTTON_PRESS_MASK|GDK_BUTTON_RELEASE_MASK,gdk_cursor_new(GDK_HAND1),GDK_CURRENT_TIME);
    }
  else if(clientData==(gpointer)3)    /* Delete */
    {
@@ -627,7 +619,7 @@ static void FunctionsMenuStart(GtkWidget *w,GdkEvent *event,gpointer data)
 
  if(doing_move)
    {
-    gdk_pointer_ungrab(GDK_CURRENT_TIME);
+    gdk_device_ungrab(gtk_get_current_event_device(),GDK_CURRENT_TIME);
 
     MoveOutput(function_output,*outputp,doing_move);
     doing_move=0;

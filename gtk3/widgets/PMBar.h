@@ -1,11 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/widgets/PMBar.h,v 1.1 2007-09-19 19:04:34 amb Exp $
-
-  ProcMeter Bar Widget include file (for ProcMeter3 3.3).
+  ProcMeter Bar Widget include file (for ProcMeter3 3.6).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,99,2000 Andrew M. Bishop
+  This file Copyright 1996-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -15,14 +13,14 @@
 #define PMBAR_H    /*+ To stop multiple inclusions. +*/
 
 #include <gdk/gdk.h>
-#include <gtk/gtkadjustment.h>
+#include <gtk/gtk.h>
 
 #include "PMGeneric.h"
 
 #define GTK_TYPE_PROCMETERBAR          (gtk_procmeterbar_get_type())
-#define GTK_PROCMETERBAR(obj)          GTK_CHECK_CAST((obj),GTK_TYPE_PROCMETERBAR,ProcMeterBar)
-#define GTK_PROCMETERBAR_CLASS(klass)  GTK_CHECK_CLASS_CAST((klass),GTK_TYPE_PROCMETERBAR,ProcMeterBarClass)
-#define GTK_IS_PROCMETERBAR(obj)       GTK_CHECK_TYPE((obj),GTK_TYPE_PROCMETERBAR)
+#define GTK_PROCMETERBAR(obj)          G_TYPE_CHECK_INSTANCE_CAST((obj),GTK_TYPE_PROCMETERBAR,ProcMeterBar)
+#define GTK_PROCMETERBAR_CLASS(klass)  G_TYPE_CHECK_CLASS_CAST((klass),GTK_TYPE_PROCMETERBAR,ProcMeterBarClass)
+#define GTK_IS_PROCMETERBAR(obj)       G_TYPE_CHECK_INSTANCE_TYPE((obj),GTK_TYPE_PROCMETERBAR)
 
 
 typedef struct _ProcMeterBar       ProcMeterBar;
@@ -34,8 +32,7 @@ struct _ProcMeterBar
 
  gchar*           grid_units;       /*+ The number of things per grid line. +*/
  gushort          grid_units_x;     /*+ The position of the grid units. +*/
- GdkColor         grid_color;       /*+ The grid lines colour. +*/
- GdkGC*           grid_gc;          /*+ The graphics context for the grid lines. +*/
+ GdkRGBA          grid_color;       /*+ The grid lines colour. +*/
  gint             grid_min;         /*+ The minimum number of grid lines. +*/
  gint             grid_max;         /*+ The maximum number of grid lines. +*/
  gint             grid_maxvis;      /*+ The maximum number of grid lines before removing them. +*/
@@ -61,7 +58,7 @@ GtkWidget* gtk_procmeterbar_new(void);
 
 /* Public functions */
 
-void ProcMeterBarSetGridColour(ProcMeterBar *pmw,GdkColor grid_color);
+void ProcMeterBarSetGridColour(ProcMeterBar *pmw,GdkRGBA *grid_color);
 void ProcMeterBarSetGridMin(ProcMeterBar *pmw,gint grid_min);
 void ProcMeterBarSetGridMax(ProcMeterBar *pmw,gint grid_max);
 void ProcMeterBarSetGridUnits(ProcMeterBar *pmw,gchar *units);

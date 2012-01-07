@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/resources.c,v 1.1 2007-09-19 19:06:43 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.3.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   X Window resource conversions.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99 Andrew M. Bishop
+  This file Copyright 1998-2011 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -19,6 +17,7 @@
 #include <string.h>
 
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
 
 #include "window.h"
 #include "procmeterp.h"
@@ -27,33 +26,32 @@
 /*++++++++++++++++++++++++++++++++++++++
   Convert a string to a font structure.
 
-  GdkFont *StringToFont Returns a pointer to a font structure.
+  PangoFontDescription *StringToFont Returns a pointer to a font structure.
 
   char *string The string to convert.
   ++++++++++++++++++++++++++++++++++++++*/
 
-GdkFont *StringToFont(char *string)
+PangoFontDescription *StringToFont(char *string)
 {
- return(gdk_font_load(string));
+ return(pango_font_description_from_string(string));
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  Convert a string to a pixel.
+  Convert a string to a colour.
 
-  GdkColor StringToPixel Returns a GdkColor value.
+  GdkRGBA *StringToColour Returns a GdkRGBA value.
 
   char *string The string to convert.
   ++++++++++++++++++++++++++++++++++++++*/
 
-GdkColor StringToPixel(char *string)
+GdkRGBA *StringToColour(char *string)
 {
- static GdkColor color;
+ static GdkRGBA rgba;
 
- gdk_color_parse(string,&color);
- gdk_colormap_alloc_color(gdk_colormap_get_system(),&color,FALSE,TRUE);
+ gdk_rgba_parse(&rgba,string);
 
- return(color);
+ return(&rgba);
 }
 
 

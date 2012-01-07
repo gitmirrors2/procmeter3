@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/window.c,v 1.6 2010-02-28 10:22:07 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5d.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   X Windows interface.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997-2010 Andrew M. Bishop
+  This file Copyright 1997-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -75,7 +73,6 @@ void Start(int *argc,char **argv)
 {
  static char procmeter_version[]="ProcMeter V" PROCMETER_VERSION;
  char *string;
- GtkWidget *event_box;
  int i,j=0;
 
  if((string=GetProcMeterRC("resources","horizontal")) &&
@@ -89,10 +86,10 @@ void Start(int *argc,char **argv)
  toplevel=gtk_window_new(GTK_WINDOW_TOPLEVEL);
  gtk_window_set_title(GTK_WINDOW(toplevel),procmeter_version);
  gtk_window_set_resizable(GTK_WINDOW(toplevel),TRUE);
+ gtk_window_set_has_resize_grip(GTK_WINDOW(toplevel),FALSE);
 
- /* Create the bitmaps */
-
- CreateBitmaps(toplevel);
+ if((string=GetProcMeterRC("resources","foreground")))
+    gtk_widget_override_background_color(GTK_WIDGET(toplevel),GTK_STATE_FLAG_NORMAL,StringToColour(string));
 
  /* Create the menu widgets */
 
@@ -100,24 +97,19 @@ void Start(int *argc,char **argv)
 
  /* Create the pane widget */
 
- event_box=gtk_event_box_new();
- gtk_container_add(GTK_CONTAINER(toplevel),event_box);
- gtk_widget_show(event_box);
-
  if(vertical)
-    pane=gtk_vbox_new(FALSE,0);
+    pane=gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
  else
-    pane=gtk_hbox_new(FALSE,0);
+    pane=gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
 
  gtk_box_set_spacing(GTK_BOX(pane),2);
 
- gtk_container_add(GTK_CONTAINER(event_box),pane);
+ gtk_container_add(GTK_CONTAINER(toplevel),pane);
  gtk_widget_show(GTK_WIDGET(pane));
 
- gtk_signal_connect(GTK_OBJECT(toplevel),"configure_event",
-                    GTK_SIGNAL_FUNC(ResizePaneCallback),NULL);
+ g_signal_connect(toplevel,"configure_event",G_CALLBACK(ResizePaneCallback),NULL);
 
- AddMenuToOutput(event_box,NULL);
+ AddMenuToOutput(pane,NULL);
 
  /* Parse the -geometry and -w flag */
 
@@ -181,8 +173,7 @@ void Start(int *argc,char **argv)
 
  /* Put an action on the window manager close button */
 
- gtk_signal_connect(GTK_OBJECT(toplevel),"delete_event",
-                    GTK_SIGNAL_FUNC(CloseCallback),NULL);
+ g_signal_connect(toplevel,"delete_event",G_CALLBACK(CloseCallback),NULL);
 }
 
 
@@ -225,7 +216,7 @@ void Sleep(time_t until)
 
  if(delay>0)
    {
-    gint id=gtk_timeout_add(delay,(GtkFunction)SleepCallback,NULL);
+    gint id=g_timeout_add(delay,SleepCallback,NULL);
     sleeping=1;
 
     while(sleeping)
@@ -238,7 +229,7 @@ void Sleep(time_t until)
 
        if(now2.tv_sec<now.tv_sec)       /* Ooops, we went back in time. Let's cancel timer */
          {
-          gtk_timeout_remove(id);
+          g_source_remove(id);
           sleeping=0;
          }
       }
@@ -293,10 +284,15 @@ void AddRemoveOutput(Output output)
        w=gtk_procmetergraph_new();
        gtk_box_pack_start(GTK_BOX(pane),w,TRUE,TRUE,0);
 
+       if(vertical)
+          gtk_widget_set_vexpand(GTK_WIDGET(w),TRUE);
+       else
+          gtk_widget_set_hexpand(GTK_WIDGET(w),TRUE);
+
        if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-foreground")) ||
            (string=GetProcMeterRC(module->module->name,"grid-foreground")) ||
            (string=GetProcMeterRC("resources","grid-foreground"))))
-          ProcMeterGraphSetGridColour(GTK_PROCMETERGRAPH(w),StringToPixel(string));
+          ProcMeterGraphSetGridColour(GTK_PROCMETERGRAPH(w),StringToColour(string));
 
        if(((string=GetProcMeterRC2(module->module->name,output->output->name,"graph-solid")) ||
            (string=GetProcMeterRC(module->module->name,"graph-solid")) ||
@@ -313,11 +309,6 @@ void AddRemoveOutput(Output output)
            (string=GetProcMeterRC("resources","grid-min"))))
           ProcMeterGraphSetGridMin(GTK_PROCMETERGRAPH(w),StringToInt(string));
  
-       if(vertical)
-          gtk_widget_set_size_request(GTK_WIDGET(w),-1,MINHEIGHT);
-       else
-          gtk_widget_set_size_request(GTK_WIDGET(w),MINWIDTH,-1);
-
        sprintf(str,output->output->graph_units,output->output->graph_scale);
        ProcMeterGraphSetGridUnits(GTK_PROCMETERGRAPH(w),str);
       }
@@ -325,6 +316,9 @@ void AddRemoveOutput(Output output)
       {
        w=gtk_procmetertext_new();
        gtk_box_pack_start(GTK_BOX(pane),w,FALSE,TRUE,0);
+
+       if(!vertical)
+          gtk_widget_set_hexpand(GTK_WIDGET(w),TRUE);
 
        if(((string=GetProcMeterRC2(module->module->name,output->output->name,"text-font")) ||
            (string=GetProcMeterRC(module->module->name,"text-font")) ||
@@ -336,10 +330,15 @@ void AddRemoveOutput(Output output)
        w=gtk_procmeterbar_new();
        gtk_box_pack_start(GTK_BOX(pane),w,TRUE,TRUE,0);
 
+       if(vertical)
+          gtk_widget_set_vexpand(GTK_WIDGET(w),TRUE);
+       else
+          gtk_widget_set_hexpand(GTK_WIDGET(w),TRUE);
+
        if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-foreground")) ||
            (string=GetProcMeterRC(module->module->name,"grid-foreground")) ||
            (string=GetProcMeterRC("resources","grid-foreground"))))
-          ProcMeterBarSetGridColour(GTK_PROCMETERBAR(w),StringToPixel(string));
+          ProcMeterBarSetGridColour(GTK_PROCMETERBAR(w),StringToColour(string));
 
        if(((string=GetProcMeterRC2(module->module->name,output->output->name,"grid-min")) ||
            (string=GetProcMeterRC(module->module->name,"grid-min")) ||
@@ -364,12 +363,12 @@ void AddRemoveOutput(Output output)
     if(((string=GetProcMeterRC2(module->module->name,output->output->name,"foreground")) ||
         (string=GetProcMeterRC(module->module->name,"foreground")) ||
         (string=GetProcMeterRC("resources","foreground"))))
-       ProcMeterGenericSetForegroundColour(GTK_PROCMETERGENERIC(w),StringToPixel(string));
+       ProcMeterGenericSetForegroundColour(GTK_PROCMETERGENERIC(w),StringToColour(string));
 
     if(((string=GetProcMeterRC2(module->module->name,output->output->name,"background")) ||
         (string=GetProcMeterRC(module->module->name,"background")) ||
         (string=GetProcMeterRC("resources","background"))))
-       ProcMeterGenericSetBackgroundColour(GTK_PROCMETERGENERIC(w),StringToPixel(string));
+       ProcMeterGenericSetBackgroundColour(GTK_PROCMETERGENERIC(w),StringToColour(string));
 
     if(((string=GetProcMeterRC2(module->module->name,output->output->name,"label-font")) ||
         (string=GetProcMeterRC(module->module->name,"label-font")) ||
@@ -382,7 +381,7 @@ void AddRemoveOutput(Output output)
         (string=GetProcMeterRC2(module->module->name,output->output->name,"foreground")) ||
         (string=GetProcMeterRC(module->module->name,"foreground")) ||
         (string=GetProcMeterRC("resources","foreground"))))
-       ProcMeterGenericSetLabelColour(GTK_PROCMETERGENERIC(w),StringToPixel(string));
+       ProcMeterGenericSetLabelColour(GTK_PROCMETERGENERIC(w),StringToColour(string));
 
     if(((string=GetProcMeterRC2(module->module->name,output->output->name,"label-position")) ||
         (string=GetProcMeterRC(module->module->name,"label-position")) ||
@@ -393,9 +392,9 @@ void AddRemoveOutput(Output output)
 
     gtk_widget_show(GTK_WIDGET(w));
 
-    gtk_signal_handler_block_by_data(GTK_OBJECT(output->menu_item_widget),output);
+    g_signal_handlers_block_matched(GTK_WIDGET(output->menu_item_widget),G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,output);
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(output->menu_item_widget),TRUE);
-    gtk_signal_handler_unblock_by_data(GTK_OBJECT(output->menu_item_widget),output);
+    g_signal_handlers_unblock_matched(GTK_WIDGET(output->menu_item_widget),G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,output);
 
     output->output_widget=w;
     output->first=2;
@@ -513,7 +512,7 @@ void MoveOutput(Output output1,Output output2,int direction)
 
 void Resize(void)
 {
- gushort psize,size;
+ gushort psize;
  gint width,height;
  int gsize,msize;
  int i,ngraphs=0;
@@ -524,7 +523,9 @@ void Resize(void)
  if(!ndisplayed)
     return;
 
- gdk_window_get_size(GTK_WIDGET(toplevel)->window,&width,&height);
+ height=gdk_window_get_height(gtk_widget_get_window(GTK_WIDGET(toplevel)));
+ width=gdk_window_get_width(gtk_widget_get_window(GTK_WIDGET(toplevel)));
+
  if(vertical)
     psize=height;
  else
@@ -535,15 +536,15 @@ void Resize(void)
 
  for(i=0;i<ndisplayed;i++)
    {
-    GtkRequisition request;
+    GtkRequisition minimum,natural;
     int min_size=0;
 
-    gtk_widget_size_request(GTK_WIDGET(displayed[i]->output_widget),&request);
+    gtk_widget_get_preferred_size(GTK_WIDGET(displayed[i]->output_widget),&minimum,&natural);
 
     if(vertical)
-       min_size=request.height;
+       min_size=minimum.height;
     else
-       min_size=request.width;
+       min_size=minimum.width;
 
     if(displayed[i]->type==PROCMETER_GRAPH)
        ngraphs++;
@@ -567,7 +568,7 @@ void Resize(void)
 
     gtk_widget_set_size_request(GTK_WIDGET(toplevel),0,0);
     gtk_window_resize(GTK_WINDOW(toplevel),width,height);
-    gdk_window_resize(GTK_WIDGET(toplevel)->window,width,height);
+    gdk_window_resize(gtk_widget_get_window(GTK_WIDGET(toplevel)),width,height);
 
     gtk_widget_set_size_request(GTK_WIDGET(pane),width,height);
     gtk_container_resize_children(GTK_CONTAINER(pane));
@@ -575,33 +576,33 @@ void Resize(void)
     return;
    }
 
- for(i=0;i<ndisplayed;i++)
-   {
-    if(displayed[i]->type==PROCMETER_GRAPH || displayed[i]->type==PROCMETER_BAR)
-      {
-       size=gsize/ngraphs;
-       gsize-=size;
-       ngraphs--;
-
-       if(vertical)
-          height=size;
-       else
-          width=size;
-      }
-    else
-      {
-       GtkRequisition request;
-
-       gtk_widget_size_request(GTK_WIDGET(displayed[i]->output_widget),&request);
-
-       if(vertical)
-          height=request.height;
-       else
-          width=request.width;
-      }
-
-    //gtk_widget_set_size_request(GTK_WIDGET(displayed[i]->output_widget),width,height);
-   }
+// for(i=0;i<ndisplayed;i++)
+//   {
+//    if(displayed[i]->type==PROCMETER_GRAPH || displayed[i]->type==PROCMETER_BAR)
+//      {
+//       gushort size=gsize/ngraphs;
+//       gsize-=size;
+//       ngraphs--;
+//
+//       if(vertical)
+//          height=size;
+//       else
+//          width=size;
+//      }
+//    else
+//      {
+//       GtkRequisition minimum,natural;
+//
+//       gtk_widget_get_preferred_size(GTK_WIDGET(displayed[i]->output_widget),&minimum,&natural);
+//
+//       if(vertical)
+//          height=natural.height;
+//       else
+//          width=natural.width;
+//      }
+//
+//    gtk_widget_set_size_request(GTK_WIDGET(displayed[i]->output_widget),width,height);
+//   }
 
  gtk_container_resize_children(GTK_CONTAINER(pane));
 }

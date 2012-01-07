@@ -1,11 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/widgets/PMGeneric.c,v 1.2 2007-11-21 19:57:18 amb Exp $
-
-  ProcMeter Generic Widget Source file (for ProcMeter 3.5a).
+  ProcMeter Generic Widget Source file (for ProcMeter 3.6).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,2000,10,02,03,07 Andrew M. Bishop
+  This file Copyright 1996-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -19,10 +17,11 @@
 
 static void procmetergeneric_class_init(ProcMeterGenericClass *class);
 static void procmetergeneric_init(ProcMeterGeneric *pmw);
-static void destroy(GtkObject *object);
+static void destroy(GtkWidget *widget);
 static void realize(GtkWidget *widget);
-static gint expose(GtkWidget *widget,GdkEventExpose *event);
-static void size_request(GtkWidget *widget,GtkRequisition *requisition);
+static gboolean draw(GtkWidget *widget,cairo_t *cr);
+static void get_preferred_width(GtkWidget *widget,gint *minimal_width,gint *natural_width);
+static void get_preferred_height(GtkWidget *widget,gint *minimal_height,gint *natural_height);
 static void size_allocate(GtkWidget *widget,GtkAllocation *allocation);
 
 static void GenericResize(ProcMeterGeneric *pmw);
@@ -45,16 +44,18 @@ guint gtk_procmetergeneric_get_type(void)
 
  if(!pmw_type)
    {
-    GtkTypeInfo pmw_info={"ProcMeterGeneric",
-                          sizeof(ProcMeterGeneric),
-                          sizeof(ProcMeterGenericClass),
-                          (GtkClassInitFunc)procmetergeneric_class_init,
-                          (GtkObjectInitFunc)procmetergeneric_init,
-                          (gpointer) NULL,
-                          (gpointer) NULL,
-                          (GtkClassInitFunc) NULL};
+    GTypeInfo pmw_info={sizeof(ProcMeterGenericClass),
+                        NULL,
+                        NULL,
+                        (GClassInitFunc) procmetergeneric_class_init,
+                        NULL,
+                        NULL,
+                        sizeof(ProcMeterGeneric),
+                        0,
+                        (GInstanceInitFunc) procmetergeneric_init,
+                        NULL};
 
-    pmw_type=gtk_type_unique(gtk_widget_get_type(),&pmw_info);
+    pmw_type=g_type_register_static(gtk_widget_get_type(),"ProcMeterGeneric",&pmw_info,0);
    }
 
  return(pmw_type);
@@ -69,24 +70,22 @@ guint gtk_procmetergeneric_get_type(void)
 
 static void procmetergeneric_class_init(ProcMeterGenericClass *class)
 {
- GtkObjectClass *object_class;
  GtkWidgetClass *widget_class;
 
  g_return_if_fail(class!=NULL);
 
- object_class=(GtkObjectClass*)class;
  widget_class=(GtkWidgetClass*)class;
 
  class->resize=GenericResize;
  class->update=GenericUpdate;
 
- parent_class=gtk_type_class(gtk_widget_get_type());
+ parent_class=g_type_class_ref(gtk_widget_get_type());
 
- object_class->destroy=destroy;
-
+ widget_class->destroy=destroy;
  widget_class->realize=realize;
- widget_class->expose_event=expose;
- widget_class->size_request=size_request;
+ widget_class->draw=draw;
+ widget_class->get_preferred_width=get_preferred_width;
+ widget_class->get_preferred_height=get_preferred_height;
  widget_class->size_allocate=size_allocate;
 }
 
@@ -101,7 +100,7 @@ GtkWidget* gtk_procmetergeneric_new(void)
 {
  ProcMeterGeneric *new;
 
- new=gtk_type_new(gtk_procmetergeneric_get_type());
+ new=g_object_new(gtk_procmetergeneric_get_type(),NULL);
 
  return(GTK_WIDGET(new));
 }
@@ -119,9 +118,8 @@ static void procmetergeneric_init(ProcMeterGeneric *pmw)
 
  /* The body parts. */
 
- pmw->body_gc=NULL;
-
- pmw->body_bg_set=FALSE;
+ gtk_style_context_get_color(gtk_widget_get_style_context(&pmw->widget),GTK_STATE_FLAG_NORMAL,&pmw->body_fg_color);
+ gtk_style_context_get_background_color(gtk_widget_get_style_context(&pmw->widget),GTK_STATE_FLAG_NORMAL,&pmw->body_bg_color);
 
  /* The label parts. */
 
@@ -131,7 +129,7 @@ static void procmetergeneric_init(ProcMeterGeneric *pmw)
 
  pmw->label_font=NULL;
 
- pmw->label_gc=NULL;
+ gtk_style_context_get_color(gtk_widget_get_style_context(&pmw->widget),GTK_STATE_FLAG_NORMAL,&pmw->label_color);
 
  /* The rest of the sizing. */
 
@@ -142,36 +140,26 @@ static void procmetergeneric_init(ProcMeterGeneric *pmw)
 /*++++++++++++++++++++++++++++++++++++++
   Destroy a Widget
 
-  GtkObject *object The widget to destroy.
+  GtkWidget *widget The widget to destroy.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void destroy(GtkObject *object)
+static void destroy(GtkWidget *widget)
 {
  ProcMeterGeneric *pmw;
 
- g_return_if_fail(object!=NULL);
- g_return_if_fail(GTK_IS_PROCMETERGENERIC(object));
+ g_return_if_fail(widget!=NULL);
+ g_return_if_fail(GTK_IS_PROCMETERGENERIC(widget));
 
- pmw=GTK_PROCMETERGENERIC(object);
+ pmw=GTK_PROCMETERGENERIC(widget);
 
  if(pmw->label_string!=empty_string)
    {
     free(pmw->label_string);
     pmw->label_string=empty_string;
    }
- if(pmw->body_gc)
-   {
-    gdk_gc_destroy(pmw->body_gc);
-    pmw->body_gc=NULL;
-   }
- if(pmw->label_gc)
-   {
-    gdk_gc_destroy(pmw->label_gc);
-    pmw->label_gc=NULL;
-   }
 
- if(GTK_OBJECT_CLASS(parent_class)->destroy)
-    (*GTK_OBJECT_CLASS(parent_class)->destroy)(object);
+ if(GTK_WIDGET_CLASS(parent_class)->destroy)
+    (*GTK_WIDGET_CLASS(parent_class)->destroy)(widget);
 }
 
 
@@ -185,60 +173,78 @@ static void realize(GtkWidget *widget)
 {
  ProcMeterGeneric *pmw;
  GdkWindowAttr attributes;
+ GtkAllocation allocation;
  gint attributes_mask;
 
  g_return_if_fail(widget!=NULL);
  g_return_if_fail(GTK_IS_PROCMETERGENERIC(widget));
 
- GTK_WIDGET_SET_FLAGS(widget,GTK_REALIZED);
+ gtk_widget_set_realized(widget,TRUE);
  pmw=GTK_PROCMETERGENERIC(widget);
 
- attributes.x=widget->allocation.x;
- attributes.y=widget->allocation.y;
- attributes.width=widget->allocation.width;
- attributes.height=widget->allocation.height;
+ gtk_widget_get_allocation(widget,&allocation);
+
+ attributes.x=allocation.x;
+ attributes.y=allocation.y;
+ attributes.width=allocation.width;
+ attributes.height=allocation.height;
  attributes.wclass=GDK_INPUT_OUTPUT;
  attributes.window_type=GDK_WINDOW_CHILD;
  attributes.event_mask=gtk_widget_get_events(widget)|GDK_EXPOSURE_MASK|GDK_BUTTON_PRESS_MASK;
  attributes.visual=gtk_widget_get_visual(widget);
- attributes.colormap=gtk_widget_get_colormap(widget);
 
- attributes_mask=GDK_WA_X|GDK_WA_Y|GDK_WA_VISUAL|GDK_WA_COLORMAP;
- widget->window=gdk_window_new(widget->parent->window,&attributes,attributes_mask);
+ attributes_mask=GDK_WA_X|GDK_WA_Y|GDK_WA_VISUAL;
+ gtk_widget_set_window(widget,gdk_window_new(gtk_widget_get_parent_window(widget),&attributes,attributes_mask));
 
- widget->style=gtk_style_attach(widget->style,widget->window);
-
- gdk_window_set_user_data(widget->window,widget);
-
- gtk_style_set_background(widget->style,widget->window,GTK_STATE_ACTIVE);
-
- if(pmw->body_bg_set)
-    gdk_window_set_background(widget->window,&pmw->body_bg_color);
+ gdk_window_set_user_data(gtk_widget_get_window(widget),widget);
 
  GenericUpdate(pmw);
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  Choose the size that the widget wants to be.
+  Return the preferred width of the widget
 
-  GtkWidget *widget The widget to be resized.
+  GtkWidget *widget The widget whose width is requested.
 
-  GtkRequisition *requisition Returns the request for the size.
+  gint *minimal_width Returns the minimal width.
+
+  gint *natural_width Returns the preferred width.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static void size_request(GtkWidget *widget,GtkRequisition *requisition)
+static void get_preferred_width(GtkWidget *widget,gint *minimal_width,gint *natural_width)
+{
+ g_return_if_fail(widget!=NULL);
+ g_return_if_fail(GTK_IS_PROCMETERGENERIC(widget));
+ g_return_if_fail(minimal_width!=NULL);
+ g_return_if_fail(natural_width!=NULL);
+
+ *minimal_width=*natural_width=50; /* arbitrary */
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Return the preferred height of the widget
+
+  GtkWidget *widget The widget whose height is requested.
+
+  gint *minimal_height Returns the minimal height.
+
+  gint *natural_height Returns the preferred height.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+static void get_preferred_height(GtkWidget *widget,gint *minimal_height,gint *natural_height)
 {
  ProcMeterGeneric *pmw;
 
  g_return_if_fail(widget!=NULL);
  g_return_if_fail(GTK_IS_PROCMETERGENERIC(widget));
- g_return_if_fail(requisition!=NULL);
+ g_return_if_fail(minimal_height!=NULL);
+ g_return_if_fail(natural_height!=NULL);
 
  pmw=GTK_PROCMETERGENERIC(widget);
 
- requisition->height=10+pmw->label_height;
- requisition->width=50;
+ *minimal_height=*natural_height=10+pmw->label_height;
 }
 
 
@@ -256,12 +262,12 @@ static void size_allocate(GtkWidget *widget,GtkAllocation *allocation)
  g_return_if_fail(GTK_IS_PROCMETERGENERIC(widget));
  g_return_if_fail(allocation!=NULL);
 
- widget->allocation=*allocation;
- if(GTK_WIDGET_REALIZED(widget))
+ gtk_widget_set_allocation(widget,allocation);
+ if(gtk_widget_get_realized(widget))
    {
     ProcMeterGeneric *pmw=GTK_PROCMETERGENERIC(widget);
 
-    gdk_window_move_resize(widget->window,
+    gdk_window_move_resize(gtk_widget_get_window(widget),
                            allocation->x,allocation->y,
                            allocation->width,allocation->height);
 
@@ -273,23 +279,19 @@ static void size_allocate(GtkWidget *widget,GtkAllocation *allocation)
 /*++++++++++++++++++++++++++++++++++++++
   Redisplay the ProcMeter Generic Widget.
 
-  gint expose Returns false
+  gboolean draw Returns false
 
   GtkWidget *widget The Widget to redisplay.
 
-  GdkEventExpose *event The event that caused the redisplay.
+  cairo_t *cr A cairo object describing the position to draw.
   ++++++++++++++++++++++++++++++++++++++*/
 
-static gint expose(GtkWidget *widget,GdkEventExpose *event)
+static gboolean draw(GtkWidget *widget,cairo_t *cr)
 {
  ProcMeterGeneric *pmw;
 
  g_return_val_if_fail(widget!=NULL,FALSE);
  g_return_val_if_fail(GTK_IS_PROCMETERGENERIC(widget),FALSE);
- g_return_val_if_fail(event!=NULL,FALSE);
-
- if(event->count>0)
-    return(FALSE);
 
  pmw=GTK_PROCMETERGENERIC(widget);
 
@@ -307,20 +309,42 @@ static gint expose(GtkWidget *widget,GdkEventExpose *event)
 
 static void GenericResize(ProcMeterGeneric *pmw)
 {
+ int allocation_width,allocation_height;
+
  g_return_if_fail(pmw!=NULL);
+
+ allocation_width =gtk_widget_get_allocated_width (&pmw->widget);
+ allocation_height=gtk_widget_get_allocated_height(&pmw->widget);
 
  /* The label parts. */
 
  if(pmw->label_pos)
    {
-    GdkFont *label_font=pmw->label_font?pmw->label_font:gtk_style_get_font(pmw->widget.style);
+    PangoRectangle ink_rect;
+    PangoLayout *layout;
+    cairo_t *cr;
+    int width,height;
 
-    pmw->label_height=label_font->ascent+label_font->descent+2;
-    pmw->label_x=(pmw->widget.allocation.width-gdk_string_width(label_font,pmw->label_string))/2;
-    if(pmw->label_pos==ProcMeterLabelTop)
-       pmw->label_y=pmw->label_height-1-label_font->descent;
+    cr=gdk_cairo_create(gtk_widget_get_root_window(&pmw->widget));
+
+    layout=pango_cairo_create_layout(cr);
+    if(pmw->label_font)
+       pango_layout_set_font_description(layout,pmw->label_font);
     else
-       pmw->label_y=pmw->widget.allocation.height-label_font->descent;
+       pango_layout_set_font_description(layout,gtk_style_context_get_font(gtk_widget_get_style_context(&pmw->widget),GTK_STATE_FLAG_NORMAL));
+
+    pango_layout_set_text(layout,pmw->label_string,-1);
+    pango_layout_get_pixel_size(layout,&width,&height);
+    pango_layout_get_pixel_extents(layout,&ink_rect,NULL);
+
+    cairo_destroy(cr);
+
+    pmw->label_height=(1+PANGO_ASCENT(ink_rect))+(1+PANGO_DESCENT(ink_rect))+2;
+    pmw->label_x=(allocation_width-width)/2;
+    if(pmw->label_pos==ProcMeterLabelTop)
+       pmw->label_y=pmw->label_height-1-(1+PANGO_DESCENT(ink_rect));
+    else
+       pmw->label_y=allocation_height-(1+PANGO_DESCENT(ink_rect));
    }
  else
    {
@@ -331,7 +355,7 @@ static void GenericResize(ProcMeterGeneric *pmw)
 
  /* The body parts. */
 
- pmw->body_height=pmw->widget.allocation.height-pmw->label_height;
+ pmw->body_height=allocation_height-pmw->label_height;
 
  if(pmw->label_pos==ProcMeterLabelTop)
     pmw->body_start=pmw->label_height;
@@ -350,28 +374,52 @@ static void GenericUpdate(ProcMeterGeneric *pmw)
 {
  g_return_if_fail(pmw!=NULL);
 
- if(GTK_WIDGET_VISIBLE(&pmw->widget))
+ if(gtk_widget_get_visible(&pmw->widget))
    {
-    GdkFont *label_font=pmw->label_font?pmw->label_font:gtk_style_get_font(pmw->widget.style);
-    GdkGC *label_gc=pmw->label_gc?pmw->label_gc:pmw->widget.style->fg_gc[GTK_STATE_NORMAL];
+    int allocation_width,allocation_height;
+    cairo_t *cr;
 
-    gdk_window_clear(pmw->widget.window);
+    cr=gdk_cairo_create(gtk_widget_get_window(&pmw->widget));
+    cairo_set_line_width(cr,1.0);
+
+    allocation_width =gtk_widget_get_allocated_width (&pmw->widget);
+    allocation_height=gtk_widget_get_allocated_height(&pmw->widget);
+
+    cairo_set_source_rgb(cr,pmw->body_bg_color.red,pmw->body_bg_color.green,pmw->body_bg_color.blue);
+    cairo_rectangle(cr,0,0,allocation_width,allocation_height);
+    cairo_fill(cr);
 
     if(pmw->label_pos)
       {
-       gdk_draw_string(pmw->widget.window,label_font,label_gc,
-                       pmw->label_x,pmw->label_y,
-                       pmw->label_string);
+       PangoLayout *layout;
+
+       cairo_set_source_rgb(cr,pmw->label_color.red,pmw->label_color.green,pmw->label_color.blue);
+
+       layout=pango_cairo_create_layout(cr);
+       if(pmw->label_font)
+          pango_layout_set_font_description(layout,pmw->label_font);
+       else
+          pango_layout_set_font_description(layout,gtk_style_context_get_font(gtk_widget_get_style_context(&pmw->widget),GTK_STATE_FLAG_NORMAL));
+
+       cairo_move_to(cr,pmw->label_x,pmw->label_y);
+       pango_layout_set_text(layout,pmw->label_string,-1);
+       pango_cairo_show_layout(cr,layout);
 
        if(pmw->label_pos==ProcMeterLabelTop)
-          gdk_draw_line(pmw->widget.window,label_gc,
-                        0                           ,pmw->label_height-1,
-                        pmw->widget.allocation.width,pmw->label_height-1);
+         {
+          cairo_move_to(cr,0               ,pmw->label_height-1+0.5);
+          cairo_line_to(cr,allocation_width,pmw->label_height-1+0.5);
+          cairo_stroke(cr);
+         }
        else
-          gdk_draw_line(pmw->widget.window,label_gc,
-                        0                           ,pmw->body_height,
-                        pmw->widget.allocation.width,pmw->body_height);
+         {
+          cairo_move_to(cr,0               ,pmw->body_height+0.5);
+          cairo_line_to(cr,allocation_width,pmw->body_height+0.5);
+          cairo_stroke(cr);
+         }
       }
+
+    cairo_destroy(cr);
    }
 }
 
@@ -381,37 +429,12 @@ static void GenericUpdate(ProcMeterGeneric *pmw)
 
   ProcMeterGeneric *pmw The widget to set.
 
-  GdkColor body_bg_color The body background.
+  GdkRGBA *body_bg_color The body background.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void ProcMeterGenericSetBackgroundColour(ProcMeterGeneric *pmw,GdkColor body_bg_color)
+void ProcMeterGenericSetBackgroundColour(ProcMeterGeneric *pmw,GdkRGBA *body_bg_color)
 {
- pmw->body_bg_color=body_bg_color;
-
- pmw->body_bg_set=TRUE;
-
- if(pmw->widget.window)
-    gdk_window_set_background(pmw->widget.window,&pmw->body_bg_color);
-
- if(pmw->body_gc)
-    gdk_gc_set_background(pmw->body_gc,&pmw->body_bg_color);
- else
-   {
-    GdkGCValues values;
-
-    values.background=pmw->body_bg_color;
-    pmw->body_gc=gdk_gc_new_with_values(pmw->widget.parent->window,&values,GDK_GC_BACKGROUND);
-   }
-
- if(pmw->label_gc)
-    gdk_gc_set_background(pmw->label_gc,&pmw->body_bg_color);
- else
-   {
-    GdkGCValues values;
-
-    values.background=pmw->body_bg_color;
-    pmw->label_gc=gdk_gc_new_with_values(pmw->widget.parent->window,&values,GDK_GC_BACKGROUND);
-   }
+ pmw->body_bg_color=*body_bg_color;
 
  GenericUpdate(pmw);
 }
@@ -422,22 +445,12 @@ void ProcMeterGenericSetBackgroundColour(ProcMeterGeneric *pmw,GdkColor body_bg_
 
   ProcMeterGeneric *pmw The widget to set.
 
-  GdkColor body_fg_color The body foreground.
+  GdkRGBA *body_fg_color The body foreground.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void ProcMeterGenericSetForegroundColour(ProcMeterGeneric *pmw,GdkColor body_fg_color)
+void ProcMeterGenericSetForegroundColour(ProcMeterGeneric *pmw,GdkRGBA *body_fg_color)
 {
- pmw->body_fg_color=body_fg_color;
-
- if(pmw->body_gc)
-    gdk_gc_set_foreground(pmw->body_gc,&pmw->body_fg_color);
- else
-   {
-    GdkGCValues values;
-
-    values.foreground=pmw->body_fg_color;
-    pmw->body_gc=gdk_gc_new_with_values(pmw->widget.parent->window,&values,GDK_GC_FOREGROUND);
-   }
+ pmw->body_fg_color=*body_fg_color;
 
  GenericUpdate(pmw);
 }
@@ -448,22 +461,12 @@ void ProcMeterGenericSetForegroundColour(ProcMeterGeneric *pmw,GdkColor body_fg_
 
   ProcMeterGeneric *pmw The widget to set.
 
-  GdkColor label_color The label foreground.
+  GdkRGBA *label_color The label foreground.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void ProcMeterGenericSetLabelColour(ProcMeterGeneric *pmw,GdkColor label_color)
+void ProcMeterGenericSetLabelColour(ProcMeterGeneric *pmw,GdkRGBA *label_color)
 {
- pmw->label_color=label_color;
-
- if(pmw->label_gc)
-    gdk_gc_set_foreground(pmw->label_gc,&pmw->label_color);
- else
-   {
-    GdkGCValues values;
-
-    values.foreground=pmw->label_color;
-    pmw->label_gc=gdk_gc_new_with_values(pmw->widget.parent->window,&values,GDK_GC_FOREGROUND);
-   }
+ pmw->label_color=*label_color;
 
  GenericUpdate(pmw);
 }
@@ -497,10 +500,10 @@ void ProcMeterGenericSetLabelPosition(ProcMeterGeneric *pmw,int label_position)
 
   ProcMeterGeneric *pmw The widget to set.
 
-  GdkFont *font The font to use.
+  PangoFontDescription *font The font to use.
   ++++++++++++++++++++++++++++++++++++++*/
 
-void ProcMeterGenericSetLabelFont(ProcMeterGeneric *pmw,GdkFont *font)
+void ProcMeterGenericSetLabelFont(ProcMeterGeneric *pmw,PangoFontDescription *font)
 {
  pmw->label_font=font;
 

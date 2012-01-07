@@ -1,12 +1,10 @@
-# $Header: /home/amb/CVS/procmeter3/gtk2/Makefile,v 1.2 2007-09-26 18:31:46 amb Exp $
+# ProcMeter - A system monitoring program for Linux - Version 3.6.
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.5.
-#
-# Makefile for gtk2 parts.
+# Makefile for gtk3 parts.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994-2007 Andrew M. Bishop
+# This file Copyright 1994-2012 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -22,17 +20,19 @@ LD=gcc
 CFLAGS=-g -O2 -Wall
 LDFLAGS=
 
-X_CFLAGS=`pkg-config --cflags gtk+-2.0`
-X_LDFLAGS=`pkg-config --libs gtk+-2.0`
+X_CFLAGS=`pkg-config --cflags gtk+-3.0`
+X_LDFLAGS=`pkg-config --libs gtk+-3.0`
 
-# Check for GTK2 development libraries and headers
+#X_CFLAGS+=-DGTK_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE
 
-HAVE_GTK2:=$(shell pkg-config --modversion gtk+-2.0)
+# Check for GTK3 development libraries and headers
 
-ifdef HAVE_GTK2
-  ALL=all-gtk2
+HAVE_GTK3:=$(shell pkg-config --modversion gtk+-3.0)
+
+ifdef HAVE_GTK3
+  ALL=all-gtk3
 else
-  ALL=all-no-gtk2
+  ALL=all-no-gtk3
 endif
 
 # Compilation targets
@@ -50,18 +50,18 @@ WOBJ=$(foreach f,$(WSRC),$(addsuffix .o,$(basename $f)))
 
 all : $(ALL)
 
-all-no-gtk2 :
+all-no-gtk3 :
 	@echo "ProcMeter:"
-	@echo "ProcMeter: GTK2 is not installed (pkg-config could not find it)."
-	@echo "ProcMeter: Cannot compile procmeter3-gtk2 program."
+	@echo "ProcMeter: GTK3 is not installed (pkg-config could not find it)."
+	@echo "ProcMeter: Cannot compile procmeter3-gtk3 program."
 	@echo "ProcMeter:"
 
-all-gtk2 : $(OBJ) procmeter.widget \
-      ../procmeter3-gtk2
+all-gtk3 : $(OBJ) procmeter.widget \
+      ../procmeter3-gtk3
 
 ########
 
-../procmeter3-gtk2 : $(OBJ) procmeter.widget procmeter.main
+../procmeter3-gtk3 : $(OBJ) procmeter.widget procmeter.main
 	$(LD) $(OBJ) $(WOBJ) $(POBJ) -o $@ -ldl $(LDFLAGS) $(X_LDFLAGS)
 
 ########
@@ -69,7 +69,6 @@ all-gtk2 : $(OBJ) procmeter.widget \
 %.o:%.c
 	$(CC) -c $(CFLAGS) $< -o $@ $(X_CFLAGS) -I..
 
-bitmap.o    : bitmap.c    ../procmeterp.h ../procmeter.h window.h
 resources.o : resources.c ../procmeterp.h ../procmeter.h window.h
 menus.o     : menus.c     ../procmeterp.h ../procmeter.h window.h
 window.o    : window.c    ../procmeterp.h ../procmeter.h window.h
