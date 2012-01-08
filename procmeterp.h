@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeterp.h,v 1.15 2005-11-19 17:25:36 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.4e.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   Global private header file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,99,2002,05 Andrew M. Bishop
+  This file Copyright 1998-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -29,7 +27,7 @@
 #endif
 
 #ifndef LIB_PATH
-#define LIB_PATH  INSTDIR  "/lib/X11/ProcMeter3"
+#define LIB_PATH  INSTDIR  "/lib/ProcMeter3"
 #endif
 #ifndef MOD_PATH
 #define MOD_PATH  LIB_PATH "/modules"

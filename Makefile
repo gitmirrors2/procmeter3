@@ -19,7 +19,7 @@ INSTDIR=/usr/local
 MANDIR=$(INSTDIR)/share/man
 
 # LIB_PATH - the root dir for library files
-LIB_PATH=$(INSTDIR)/lib/X11/ProcMeter3
+LIB_PATH=$(INSTDIR)/lib/ProcMeter3
 
 # MOD_PATH - the path modules are stored in
 MOD_PATH=$(LIB_PATH)/modules

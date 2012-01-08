@@ -13,7 +13,7 @@
 # Paths (overridden by main Makefile)
 
 INSTDIR=/usr/local
-LIB_PATH=$(INSTDIR)/lib/X11/ProcMeter3
+LIB_PATH=$(INSTDIR)/lib/ProcMeter3
 MOD_PATH=$(LIB_PATH)/modules
 
 # Programs
