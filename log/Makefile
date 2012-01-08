@@ -1,12 +1,10 @@
-# $Header: /home/amb/CVS/procmeter3/log/Makefile,v 1.3 2002-11-30 19:20:54 amb Exp $
-#
-# ProcMeter - A system monitoring program for Linux - Version 3.4.
+# ProcMeter - A system monitoring program for Linux - Version 3.6.
 #
 # Makefile for logging to a file.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994,95,96,97,98,99,2000,02 Andrew M. Bishop
+# This file Copyright 1994-2012 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -20,7 +18,7 @@ LD=gcc
 # Program options
 
 CFLAGS=-g -O2 -Wall
-LDFLAGS=
+LDFLAGS=-g
 
 # Compilation targets
 
@@ -38,7 +36,7 @@ all : $(OBJ) \
 ########
 
 ../procmeter3-log : $(OBJ) procmeter.main
-	$(LD) $(OBJ) $(POBJ) -o $@ -ldl $(LDFLAGS)
+	$(LD) $(OBJ) $(POBJ) -o $@ $(LDFLAGS) -ldl -rdynamic
 
 ########
 

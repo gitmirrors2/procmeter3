@@ -1,12 +1,10 @@
-# $Header: /home/amb/CVS/procmeter3/xaw/Makefile,v 1.2 2007-09-26 18:31:46 amb Exp $
+# ProcMeter - A system monitoring program for Linux - Version 3.6.
 #
-# ProcMeter - A system monitoring program for Linux - Version 3.5.
-#
-# Makefile for xaw parts.
+# Makefile for Athena parts.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994-2007 Andrew M. Bishop
+# This file Copyright 1994-2012 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -20,7 +18,7 @@ LD=gcc
 # Program options
 
 CFLAGS=-g -O2 -Wall
-LDFLAGS=
+LDFLAGS=-g
 
 X_CFLAGS=-I/usr/X11/include -I/usr/X11R6/include
 X_LDFLAGS=-L/usr/X11/lib -L/usr/X11R6/lib -lXaw -lXmu -lXt -lXext -lSM -lICE -lX11
@@ -44,7 +42,7 @@ all : $(OBJ) procmeter.widget \
 ########
 
 ../procmeter3-xaw : $(OBJ) procmeter.widget procmeter.main
-	$(LD) $(OBJ) $(WOBJ) $(POBJ) -o $@ -ldl $(LDFLAGS) $(X_LDFLAGS)
+	$(LD) $(OBJ) $(WOBJ) $(POBJ) -o $@ $(LDFLAGS) $(X_LDFLAGS) -ldl -rdynamic
 
 ########
 

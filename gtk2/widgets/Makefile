@@ -13,7 +13,6 @@
 # Programs
 
 CC=gcc
-LD=gcc
 
 # Program options (overridden by main Makefile)
 

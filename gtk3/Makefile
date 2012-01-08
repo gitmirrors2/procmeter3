@@ -18,10 +18,10 @@ LD=gcc
 # Program options
 
 CFLAGS=-g -O2 -Wall
-LDFLAGS=
+LDFLAGS=-g
 
 X_CFLAGS=`pkg-config --cflags gtk+-3.0`
-X_LDFLAGS=`pkg-config --libs gtk+-3.0`
+X_LDFLAGS=`pkg-config --libs gtk+-3.0` -lX11
 
 #X_CFLAGS+=-DGTK_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE
 
@@ -62,7 +62,7 @@ all-gtk3 : $(OBJ) procmeter.widget \
 ########
 
 ../procmeter3-gtk3 : $(OBJ) procmeter.widget procmeter.main
-	$(LD) $(OBJ) $(WOBJ) $(POBJ) -o $@ -ldl $(LDFLAGS) $(X_LDFLAGS)
+	$(LD) $(OBJ) $(WOBJ) $(POBJ) -o $@ $(LDFLAGS) $(X_LDFLAGS) -ldl -rdynamic
 
 ########
 

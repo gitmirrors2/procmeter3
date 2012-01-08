@@ -1,11 +1,10 @@
-#
-# ProcMeter - A system monitoring program for Linux - Version 3.5d.
+# ProcMeter - A system monitoring program for Linux - Version 3.6.
 #
 # Makefile for the modules.
 #
 # Written by Andrew M. Bishop
 #
-# This file Copyright 1994-2011 Andrew M. Bishop
+# This file Copyright 1994-2012 Andrew M. Bishop
 # It may be distributed under the GNU Public License, version 2, or
 # any higher version.  See section COPYING of the GNU Public license
 # for conditions under which this file may be redistributed.
@@ -25,7 +24,7 @@ LD=gcc
 # Program options (overridden by main Makefile)
 
 CFLAGS=-g -O2 -Wall
-LDFLAGS=
+LDFLAGS=-g
 
 # Compilation targets
 
