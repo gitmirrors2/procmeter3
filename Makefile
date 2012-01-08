@@ -21,6 +21,9 @@ MANDIR=$(INSTDIR)/share/man
 # LIB_PATH - the root dir for library files
 LIB_PATH=$(INSTDIR)/lib/ProcMeter3
 
+# INC_PATH - the root dir for include files
+INC_PATH=$(INSTDIR)/include/ProcMeter3
+
 # MOD_PATH - the path modules are stored in
 MOD_PATH=$(LIB_PATH)/modules
 
@@ -133,6 +136,7 @@ distclean : clean
 install :
 	@[ -f procmeter3-xaw ] || [ -f procmeter3-gtk1 ] || [ -f procmeter3-gtk2 ] || [ -f procmeter3-gtk3 ] || [ -f procmeter3-log ] || [ -f procmeter3-lcd ] || \
 	  (echo "*** Run 'make all' or 'make procmeter3-xaw' or 'make procmeter3-gtk1' or 'make procmeter3-gtk2' or 'make procmeter3-gtk3' or 'make procmeter3-log' or 'make procmeter3-lcd' first." ; exit 1)
+	install -d $(DESTDIR)$(INC_PATH)
 	install -d $(DESTDIR)$(LIB_PATH)
 	install -d $(DESTDIR)$(MOD_PATH)
 	install -d $(DESTDIR)$(RC_PATH)
@@ -173,8 +177,7 @@ install :
 	[ ! -f $(DESTDIR)$(RC_PATH)/procmeterrc ]  || install -m 644 procmeterrc.install $(DESTDIR)$(RC_PATH)/procmeterrc.install
 	[ -f $(DESTDIR)$(RC_PATH)/procmeterrc ]    || install -m 644 procmeterrc.install $(DESTDIR)$(RC_PATH)/procmeterrc
 #
-	install -d $(DESTDIR)$(LIB_PATH)/include
-	install -m 644 procmeter.h $(DESTDIR)$(LIB_PATH)/include
+	install -m 644 procmeter.h $(DESTDIR)$(INC_PATH)
 
 install-strip :
 	$(MAKE) install STRIP=-s
