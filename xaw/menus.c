@@ -1,11 +1,11 @@
 /***************************************
-  ProcMeter - A system monitoring program for Linux - Version 3.5c.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   X Window menus.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2011 Andrew M. Bishop
+  This file Copyright 1998-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -117,7 +117,11 @@ void CreateMenus(Widget parent)
    {XtSetArg(args[nargs],XtNbackground,StringToPixel(string));nargs++;}
 
  if((string=GetProcMeterRC("resources","menu-font")))
-   {XtSetArg(args[nargs],XtNfont,StringToFont(string));nargs++;}
+   {
+    XFontStruct *font=StringToFont(string);
+    if(font)
+      {XtSetArg(args[nargs],XtNfont,font);nargs++;}
+   }
 
  if(nargs==1)
     resources=XtVaCreateArgsList(NULL,
@@ -400,7 +404,11 @@ void AddModuleToMenu(Module module)
 
  if(((string=GetProcMeterRC(module->module->name,"menu-font")) ||
      (string=GetProcMeterRC("resources","menu-font"))))
-   {XtSetArg(args[nargs],XtNfont,StringToFont(string));nargs++;}
+   {
+    XFontStruct *font=StringToFont(string);
+    if(font)
+      {XtSetArg(args[nargs],XtNfont,font);nargs++;}
+   }
 
  /* Create a new menu. */
 
@@ -449,7 +457,11 @@ void AddModuleToMenu(Module module)
        if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-font")) ||
            (string=GetProcMeterRC(module->module->name,"menu-font")) ||
            (string=GetProcMeterRC("resources","menu-font"))))
-          XtVaSetValues(menuitem,XtNfont,StringToFont(string),NULL);
+         {
+          XFontStruct *font=StringToFont(string);
+          if(font)
+             XtVaSetValues(menuitem,XtNfont,font,NULL);
+         }
 
        submenu=XtVaCreatePopupShell("Type",simpleMenuWidgetClass,module->submenu_widget,
                                     NULL);

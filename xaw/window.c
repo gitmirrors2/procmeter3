@@ -300,7 +300,11 @@ void AddRemoveOutput(Output output)
     if(((string=GetProcMeterRC2(module->module->name,output->output->name,"label-font")) ||
         (string=GetProcMeterRC(module->module->name,"label-font")) ||
         (string=GetProcMeterRC("resources","label-font"))))
-      {XtSetArg(args[nargs],XtNlabelFont,StringToFont(string));nargs++;}
+      {
+       XFontStruct *font=StringToFont(string);
+       if(font)
+         {XtSetArg(args[nargs],XtNlabelFont,font);nargs++;}
+      }
 
     if(((string=GetProcMeterRC2(module->module->name,output->output->name,"label-foreground")) ||
         (string=GetProcMeterRC(module->module->name,"label-foreground")) ||
@@ -356,7 +360,11 @@ void AddRemoveOutput(Output output)
        if(((string=GetProcMeterRC2(module->module->name,output->output->name,"text-font")) ||
            (string=GetProcMeterRC(module->module->name,"text-font")) ||
            (string=GetProcMeterRC("resources","text-font"))))
-         {XtSetArg(args[nargs],XtNtextFont,StringToFont(string));nargs++;}
+         {
+          XFontStruct *font=StringToFont(string);
+          if(font)
+            {XtSetArg(args[nargs],XtNtextFont,font);nargs++;}
+         }
 
        XtSetArg(args[nargs],XtNlabel,output->label);nargs++;
        XtSetArg(args[nargs],XtNallowResize,True);nargs++;
