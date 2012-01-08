@@ -170,8 +170,8 @@ install :
 #
 	[ ! -f $(DESTDIR)$(RC_PATH)/.procmeterrc ] || mv $(DESTDIR)$(RC_PATH)/.procmeterrc $(DESTDIR)$(RC_PATH)/procmeterrc
 	@[ ! -f $(DESTDIR)$(RC_PATH)/procmeterrc ] || (echo "" ; echo "*** The $(DESTDIR)$(RC_PATH)/procmeterrc file has not been installed (it already exists)." ; echo "")
-	[ -f $(DESTDIR)$(RC_PATH)/procmeterrc ] || install -m 644 procmeterrc.install $(DESTDIR)$(RC_PATH)/procmeterrc
-	install -m 644 procmeterrc.install $(DESTDIR)$(RC_PATH)
+	[ ! -f $(DESTDIR)$(RC_PATH)/procmeterrc ]  || install -m 644 procmeterrc.install $(DESTDIR)$(RC_PATH)/procmeterrc.install
+	[ -f $(DESTDIR)$(RC_PATH)/procmeterrc ]    || install -m 644 procmeterrc.install $(DESTDIR)$(RC_PATH)/procmeterrc
 #
 	install -d $(DESTDIR)$(LIB_PATH)/include
 	install -m 644 procmeter.h $(DESTDIR)$(LIB_PATH)/include
