@@ -30,12 +30,11 @@ POBJ=$(foreach f,$(PSRC),$(addsuffix .o,$(basename $f)))
 
 ########
 
-all : $(OBJ) \
-      ../procmeter3-lcd
+all : ../procmeter3-lcd
 
 ########
 
-../procmeter3-lcd : $(OBJ) procmeter.main
+../procmeter3-lcd : $(OBJ) $(POBJ)
 	$(LD) $(OBJ) $(POBJ) -o $@ $(LDFLAGS) -ldl -rdynamic
 
 ########
@@ -49,11 +48,7 @@ run.o       : run.c       ../procmeterp.h ../procmeter.h
 
 ########
 
-.PHONY : procmeter.main
-
-$(POBJ) : procmeter.main
-
-procmeter.main :
+$(POBJ) :
 	$(MAKE) CFLAGS="$(CFLAGS)" -C .. obj
 
 ########

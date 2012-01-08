@@ -101,9 +101,10 @@ procmeter3-lcd  :
 
 ########
 
-.PHONY : procmeterrc
+procmeterrc :
+	;
 
-procmeterrc.install: procmeterrc Makefile
+procmeterrc.install : procmeterrc Makefile
 	sed -e "s%path=modules%path=$(MOD_PATH)%" < procmeterrc > procmeterrc.install
 
 ########

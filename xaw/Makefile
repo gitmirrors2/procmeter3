@@ -36,12 +36,11 @@ WOBJ=$(foreach f,$(WSRC),$(addsuffix .o,$(basename $f)))
 
 ########
 
-all : $(OBJ) procmeter.widget \
-      ../procmeter3-xaw
+all : ../procmeter3-xaw
 
 ########
 
-../procmeter3-xaw : $(OBJ) procmeter.widget procmeter.main
+../procmeter3-xaw : $(OBJ) $(WOBJ) $(POBJ)
 	$(LD) $(OBJ) $(WOBJ) $(POBJ) -o $@ $(LDFLAGS) $(X_LDFLAGS) -ldl -rdynamic
 
 ########
@@ -57,18 +56,12 @@ run.o       : run.c       ../procmeterp.h ../procmeter.h window.h
 
 ########
 
-.PHONY : procmeter.widget
-
-procmeter.widget :
+$(WOBJ) :
 	$(MAKE) CFLAGS="$(CFLAGS)" X_CFLAGS="$(X_CFLAGS)" -C widgets
 
 ########
 
-.PHONY : procmeter.main
-
-$(POBJ) : procmeter.main
-
-procmeter.main :
+$(POBJ) :
 	$(MAKE) CFLAGS="$(CFLAGS)" -C .. obj
 
 ########
