@@ -35,7 +35,7 @@ LD=gcc
 # Program options
 
 CFLAGS=-g -O2 -Wall
-LDFLAGS=-rdynamic -lX11
+LDFLAGS=-g
 
 PATHDEFS=-DINSTDIR=\"$(INSTDIR)\"   -DLIB_PATH=\"$(LIB_PATH)\" \
          -DMOD_PATH=\"$(MOD_PATH)\" -DRC_PATH=\"$(RC_PATH)\"
