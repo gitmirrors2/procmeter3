@@ -4,7 +4,7 @@
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998-2011 Andrew M. Bishop
+.\"  This file Copyright 1998-2012 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
@@ -84,64 +84,72 @@ options apply to are specified below.
 .TP
 .BR horizontal=...
 A Boolean to indicate that the outputs are stacked horizontally instead of
-the default which is vertically. (For X versions of procmeter3 only.)
+the default which is vertically. (For X versions of ProcMeter only.)
 .TP
 .BR background=...
 The colour to use as the default background for all outputs. (An X11 colour name
-or an RGB value in hex as #RRGGBB.)  (For X versions of procmeter3 only.)
+or an RGB value in hex as #RRGGBB; for X versions of ProcMeter only.)
 .TP
 .BR foreground=...
 The colour to use as the default foreground for all outputs. (An X11 colour name
-or an RGB value in hex as #RRGGBB.)  (For X versions of procmeter3 only.)
+or an RGB value in hex as #RRGGBB; for X versions of ProcMeter only.)
 .TP
 .BR label-font=...
-The font to use for the label that describes the output. (An X11 font name.)
-(For X versions of procmeter3 only.)
+The font to use for the label that describes the output. (An X11 font name, also
+known as an X Logical Font Description; for Xaw and GTK1/2 versions of
+ProcMeter only.)
+.TP
+.BR label-font-pango=...
+The font to use for the label that describes the output. (A Pango font name; for
+GTK3 version of ProcMeter only.)
 .TP
 .BR label-foreground=...
 The colour to use as the foreground for the label. (An X11 colour name or an RGB
-value in hex as #RRGGBB.)  (For X versions of procmeter3 only.)
+value in hex as #RRGGBB; for X versions of ProcMeter only.)
 .TP
 .BR label-position=...
 The position of the label relative to the body of the output.  (Either top,
-bottom or none.)  (For X versions of procmeter3 only.)
+bottom or none; for X versions of ProcMeter only.)
 .TP
 .BR grid-foreground=...
 The colour to use for the grid lines. (An X11 colour name or an RGB value in hex
-as #RRGGBB.)  (For X versions of procmeter3 only.)
+as #RRGGBB; for X versions of ProcMeter only.)
 .TP
 .BR graph-solid=...
 A boolean to indicate if the graph should be solid (the default) or a single
-line.  (yes or no, true or false, 0 or 1.)  (For X versions of procmeter3 only.)
+line.  (yes or no, true or false, 0 or 1; for X versions of ProcMeter only.)
 .TP
 .BR grid-min=...
 The minimum number of grid lines to display on a graph or bar chart.  (An
-integer.)  (For X and LCD versions of procmeter3 only.)  This is particularly
+integer; for X and LCD versions of ProcMeter only.)  This is particularly
 important with the bar chart because with this set too low the bar will always
 be the same length on screen and the number of grid lines will change with the
 data.
 .TP
 .BR grid-max=...
 The maximum number of grid lines to display on a graph or bar chart.  (An
-integer.)  (For X and LCD versions of procmeter3 only.)
+integer; for X and LCD versions of ProcMeter only.)
 .TP
 .BR text-font=...
-The font to use for the textual outputs.  (An X11 font name.)  (For X versions
-of procmeter3 only.)
+The font to use for the textual outputs.  (An X11 font name, also known as an X
+Logical Font Description; for Xaw and GTK1/2 versions of ProcMeter only.)
+.TP
+.BR text-font-pango=...
+The font to use for the textual outputs.  (A Pango font name; for GTK3 version
+of ProcMeter only.)
 .TP
 .BR menu-foreground=...
 The colour to use as the foreground for the menus.  (An X11 colour name or an RGB
-value in hex as #RRGGBB.)  (For procmeter3 and procmeter3-xaw only.)
+value in hex as #RRGGBB; for Xaw version of ProcMeter only.)
 .TP
 .BR menu-background=...
 The colour to use as the background for the menus.  (An X11 colour name or an
-RGB value in hex as #RRGGBB.)  (For procmeter3 and procmeter3-xaw only.)  (The
-background of all items on the same menu must be the same due to the Xaw Widget
-set used.)
+RGB value in hex as #RRGGBB; for Xaw version of ProcMeter only; the
+background of all items on the same menu must be the same.)
 .TP
 .BR menu-font=...
-The font to use for the menus.  (An X11 font name.)  (For procmeter3 and
-procmeter3-xaw only.)
+The font to use for the menus.  (An X11 font name, also known as an X
+Logical Font Description; for Xaw version of ProcMeter only.)
 .TP
 .BR update=...
 The update interval for the output in seconds (an integer).
@@ -185,11 +193,11 @@ modules have different options, see the procmeter3_modules(1) manual page.
 .TP
 .BR graph-scale=...
 The scaling of the graph or bar chart, the number of units between each of the
-grid lines (an integer).
+grid lines.  (An integer; for X versions of ProcMeter only.)
 .TP
 .BR run=...
 A string that specifies a program that can be run by selecting it from the menu
-for the left mouse button.  (For X versions of procmeter3 only.)  The way that
+for the left mouse button.  (For X versions of ProcMeter only.)  The way that
 the command is run can be specified using one of the following abbreviations;
 .B XTerm(
 .I command
@@ -250,6 +258,7 @@ file, it is a much reduced version of the system default procmeterrc file.
 
  # A large-medium size text font.
  text-font = 8x13
+ text-font-pango = Sans 8
 
  # Solid graphs with at least 5 grid lines in grey.
  graph-solid = yes
@@ -258,6 +267,7 @@ file, it is a much reduced version of the system default procmeterrc file.
 
  # Black on white output labels, small font, below the data.
  label-font = 5x7
+ label-font-pango = Sans 5
  label-foreground = black
  label-position = bottom
 
@@ -270,6 +280,7 @@ file, it is a much reduced version of the system default procmeterrc file.
 
  # A smaller font than normal with no label.
  text-font = 6x10
+ text-font-gtk3 = Sans 6
  label-position = none
 
  [Statistics]
