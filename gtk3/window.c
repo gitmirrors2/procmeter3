@@ -320,9 +320,9 @@ void AddRemoveOutput(Output output)
        if(!vertical)
           gtk_widget_set_hexpand(GTK_WIDGET(w),TRUE);
 
-       if(((string=GetProcMeterRC2(module->module->name,output->output->name,"text-font-gtk3")) ||
-           (string=GetProcMeterRC(module->module->name,"text-font-gtk3")) ||
-           (string=GetProcMeterRC("resources","text-font-gtk3")) ||
+       if(((string=GetProcMeterRC2(module->module->name,output->output->name,"text-font-pango")) ||
+           (string=GetProcMeterRC(module->module->name,"text-font-pango")) ||
+           (string=GetProcMeterRC("resources","text-font-pango")) ||
            (string=GetProcMeterRC2(module->module->name,output->output->name,"text-font")) ||
            (string=GetProcMeterRC(module->module->name,"text-font")) ||
            (string=GetProcMeterRC("resources","text-font"))))
@@ -373,9 +373,9 @@ void AddRemoveOutput(Output output)
         (string=GetProcMeterRC("resources","background"))))
        ProcMeterGenericSetBackgroundColour(GTK_PROCMETERGENERIC(w),StringToColour(string));
 
-    if(((string=GetProcMeterRC2(module->module->name,output->output->name,"label-font-gtk3")) ||
-        (string=GetProcMeterRC(module->module->name,"label-font-gtk3")) ||
-        (string=GetProcMeterRC("resources","label-font-gtk3"))) ||
+    if(((string=GetProcMeterRC2(module->module->name,output->output->name,"label-font-pango")) ||
+        (string=GetProcMeterRC(module->module->name,"label-font-pango")) ||
+        (string=GetProcMeterRC("resources","label-font-pango"))) ||
         (string=GetProcMeterRC2(module->module->name,output->output->name,"label-font")) ||
         (string=GetProcMeterRC(module->module->name,"label-font")) ||
         (string=GetProcMeterRC("resources","label-font")))
