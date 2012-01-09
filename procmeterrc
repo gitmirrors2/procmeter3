@@ -31,6 +31,7 @@ background = grey80
 
 # The text output, a large-medium size font.
 text-font = 8x13
+text-font-gtk3 = Sans 8
 
 # The graph output, a solid graph with at least 5 grid lines in grey.
 graph-solid = yes
@@ -39,13 +40,15 @@ grid-foreground = grey40
 
 # The labels on the graphs, black in a small size font below the data.
 label-font = 5x7
+label-font-gtk3 = Sans 5
 label-foreground = black
 label-position = bottom
 
-# The menu items, black on white in a small-medium size font (These are not used for GTK version).
+# The menu items, black on white in a small-medium size font (These are not used for GTK versions).
+menu-font = 7x13
+menu-font-gtk3 = Sans 5
 menu-foreground = black
 menu-background = grey80
-menu-font = 7x13
 
 ##
 ## The resources for the ProcMeter Version output.
@@ -55,6 +58,7 @@ menu-font = 7x13
 
 # A smaller font than normal with no label.
 text-font = 6x10
+text-font-gtk3 = Sans 6
 label-position = none
 
 # More information about procmeter3
