@@ -44,7 +44,7 @@ label-font-pango = Sans 5
 label-foreground = black
 label-position = bottom
 
-# The menu items, black on white in a small-medium size font (These are not used for GTK versions).
+# The menu items, black on white in a small-medium size font (all used for Xaw version, background for GTK3 version).
 menu-font = 7x13
 menu-foreground = black
 menu-background = grey80

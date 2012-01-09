@@ -74,22 +74,27 @@ void CreateMenus(GtkWidget *parent)
            *prop_modlabel,*prop_outlabel,
            *prop_lbllabel,*prop_typlabel,*prop_intlabel,*prop_scllabel,
            *prop_done;
- // char *string;
+ GdkRGBA menu_bg;
+ int menu_bg_set=0;
+ char *string;
 
  /* Sort out the resources in advance. */
  
- //  if((string=GetProcMeterRC("resources","menu-foreground")))
- //    {XtSetArg(args[nargs],XtNforeground,StringToPixel(string));nargs++;}
- // 
- //  if((string=GetProcMeterRC("resources","menu-background")))
- //    {XtSetArg(args[nargs],XtNbackground,StringToPixel(string));nargs++;}
- // 
- //  if((string=GetProcMeterRC("resources","menu-font")))
- //    {XtSetArg(args[nargs],XtNfont,StringToFont(string));nargs++;}
+// if((string=GetProcMeterRC("resources","menu-foreground")))
+//   {menu_fg=*StringToColour(string);menu_fg_set=1;}
+ 
+ if((string=GetProcMeterRC("resources","menu-background")))
+   {menu_bg=*StringToColour(string);menu_bg_set=1;}
+
+// if((string=GetProcMeterRC("resources","menu-font-pango")) ||
+//    (string=GetProcMeterRC("resources","menu-font")))
+//   {menu_font=StringToFont(string);menu_font_set=1;}
 
  /* The module menu */
 
  module_menu=gtk_menu_new();
+
+ if(menu_bg_set) gtk_widget_override_background_color(GTK_WIDGET(module_menu),GTK_STATE_FLAG_NORMAL,&menu_bg);
 
  menulabel=gtk_menu_item_new_with_label("Modules");
  gtk_widget_set_sensitive(GTK_WIDGET(menulabel),FALSE);
@@ -103,6 +108,8 @@ void CreateMenus(GtkWidget *parent)
  /* The functions menu */
 
  functions_menu=gtk_menu_new();
+
+ if(menu_bg_set) gtk_widget_override_background_color(GTK_WIDGET(functions_menu),GTK_STATE_FLAG_NORMAL,&menu_bg);
 
  menulabel=gtk_menu_item_new_with_label("Functions");
  gtk_widget_set_sensitive(GTK_WIDGET(menulabel),FALSE);
@@ -281,6 +288,8 @@ void AddModuleToMenu(Module module)
 {
  int i;
  GtkWidget *menulabel,*menuline,*submenu=NULL,*menuitem=NULL;
+ GdkRGBA menu_bg;
+ int menu_bg_set=0;
  ProcMeterOutput *prevoutput=NULL;
  char *string;
 
@@ -291,21 +300,25 @@ void AddModuleToMenu(Module module)
 
  /* Sort out the resources in advance. */
 
- // if(((string=GetProcMeterRC(module->module->name,"menu-foreground")) ||
- //     (string=GetProcMeterRC("resources","menu-foreground"))))
- //   {XtSetArg(args[nargs],XtNforeground,StringToPixel(string));nargs++;}
- //
- // if(((string=GetProcMeterRC(module->module->name,"menu-background")) ||
- //     (string=GetProcMeterRC("resources","menu-background"))))
- //   {XtSetArg(args[nargs],XtNbackground,StringToPixel(string));nargs++;}
- //
- // if(((string=GetProcMeterRC(module->module->name,"menu-font")) ||
- //     (string=GetProcMeterRC("resources","menu-font"))))
- //   {XtSetArg(args[nargs],XtNfont,StringToFont(string));nargs++;}
+// if((string=GetProcMeterRC(module->module->name,"menu-foreground")) ||
+//    (string=GetProcMeterRC("resources","menu-foreground")))
+//   {menu_fg=*StringToColour(string);menu_fg_set=1;}
+ 
+ if((string=GetProcMeterRC(module->module->name,"menu-background")) ||
+    (string=GetProcMeterRC("resources","menu-background")))
+   {menu_bg=*StringToColour(string);menu_bg_set=1;}
+
+// if((string=GetProcMeterRC(module->module->name,"menu-font-pango")) ||
+//    (string=GetProcMeterRC("resources","menu-font-pango")) ||
+//    (string=GetProcMeterRC(module->module->name,"menu-font")) ||
+//    (string=GetProcMeterRC("resources","menu-font")))
+//   {menu_font=StringToFont(string);menu_font_set=1;}
 
  /* Create a new menu. */
 
  module->submenu_widget=gtk_menu_new();
+
+ if(menu_bg_set) gtk_widget_override_background_color(GTK_WIDGET(module->submenu_widget),GTK_STATE_FLAG_NORMAL,&menu_bg);
 
  menulabel=gtk_menu_item_new_with_label(module->module->name);
  gtk_widget_set_sensitive(GTK_WIDGET(menulabel),FALSE);
@@ -324,6 +337,8 @@ void AddModuleToMenu(Module module)
  gtk_widget_show(GTK_WIDGET(module->menu_item_widget));
  gtk_menu_item_set_submenu(GTK_MENU_ITEM(module->menu_item_widget),module->submenu_widget);
 
+ if(menu_bg_set) gtk_widget_override_background_color(GTK_WIDGET(module->menu_item_widget),GTK_STATE_FLAG_NORMAL,&menu_bg);
+
  /* Add entries to it for each output. */
 
  for(i=0;module->outputs[i];i++)
@@ -338,18 +353,13 @@ void AddModuleToMenu(Module module)
        gtk_menu_shell_append(GTK_MENU_SHELL(module->submenu_widget),menuitem);
        gtk_widget_show(GTK_WIDGET(menuitem));
 
- //       if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-foreground")) ||
- //           (string=GetProcMeterRC(module->module->name,"menu-foreground")) ||
- //           (string=GetProcMeterRC("resources","menu-foreground"))))
- //          XtVaSetValues(menuitem,XtNforeground,StringToPixel(string),NULL);
- //
- //       if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-font")) ||
- //           (string=GetProcMeterRC(module->module->name,"menu-font")) ||
- //           (string=GetProcMeterRC("resources","menu-font"))))
- //          XtVaSetValues(menuitem,XtNfont,StringToFont(string),NULL);
-
        submenu=gtk_menu_new();
        gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem),submenu);
+
+       if((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-background")))
+          gtk_widget_override_background_color(GTK_WIDGET(submenu),GTK_STATE_FLAG_NORMAL,StringToColour(string));
+       else if(menu_bg_set)
+          gtk_widget_override_background_color(GTK_WIDGET(submenu),GTK_STATE_FLAG_NORMAL,&menu_bg);
 
        prevoutput=module->outputs[i]->output;
       }
@@ -375,11 +385,6 @@ void AddModuleToMenu(Module module)
     gtk_widget_show(GTK_WIDGET(sme));
 
     g_signal_connect_swapped(sme,"activate",G_CALLBACK(SelectOutputMenuCallback),(gpointer)module->outputs[i]);
-
- //    if(((string=GetProcMeterRC2(module->module->name,module->outputs[i]->output->name,"menu-foreground")) ||
- //        (string=GetProcMeterRC(module->module->name,"menu-foreground")) ||
- //        (string=GetProcMeterRC("resources","menu-foreground"))))
- //       XtVaSetValues(sme,XtNforeground,StringToPixel(string),NULL);
 
     module->outputs[i]->menu_item_widget=sme;
     module->outputs[i]->output_widget=NULL;
