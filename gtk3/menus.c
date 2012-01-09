@@ -344,7 +344,6 @@ void AddModuleToMenu(Module module)
  for(i=0;module->outputs[i];i++)
    {
     GtkWidget *sme;
- //    GdkPixmap *bitmap=CircleBitmap;
 
     if(module->outputs[i]->output!=prevoutput)
       {
@@ -363,13 +362,6 @@ void AddModuleToMenu(Module module)
 
        prevoutput=module->outputs[i]->output;
       }
-
- //   if(module->outputs[i]->type==PROCMETER_GRAPH)
- //      bitmap=GraphBitmap;
- //   else if(module->outputs[i]->type==PROCMETER_TEXT)
- //      bitmap=TextBitmap;
- //   else if(module->outputs[i]->type==PROCMETER_BAR)
- //      bitmap=BarBitmap;
 
     string="";
     if(module->outputs[i]->type==PROCMETER_GRAPH)
