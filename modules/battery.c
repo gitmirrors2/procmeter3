@@ -63,33 +63,33 @@ const static struct battery_field {
 } fields[] = {
 #define FIELD_OFS_STATUS 0
         { "status", bft_string, true, true,
-                "status (Charging/Discharging)", "%s state"},
+                "Status (charging/discharging).", "%s_state"},
 #define FIELD_OFS_CURRENT 1
         { "current_now", bft_muA, true, true,
-                "current charging/discharging rate", "%s rate"},
+                "Current charging/discharging rate.", "%s_rate"},
 #define FIELD_OFS_CHARGE 2
         { "charge_now", bft_muAh, true, true,
-                "current charge of the battery", "%s charge"},
+                "Current charge of the battery.", "%s_charge"},
 #define FIELD_OFS_FULL 3
         { "charge_full", bft_muAh, false, true,
-                "last full charge of the battery", "%s last full"},
+                "Last full charge of the battery.", "%s_last full"},
 #define FIELD_OFS_DESIGN_FULL 4
         { "charge_full_design", bft_muAh, false, false,
-                "designed full charge of the battery", "%s design full"},
+                "Designed full charge of the battery.", "%s_design full"},
 //      { "cycle_count", bft_count, false, false,
-//              "content of the 'cycle_count' file", "%s cycle count"},
+//              "Content of the 'cycle_count' file.", "%s_cycle count"},
         { "manufacturer", bft_string, false, false,
-                "manufacturer", "%s manufacturer"},
+                "Manufacturer.", "%s_manufacturer"},
         { "model_name", bft_string, false, false,
-                "model name", "%s model name"},
+                "Model name.", "%s_model name"},
         { "serial_number", bft_string, false, false,
-                "serial number", "%s serial number"},
+                "Serial number.", "%s_serial number"},
         { "technology", bft_string, false, false,
-                "technology", "%s technology"},
+                "Technology.", "%s_technology"},
         { "voltage_min_design", bft_v, false, false,
-                "minimum design voltage", "%s min voltage"},
+                "Minimum design voltage.", "%s_min voltage"},
         { "voltage_now", bft_v, true, false,
-                "current voltage", "%s voltage"},
+                "Current voltage.", "%s_voltage"},
         { NULL, 0}
 };
 
@@ -298,14 +298,14 @@ static bool fill_outputs(struct battery *bat, int dirfd) {
         bat->output_count = 0;
 
 #define OUTPUT_OFS_PERCENT 0
-        f = new_output(bat, "%s percent", "", PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH, 10);
+        f = new_output(bat, "%s_percent", "The percentage of design charge in the battery.", PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH, 10);
         if (f == NULL)
                 return false;
         strcpy(f->output.text_value, "??%");
         strcpy(f->output.graph_units, "(%d%)");
         f->output.graph_scale = 20;
 #define OUTPUT_OFS_TIMELEFT 1
-        f = new_output(bat, "%s remaining", "Time left till charged or discharged", PROCMETER_TEXT, 10);
+        f = new_output(bat, "%s_remaining", "Time left till charged or discharged.", PROCMETER_TEXT, 10);
         if (f == NULL)
                 return false;
         strcpy(f->output.text_value, "??:??:??");
