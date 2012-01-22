@@ -1,3 +1,27 @@
+Version 3.6 of ProcMeter3 released : Sun Jan 22 2012
+----------------------------------------------------
+
+Bug Fixes
+ Don't package up unused LSM and ANNOUNCE files.
+ Add "-lX11" to LDFLAGS (fixes Debian bug #556073).
+ Move installed modules into /usr/lib/ProcMeter3 (fixes Debian bug #651145).
+ Don't always install the procmeterrc.install file (fixes Debian bug #651149).
+ Install procmeter.h to /usr/include/ProcMeter3 (fixes Debian bug #651150).
+ Fix Makefiles to stop linking executables each time make is run.
+ Don't crash procmeter3-xaw if specified font doesn't exist.
+
+Module bug fixes
+ Changed wireless module to remove kernel 2.4.x code.
+ Fixed stat-intr module to not use data from freed memory.
+
+New features
+ Added GTK3 version.
+ Draw line in foreground colour between outputs in procmeter3-gtk2.
+
+New modules
+ Battery - new /sys/class/power_supply/ battery information.
+
+
 Version 3.5d of ProcMeter3 released : Mon Oct 3 18:00:00 2011
 -------------------------------------------------------------
 

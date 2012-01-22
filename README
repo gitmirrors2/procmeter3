@@ -1,4 +1,4 @@
-                              PROCMETER V3.5
+                              PROCMETER V3.6
                               ==============
 
 A system monitoring program for Linux.
@@ -7,6 +7,7 @@ A system monitoring program for Linux.
 Usage: procmeter3-xaw  [-h] -w hint [--rc=<filename>] [--...] ...
        procmeter3-gtk1 [-h] -w hint [--rc=<filename>] [--...] ...
        procmeter3-gtk2 [-h] -w hint [--rc=<filename>] [--...] ...
+       procmeter3-gtk3 [-h] -w hint [--rc=<filename>] [--...] ...
        procmeter3-log  [-h]         [--rc=<filename>] [--...] ...
        procmeter3-lcd  [-h]         [--rc=<filename>] [--...] ...
 
@@ -23,7 +24,8 @@ Compilation
 
 Edit the Makefile to set the paths for installation (INSTDIR).
 
-To compile all possible versions (using GTK1 and/or GTK2 if available) then use:
+To compile all possible versions (using GTK1 or GTK2 or GTK3 if available) then
+use:
 
 make all
 
@@ -36,6 +38,8 @@ procmeter3-xaw      - Traditional Athena Widgets version.
 procmeter3-gtk1     - GTK1 version.
 
 procmeter3-gtk2     - GTK2 version.
+
+procmeter3-gtk3     - GTK3 version.
 
 procmeter3-log      - Non-GUI data-logging version.
 
@@ -66,8 +70,8 @@ Usage
 -----
 
 The manual pages procmeter3-xaw(1), procmeter3-gtk1(1), procmeter3-gtk2(1),
-procmeter3-log(1) and procmeter3-lcd(1) give more details on how to use the
-programs.
+procmeter3-gtk3(1), procmeter3-log(1) and procmeter3-lcd(1) give more details on
+how to use the programs.
 
 The manual page procmeter3_modules(1) describes the different data display
 modules that are available.
@@ -98,11 +102,12 @@ Procmeter Version 3.1 Written February - March   1999
 Procmeter Version 3.2 Written August - December  1999
 Procmeter Version 3.3 Written August 2000 - November 2002
 Procmeter Version 3.4 Written November 2002 - September 2007
-Procmeter Version 3.5 Written September 2007 - 
+Procmeter Version 3.5 Written September 2007 - October 2011
+Procmeter Version 3.6 Written October 2011 - 
 
 email: amb@gedanken.demon.co.uk [Please put procmeter in the subject line]
 
-This program is Copyright Andrew M. Bishop 1994-2010 and distributed under GPL.
+This program is Copyright Andrew M. Bishop 1994-2012 and distributed under GPL.
 
 
 Some modules were written by Joey Hess <joey@kitenet.net>, a long time supporter
@@ -114,3 +119,5 @@ page came from Wolfgang Kroener <wk@azog.de> along with other bug fixes
 
 The FanSpeed, Temperature & Voltage modules were provided by Mike T. Liang along
 with several bug fixes and some other new features.
+
+The Battery module was provided by Bernhard R. Link.

@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/procmeter.c,v 1.13 2007-11-20 18:59:35 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   Main program.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2007 Andrew M. Bishop
+  This file Copyright 1998-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -131,7 +129,7 @@ int main(int argc,char **argv)
 
     printf("\nProcMeter Version %s\n%s\n\n",PROCMETER_VERSION,&double_underline[sizeof(double_underline)-18-sizeof(PROCMETER_VERSION)]);
     printf("An efficient modular system monitoring program for Linux.\n");
-    printf("(c) Andrew M. Bishop 1998-2007 [amb@gedanken.demon.co.uk]\n\n");
+    printf("(c) Andrew M. Bishop 1998-2012 [amb@gedanken.demon.co.uk]\n\n");
 
     printf("Usage: ProcMeter [-h] [--rc=<filename>] [--...] [...]\n\n");
 
