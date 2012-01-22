@@ -73,6 +73,7 @@ const static struct battery_field {
 #define FIELD_OFS_FULL 3
         { "charge_full", bft_muAh, false, true,
                 "last full charge of the battery", "%s last full"},
+#define FIELD_OFS_DESIGN_FULL 4
         { "charge_full_design", bft_muAh, false, false,
                 "designed full charge of the battery", "%s design full"},
 //      { "cycle_count", bft_count, false, false,
@@ -113,7 +114,7 @@ static struct battery {
                 battery_unknown
         } state;
         time_t lastupdated;
-        long long lastcurrent, lastcharge, lastfull;
+        long long lastcurrent, lastcharge, lastfull, designfull;
         struct field {
                 struct battery *parent;
                 const struct battery_field *field;
@@ -297,11 +298,12 @@ static bool fill_outputs(struct battery *bat, int dirfd) {
         bat->output_count = 0;
 
 #define OUTPUT_OFS_PERCENT 0
-        f = new_output(bat, "%s percent", "", PROCMETER_TEXT|PROCMETER_BAR, 10);
+        f = new_output(bat, "%s percent", "", PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH, 10);
         if (f == NULL)
                 return false;
         strcpy(f->output.text_value, "??%");
-        strcpy(f->output.graph_units, "10%");
+        strcpy(f->output.graph_units, "(%d%)");
+        f->output.graph_scale = 20;
 #define OUTPUT_OFS_TIMELEFT 1
         f = new_output(bat, "%s remaining", "Time left till charged or discharged", PROCMETER_TEXT, 10);
         if (f == NULL)
@@ -320,14 +322,15 @@ static bool fill_outputs(struct battery *bat, int dirfd) {
                 }
                 close(fd);
                 f = new_output(bat, bf->name_template,
-                        bf->description, PROCMETER_TEXT, 5);
+                               bf->description, PROCMETER_TEXT, bf->variable ? 5 : 60);
                 f->field = bf;
                 if (f == NULL)
                         return false;
                 switch (bf->fieldtype) {
                         case bft_muAh:
-                                f->output.type = PROCMETER_TEXT|PROCMETER_BAR;
-                                strcpy(f->output.graph_units, "(%d mAh)");
+                                if(bf->variable)
+                                        f->output.type = PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH;
+                                strcpy(f->output.graph_units, "(%dmAh)");
                                 f->output.graph_scale = 100;
                                 break;
                         case bft_muA:
@@ -336,9 +339,10 @@ static bool fill_outputs(struct battery *bat, int dirfd) {
                                 f->output.graph_scale = 100;
                                 break;
                         case bft_v:
-                                f->output.type = PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH;
-                                /* what units does this have? */
-                                strcpy(f->output.graph_units, "?V");
+                                if(bf->variable)
+                                        f->output.type = PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH;
+                                strcpy(f->output.graph_units, "(%dV)");
+				f->output.graph_scale = 1;
                                 break;
                         default:
                                 break;
@@ -545,6 +549,8 @@ static int update_field(time_t timenow, struct field *f) {
                         bat->lastcharge = l;
                 } else if (f - bat->fields == OUTPUT_OFS_FIELDS + FIELD_OFS_FULL) {
                         bat->lastfull = l;
+		} else if (f - bat->fields == OUTPUT_OFS_FIELDS + FIELD_OFS_DESIGN_FULL) {
+			bat->designfull = l;
                 }
                 switch (bf->fieldtype) {
                         case bft_string:
@@ -553,17 +559,17 @@ static int update_field(time_t timenow, struct field *f) {
                         case bft_muAh:
                                 f->output.graph_value = (l*PROCMETER_GRAPH_SCALE)/100000;
                                 snprintf(f->output.text_value, PROCMETER_TEXT_LEN,
-                                                "%lu mAh", (unsigned long)(l / 1000));
+						"%.0f mAh", (double)l / 1000.0);
                                 break;
                         case bft_muA:
                                 f->output.graph_value = (l*PROCMETER_GRAPH_SCALE)/100000;
                                 snprintf(f->output.text_value, PROCMETER_TEXT_LEN,
-                                                "%lu mA", (unsigned long)(l / 1000));
+						"%.0f mA", (double)l / 1000.0);
                                 break;
                         case bft_v:
                                 f->output.graph_value = (l*PROCMETER_GRAPH_SCALE)/100000;
                                 snprintf(f->output.text_value, PROCMETER_TEXT_LEN,
-                                                "%lu mV", (unsigned long)l);
+                                                "%.1f V", (double)l / 1000000.0);
                                 break;
                         case bft_yesno:
                                 f->output.graph_value = l;
@@ -584,7 +590,7 @@ static int update_field(time_t timenow, struct field *f) {
                 unsigned int percent;
 
                 if (update_field(timenow, bat->fields + OUTPUT_OFS_FIELDS
-                                + FIELD_OFS_FULL) != 0)
+                                + FIELD_OFS_DESIGN_FULL) != 0)
                         return -1;
                 if (update_field(timenow, bat->fields + OUTPUT_OFS_FIELDS
                                 + FIELD_OFS_CHARGE) != 0)
@@ -594,11 +600,11 @@ static int update_field(time_t timenow, struct field *f) {
                         return 0;
                 }
                 percent = ((PROCMETER_GRAPH_SCALE*100)*bat->lastcharge)/
-                                        bat->lastfull;
+                                        bat->designfull;
                 snprintf(f->output.text_value, PROCMETER_TEXT_LEN,
                                 "%u%%", (unsigned int)(percent /
                                         PROCMETER_GRAPH_SCALE));
-                f->output.graph_value = percent/10;
+                f->output.graph_value = percent;
         } else if (f - bat->fields == OUTPUT_OFS_TIMELEFT) {
                 long seconds, minutes, hours;
 
