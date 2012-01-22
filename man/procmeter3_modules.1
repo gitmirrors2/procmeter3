@@ -4,12 +4,12 @@
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998-2011 Andrew M. Bishop
+.\"  This file Copyright 1998-2012 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETER3_MODULES 1 "December 30, 2011"
+.TH PROCMETER3_MODULES 1 "January 22, 2012"
 
 .SH NAME
 
@@ -27,11 +27,22 @@ performed by a set of loadable modules.
 
 The modules that are provided with the program are the following:
 .TP
+.BR ACPI
+Advanced Configuration and Power Interface information. These outputs are
+only available if you have enabled ACPI in the Linux kernel and you have
+the appropriate hardware.  ACPI can report various information about a
+system's battery, and may also have thermal outputs available.
+.TP
 .BR APM
 Advanced Power Management information.  These outputs are only available if you
 have configured the Linux kernel to have the APM feature and you have the
 appropriate hardware.  The outputs can tell you the amount of time remaining and
 the state of charge of the battery.
+.TP
+.BR Battery
+Battery information from /sys/class/power_supply/ which is the new replacement
+for battery information from ACPI or APM and contains more information about
+the battery.
 .TP
 .BR Biff
 Monitors the e-mail inbox (in
@@ -44,6 +55,9 @@ inbox.  The
 parameter in the
 .B .procmeterrc
 file can be used to specify an alternate filename to use for the inbox.
+.TP
+.BR CPUInfo
+Information about the CPUs in the system, currently only the CPU speed in MHz.
 .TP
 .BR Date_Time
 The current date and time and the amount of time since the system was last
@@ -64,6 +78,16 @@ parameter in the
 .B .procmeterrc
 file to contain a space separated list of mount points.
 .TP
+.BR FanSpeed
+Information from hardware sensors for fan speed (requires libsensors library
+installed but does read sensors.conf file for system customisation).  The
+.I options
+parameter in the
+.B .procmeterrc
+file can be used to specify an alternate sensors configuration filename to use
+instead of the default.  If this is used then it must be used in each of the
+FanSpeed, Temperature and Voltage modules.
+.TP
 .BR LogFile
 Monitors the size and number of lines and the rate of increase of the size or
 number of lines in a set of log files.  The
@@ -71,6 +95,12 @@ number of lines in a set of log files.  The
 parameter in the
 .B .procmeterrc
 file contains a space separated list of log file names.
+.TP
+.BR Longrun
+For systems with the Transmeta Crueso processor, information about longrun.
+Will not work unless the kernel is compiled with CPUID support, and
+/dev/cpu/0/cpuid must be readable by ProcMeter. (Allow regular users to
+access the cpuid device at your own risk!)
 .TP
 .BR Memory
 The amount of memory that is used for programs, buffers, cache and the amount
@@ -87,50 +117,15 @@ parameter in the
 .B .procmeterrc
 configuration file which is a space separated list of device names.
 .TP
-.BR Processes
-The load average and the number of processes running and starting.
-.TP
 .BR ProcMeter
 Information about the procmeter program itself.
+.TP
+.BR Processes
+The load average and the number of processes running and starting.
 .TP
 .BR Sensors
 Information from hardware sensors for temperature and fan speed (simple
 version with fixed scaling).
-.TP
-.BR FanSpeed
-Information from hardware sensors for fan speed (requires libsensors library
-installed but does read sensors.conf file for system customisation).  The
-.I options
-parameter in the
-.B .procmeterrc
-file can be used to specify an alternate sensors configuration filename to use
-instead of the default.  If this is used then it must be used in each of the
-FanSpeed, Temperature and Voltage modules.
-.TP
-.BR Temperature
-Information from hardware sensors for temperature (requires libsensors library
-installed but does read sensors.conf file for system customisation).  The
-.I options
-parameter in the
-.B .procmeterrc
-file can be used to specify an alternate sensors configuration filename to use
-instead of the default.  If this is used then it must be used in each of the
-FanSpeed, Temperature and Voltage modules.
-.TP
-.BR Voltage
-Information from hardware sensors for voltages (requires libsensors library
-installed but does read sensors.conf file for system customisation).  The
-.I options
-parameter in the
-.B .procmeterrc
-file can be used to specify an alternate sensors configuration filename to use
-instead of the default.  If this is used then it must be used in each of the
-FanSpeed, Temperature and Voltage modules.
-.TP
-.BR Statistics
-Low level system statistics.  For example CPU usage, context switches,
-interrupts, disk usage (before kernel 2.6), swapping and paging (before kernel
-2.6).
 .TP
 .BR Stat-CPU
 More detailed statistics about individual CPU usage including individual CPU
@@ -158,11 +153,40 @@ parameter in the
 .B .procmeterrc
 configuration file can be set to the maximum number to display.
 .TP
+.BR Statistics
+Low level system statistics.  For example CPU usage, context switches,
+interrupts, disk usage (before kernel 2.6), swapping and paging (before kernel
+2.6).
+.TP
+.BR Temperature
+Information from hardware sensors for temperature (requires libsensors library
+installed but does read sensors.conf file for system customisation).  The
+.I options
+parameter in the
+.B .procmeterrc
+file can be used to specify an alternate sensors configuration filename to use
+instead of the default.  If this is used then it must be used in each of the
+FanSpeed, Temperature and Voltage modules.
+.TP
 .BR Uname
 The system information, hostname and Linux kernel version, the same as the
 output of the
 .B uname
 program.
+.TP
+.BR VM_Statistics
+Low level system statistics about virtual memory (swapping and paging) for kernel
+version 2.6 where the information has moved from the Statistics section.
+.TP
+.BR Voltage
+Information from hardware sensors for voltages (requires libsensors library
+installed but does read sensors.conf file for system customisation).  The
+.I options
+parameter in the
+.B .procmeterrc
+file can be used to specify an alternate sensors configuration filename to use
+instead of the default.  If this is used then it must be used in each of the
+FanSpeed, Temperature and Voltage modules.
 .TP
 .BR Wireless
 Information about wireless network devices. It will
@@ -172,25 +196,6 @@ use the
 parameter in the 
 .B .procmeterrc 
 configuration file which is a space separated list of device names.
-.TP
-.BR Longrun
-For systems with the Transmeta Crueso processor, information about longrun.
-Will not work unless the kernel is compiled with CPUID support, and
-/dev/cpu/0/cpuid must be readable by ProcMeter. (Allow regular users to
-access the cpuid device at your own risk!)
-.TP
-.BR ACPI
-Advanced Configuration and Power Interface information. These outputs are
-only available if you have enabled ACPI in the Linux kernel and you have
-the appropriate hardware.  ACPI can report various information about a
-system's battery, and may also have thermal outputs available.
-.TP
-.BR VM_Statistics
-Low level system statistics about virtual memory (swapping and paging) for kernel
-version 2.6 where the information has moved from the Statistics section.
-.TP
-.BR CPUInfo
-Information about the CPUs in the system, currently only the CPU speed in MHz.
 
 .SH SEE ALSO
 
@@ -202,4 +207,4 @@ biff(1) free(1) uname(1)
 
 .SH AUTHOR
 
-Andrew M. Bishop (c) 2007-2011
+Andrew M. Bishop (c) 2007-2012
