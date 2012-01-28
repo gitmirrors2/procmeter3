@@ -12,6 +12,8 @@
   ***************************************/
 
 
+#define _FILE_OFFSET_BITS 64    /* Force statfs to use 64-bit values */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
