@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/df.c,v 1.14 2009-04-21 17:26:58 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.6a.
 
   Disk capacity monitoring source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2009 Andrew M. Bishop
+  This file Copyright 1998-2012 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -18,6 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <errno.h>
 #include <sys/vfs.h>
 
 #include "procmeter.h"
@@ -293,7 +292,11 @@ int Update(time_t now,ProcMeterOutput *output)
        else if(statfs(disk[i/2],&buf))
          {
           output->graph_value=0;
-          strcpy(output->text_value,"statfs error");
+
+          if(errno == EOVERFLOW)
+             strcpy(output->text_value,"statfs overflow");
+          else
+             strcpy(output->text_value,"statfs error");
          }
        else
          {
