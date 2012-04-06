@@ -3,7 +3,7 @@
 
   battery values from /sys/ (for example new-style ACPI)
 
-  This file Copyright 2011 Bernhard R. Link
+  This file Copyright 2011, 2012 Bernhard R. Link
   Modified 2012 by Andrew M. Bishop.
 
   It may be distributed under the GNU Public License, version 2, or
@@ -357,10 +357,17 @@ static struct battery *find_batteries(const char *basepath, bool presentonly) {
         DIR *dir;
         int dir_fd;
 
-        dir = opendir(basepath);
         if (basepath == NULL)
                 return NULL;
+
+        dir = opendir(basepath);
+        if (dir == NULL)
+                return NULL;
+
         dir_fd = dirfd(dir);
+        if (dir_fd == -1)
+                return NULL;
+
         while ((ent = readdir(dir)) != NULL) {
                 struct battery *n;
                 char *dirname;
