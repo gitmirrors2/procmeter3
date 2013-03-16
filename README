@@ -84,12 +84,7 @@ More Information
 ----------------
 
 There is a ProcMeter3 web-page that contains the latest information
-http://www.gedanken.demon.co.uk/procmeter3/
-
-
-There is also a ProcMeter announcements mailing list; send an e-mail to
-procmeter-announce-request@gedanken.demon.co.uk with the phrase 'subscribe' in
-the body.
+http://www.gedanken.org.uk/software/procmeter3/
 
 
 Author & Copyright
@@ -105,17 +100,17 @@ Procmeter Version 3.4 Written November 2002 - September 2007
 Procmeter Version 3.5 Written September 2007 - October 2011
 Procmeter Version 3.6 Written October 2011 - 
 
-email: amb@gedanken.demon.co.uk [Please put procmeter in the subject line]
-
 This program is Copyright Andrew M. Bishop 1994-2012 and distributed under GPL.
 
+More information: http://www.gedanken.org.uk/software/procmeter3/
 
-Some modules were written by Joey Hess <joey@kitenet.net>, a long time supporter
-of the program: wireless, longrun and acpi.
+
+Some modules were written by Joey Hess, a long time supporter of the program:
+wireless, longrun and acpi.
 
 The GTK2 code for Extended Window Manager Hints as well as an updated manual
-page came from Wolfgang Kroener <wk@azog.de> along with other bug fixes
-(e.g. GTK2 grid-min handling).
+page came from Wolfgang Kroener along with other bug fixes (e.g. GTK2 grid-min
+handling).
 
 The FanSpeed, Temperature & Voltage modules were provided by Mike T. Liang along
 with several bug fixes and some other new features.

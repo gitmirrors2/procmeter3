@@ -2,10 +2,10 @@ Summary: A modular, graphical, system monitoring program.
 Name: procmeter3
 Version: 3.3a
 Release: 1
-URL: http://www.gedanken.demon.co.uk/procmeter3/
+URL: http://www.gedanken.org.uk/software/procmeter3/
 Copyright: GPL
 Group: Applications/System
-Source: ftp://ftp.demon.co.uk/pub/unix/linux/X11/xutils/%{name}-%{version}.tgz
+Source: http://www.gedanken.org.uk/software/procmeter3/download/%{name}-%{version}.tgz
 BuildRoot: %{_tmppath}/%{name}-root
 
 %description

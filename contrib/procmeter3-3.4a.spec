@@ -9,7 +9,7 @@ Release: 		%{release}
 Copyright: 		GPL
 Group: 			Applications/System
 Source: 		%{name}-%{version}.tgz
-URL: 			http://www.gedanken.demon.co.uk/procmeter3/
+URL: 			http://www.gedanken.org.uk/software/procmeter3/
 Packager: 		thias <matthias.brill@akamail.com>
 BuildRoot: 		%{_tmppath}/%{name}-%{version}-buildroot
 
