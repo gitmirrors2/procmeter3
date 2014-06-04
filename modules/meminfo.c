@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/meminfo.c,v 1.11 2008-05-05 18:45:35 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.6a.
 
   Memory status module source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2008 Andrew M. Bishop
+  This file Copyright 1998-2014 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -137,7 +135,7 @@ static size_t length=0;
 static int proc_meminfo_V2_1_41=0;
 
 /* The contents of the file when parsed */
-static int contents[20];
+static int contents[64];
 static int available[N_LINES];
 
 
