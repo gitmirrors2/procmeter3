@@ -4,7 +4,7 @@
   battery values from /sys/ (for example new-style ACPI)
 
   This file Copyright 2011, 2012 Bernhard R. Link
-  Modified 2012 by Andrew M. Bishop.
+  Modified 2012, 2015 by Andrew M. Bishop.
 
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
@@ -56,7 +56,8 @@ const static struct battery_field {
         const char *name;
         enum batteryfieldtype {
                 bft_yesno, bft_string, bft_count,
-                bft_muA, bft_muAh, bft_v }
+                bft_muA, bft_muAh, bft_v,
+                bft_uW, bft_uWh, bft_percent }
                         fieldtype;
         bool variable, required;
         const char *description, *name_template;
@@ -65,35 +66,56 @@ const static struct battery_field {
         { "status", bft_string, true, true,
                 "Status (charging/discharging).", "%s_state"},
 #define FIELD_OFS_CURRENT 1
-        { "current_now", bft_muA, true, true,
+        { "current_now", bft_muA, true, false,
                 "Current charging/discharging rate.", "%s_rate"},
 #define FIELD_OFS_CHARGE 2
-        { "charge_now", bft_muAh, true, true,
+        { "charge_now", bft_muAh, true, false,
                 "Current charge of the battery.", "%s_charge"},
-#define FIELD_OFS_FULL 3
-        { "charge_full", bft_muAh, false, true,
-                "Last full charge of the battery.", "%s_last full"},
-#define FIELD_OFS_DESIGN_FULL 4
+#define FIELD_OFS_CHARGE_FULL 3
+        { "charge_full", bft_muAh, false, false,
+                "Last full charge of the battery.", "%s_last_full"},
+#define FIELD_OFS_CHARGE_DESIGN_FULL 4
         { "charge_full_design", bft_muAh, false, false,
-                "Designed full charge of the battery.", "%s_design full"},
+                "Designed full charge of the battery.", "%s_design_full"},
+#define FIELD_OFS_POWER 5
+        { "power_now", bft_uW, true, false,
+                "Current power consumption from the battery.", "%s_power"},
+#define FIELD_OFS_ENERGY 6
+        { "energy_now", bft_uWh, true, false,
+                "Current energy of the battery.", "%s_energy"},
+#define FIELD_OFS_ENERGY_FULL 7
+        { "energy_full", bft_uWh, false, false,
+                "Last full energy of the battery.", "%s_last_full"},
+#define FIELD_OFS_ENERGY_DESIGN_FULL 8
+        { "energy_full_design", bft_uWh, false, false,
+                "Designed full energy of the battery.", "%s_design_full"},
+        { "capacity", bft_percent, true, false,
+                "Percentage capacity of the battery.", "%s_capacity"},
 //      { "cycle_count", bft_count, false, false,
 //              "Content of the 'cycle_count' file.", "%s_cycle count"},
         { "manufacturer", bft_string, false, false,
                 "Manufacturer.", "%s_manufacturer"},
         { "model_name", bft_string, false, false,
-                "Model name.", "%s_model name"},
+                "Model name.", "%s_model_name"},
         { "serial_number", bft_string, false, false,
-                "Serial number.", "%s_serial number"},
+                "Serial number.", "%s_serial_number"},
         { "technology", bft_string, false, false,
                 "Technology.", "%s_technology"},
         { "voltage_min_design", bft_v, false, false,
-                "Minimum design voltage.", "%s_min voltage"},
+                "Minimum design voltage.", "%s_min_voltage"},
         { "voltage_now", bft_v, true, false,
                 "Current voltage.", "%s_voltage"},
+#define FIELD_OFS_CHARGE_PERCENT 16
+        { NULL, 0},
+#define FIELD_OFS_ENERGY_PERCENT 17
+        { NULL, 0},
+#define FIELD_OFS_CHARGE_TIMELEFT 18
+        { NULL, 0},
+#define FIELD_OFS_ENERGY_TIMELEFT 19
         { NULL, 0}
 };
 
-#define BAT_OUTPUT_COUNT 15
+#define BAT_OUTPUT_COUNT (sizeof(fields)/sizeof(struct battery_field))
 
 static struct battery {
         struct battery *next;
@@ -114,7 +136,9 @@ static struct battery {
                 battery_unknown
         } state;
         time_t lastupdated;
-        long long lastcurrent, lastcharge, lastfull, designfull;
+        long long lastcurrent, lastpower;
+        long long lastcharge, lastchargefull, designchargefull;
+        long long lastenergy, lastenergyfull, designenergyfull;
         struct field {
                 struct battery *parent;
                 const struct battery_field *field;
@@ -293,24 +317,11 @@ static struct field *new_output(struct battery *bat, const char *name, const cha
 static bool fill_outputs(struct battery *bat, int dirfd) {
         struct field *f;
         const struct battery_field *bf;
+        int i;
 
         memset(bat->fields, 0, sizeof(bat->fields));
         bat->output_count = 0;
 
-#define OUTPUT_OFS_PERCENT 0
-        f = new_output(bat, "%s_percent", "The percentage of design charge in the battery.", PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH, 10);
-        if (f == NULL)
-                return false;
-        strcpy(f->output.text_value, "??%");
-        strcpy(f->output.graph_units, "(%d%)");
-        f->output.graph_scale = 20;
-#define OUTPUT_OFS_TIMELEFT 1
-        f = new_output(bat, "%s_remaining", "Time left till charged or discharged.", PROCMETER_TEXT, 10);
-        if (f == NULL)
-                return false;
-        strcpy(f->output.text_value, "??:??:??");
-
-#define OUTPUT_OFS_FIELDS 2
         for (bf = fields ; bf->name != NULL ; bf++) {
                 int fd;
 
@@ -344,10 +355,66 @@ static bool fill_outputs(struct battery *bat, int dirfd) {
                                 strcpy(f->output.graph_units, "(%dV)");
 				f->output.graph_scale = 1;
                                 break;
+                        case bft_uWh:
+                                if(bf->variable)
+                                        f->output.type = PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH;
+                                strcpy(f->output.graph_units, "(%dWh)");
+				f->output.graph_scale = 10;
+                                break;
+                        case bft_uW:
+                                if(bf->variable)
+                                        f->output.type = PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH;
+                                strcpy(f->output.graph_units, "(%dW)");
+				f->output.graph_scale = 1;
+                                break;
+                        case bft_percent:
+                                if(bf->variable)
+                                        f->output.type = PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH;
+                                strcpy(f->output.graph_units, "(%d%%)");
+				f->output.graph_scale = 20;
+                                break;
                         default:
                                 break;
                 }
         }
+
+        for(i=0;i<BAT_OUTPUT_COUNT;i++)
+          {
+           if(bat->fields[i].field && bat->fields[i].field==&fields[FIELD_OFS_CHARGE])
+             {
+              f = new_output(bat, "%s_percent", "The percentage of design charge in the battery.", PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH, 10);
+              if (f == NULL)
+                 return false;
+              f->field = &fields[FIELD_OFS_CHARGE_PERCENT];
+              strcpy(f->output.text_value, "??%");
+              strcpy(f->output.graph_units, "(%d%%)");
+              f->output.graph_scale = 20;
+
+              f = new_output(bat, "%s_remaining", "Time left till charged or discharged.", PROCMETER_TEXT, 10);
+              if (f == NULL)
+                 return false;
+              f->field = &fields[FIELD_OFS_CHARGE_TIMELEFT];
+              strcpy(f->output.text_value, "??:??:??");
+             }
+
+           if(bat->fields[i].field && bat->fields[i].field==&fields[FIELD_OFS_ENERGY])
+             {
+              f = new_output(bat, "%s_percent", "The percentage of design energy in the battery.", PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH, 10);
+              if (f == NULL)
+                 return false;
+              f->field = &fields[FIELD_OFS_ENERGY_PERCENT];
+              strcpy(f->output.text_value, "??%");
+              strcpy(f->output.graph_units, "(%d%%)");
+              f->output.graph_scale = 20;
+
+              f = new_output(bat, "%s_remaining", "Time left till charged or discharged.", PROCMETER_TEXT, 10);
+              if (f == NULL)
+                 return false;
+              f->field = &fields[FIELD_OFS_ENERGY_TIMELEFT];
+              strcpy(f->output.text_value, "??:??:??");
+             }
+          }
+
         return true;
 };
 
@@ -471,9 +538,18 @@ static inline void battery_setstate(struct battery *bat, enum battery_state stat
                         bat->fields[i].lastupdated = 0;
                 }
         } else
-                /* don't use an old rate if switching between
-                 * charging and discharging or back */
-                bat->fields[OUTPUT_OFS_FIELDS + FIELD_OFS_CURRENT].lastupdated = 0;
+          {
+           int i;
+
+           /* don't use an old rate if switching between
+            * charging and discharging or back */
+
+           for(i=0;i<BAT_OUTPUT_COUNT;i++)
+              if(bat->fields[i].field)
+                 if(bat->fields[i].field==&fields[FIELD_OFS_CURRENT] ||
+                    bat->fields[i].field==&fields[FIELD_OFS_POWER])
+                    bat->fields[i].lastupdated = 0;
+          }
 }
 
 void update_presence(time_t timenow, struct battery *bat) {
@@ -519,7 +595,7 @@ static int update_field(time_t timenow, struct field *f) {
                         return 0;
         }
 
-        if (f->field != NULL) {
+        if (f->field != NULL && f->field->name != NULL) {
                 const struct battery_field *bf = f->field;
                 char text[PROCMETER_TEXT_LEN + 3];
                 long long l;
@@ -530,8 +606,7 @@ static int update_field(time_t timenow, struct field *f) {
 
                 switch (bf->fieldtype) {
                         case bft_string:
-                                if ((f - bat->fields) == OUTPUT_OFS_FIELDS +
-                                                FIELD_OFS_STATUS) {
+                                if (f->field == &fields[FIELD_OFS_STATUS]) {
                                         if (strcmp(text, "Discharging") == 0)
                                                 battery_setstate(bat,
                                                         battery_discharging);
@@ -550,14 +625,23 @@ static int update_field(time_t timenow, struct field *f) {
                                 break;
                 }
                 l = atoll(text);
-                if (f - bat->fields == OUTPUT_OFS_FIELDS + FIELD_OFS_CURRENT) {
+
+                if (f->field == &fields[FIELD_OFS_CURRENT]) {
                         bat->lastcurrent = l;
-                } else if (f - bat->fields == OUTPUT_OFS_FIELDS + FIELD_OFS_CHARGE) {
+                } else if (f->field == &fields[FIELD_OFS_CHARGE]) {
                         bat->lastcharge = l;
-                } else if (f - bat->fields == OUTPUT_OFS_FIELDS + FIELD_OFS_FULL) {
-                        bat->lastfull = l;
-		} else if (f - bat->fields == OUTPUT_OFS_FIELDS + FIELD_OFS_DESIGN_FULL) {
-			bat->designfull = l;
+                } else if (f->field == &fields[FIELD_OFS_CHARGE_FULL]) {
+                        bat->lastchargefull = l;
+		} else if (f->field == &fields[FIELD_OFS_CHARGE_DESIGN_FULL]) {
+			bat->designchargefull = l;
+                } else if (f->field == &fields[FIELD_OFS_POWER]) {
+                        bat->lastpower = l;
+                } else if (f->field == &fields[FIELD_OFS_ENERGY]) {
+                        bat->lastenergy = l;
+                } else if (f->field == &fields[FIELD_OFS_ENERGY_FULL]) {
+                        bat->lastenergyfull = l;
+		} else if (f->field == &fields[FIELD_OFS_ENERGY_DESIGN_FULL]) {
+			bat->designenergyfull = l;
                 }
                 switch (bf->fieldtype) {
                         case bft_string:
@@ -578,6 +662,21 @@ static int update_field(time_t timenow, struct field *f) {
                                 snprintf(f->output.text_value, PROCMETER_TEXT_LEN,
                                                 "%.1f V", (double)l / 1000000.0);
                                 break;
+                        case bft_uWh:
+                                f->output.graph_value = (l*PROCMETER_GRAPH_SCALE)/100000;
+                                snprintf(f->output.text_value, PROCMETER_TEXT_LEN,
+                                                "%.1f Wh", (double)l / 1000000.0);
+                                break;
+                        case bft_uW:
+                                f->output.graph_value = (l*PROCMETER_GRAPH_SCALE)/100000;
+                                snprintf(f->output.text_value, PROCMETER_TEXT_LEN,
+                                                "%.1f W", (double)l / 1000000.0);
+                                break;
+                        case bft_percent:
+                                f->output.graph_value = (l*PROCMETER_GRAPH_SCALE)/20;
+                                snprintf(f->output.text_value, PROCMETER_TEXT_LEN,
+                                                "%.1f %%", (double)l);
+                                break;
                         case bft_yesno:
                                 f->output.graph_value = l;
                                 if (l == 0)
@@ -593,55 +692,99 @@ static int update_field(time_t timenow, struct field *f) {
                                 memcpy(f->output.text_value, text, PROCMETER_TEXT_LEN);
                                 break;
                 }
-        } else if (f - bat->fields == OUTPUT_OFS_PERCENT) {
-                unsigned int percent;
+        } else if (f->field == &fields[FIELD_OFS_CHARGE_PERCENT]) {
+                unsigned int percent,i;
 
-                if (update_field(timenow, bat->fields + OUTPUT_OFS_FIELDS
-                                + FIELD_OFS_DESIGN_FULL) != 0)
-                        return -1;
-                if (update_field(timenow, bat->fields + OUTPUT_OFS_FIELDS
-                                + FIELD_OFS_CHARGE) != 0)
-                        return -1;
-                if (bat->lastfull == 0) {
+                for(i=0;i<BAT_OUTPUT_COUNT;i++)
+                   if(bat->fields[i].field)
+                      if(bat->fields[i].field==&fields[FIELD_OFS_CHARGE] ||
+                         bat->fields[i].field==&fields[FIELD_OFS_CHARGE_DESIGN_FULL])
+                         if (update_field(timenow, &bat->fields[i]) != 0)
+                            return -1;
+
+                if (bat->designchargefull == 0) {
                         strcpy(f->output.text_value, "not available");
                         return 0;
                 }
-                percent = ((PROCMETER_GRAPH_SCALE*100)*bat->lastcharge)/
-                                        bat->designfull;
+                percent = (100*bat->lastcharge)/bat->designchargefull;
                 snprintf(f->output.text_value, PROCMETER_TEXT_LEN,
-                                "%u%%", (unsigned int)(percent /
-                                        PROCMETER_GRAPH_SCALE));
-                f->output.graph_value = percent;
-        } else if (f - bat->fields == OUTPUT_OFS_TIMELEFT) {
-                long seconds, minutes, hours;
+                                "%u%%", percent);
+                f->output.graph_value = PROCMETER_GRAPH_FLOATING(percent)/f->output.graph_scale;
+        } else if (f->field == &fields[FIELD_OFS_ENERGY_PERCENT]) {
+                unsigned int percent,i;
 
-                if (update_field(timenow, bat->fields + OUTPUT_OFS_FIELDS
-                                + FIELD_OFS_STATUS) != 0)
-                        return -1;
+                for(i=0;i<BAT_OUTPUT_COUNT;i++)
+                   if(bat->fields[i].field)
+                      if(bat->fields[i].field==&fields[FIELD_OFS_ENERGY] ||
+                         bat->fields[i].field==&fields[FIELD_OFS_ENERGY_DESIGN_FULL])
+                         if (update_field(timenow, &bat->fields[i]) != 0)
+                            return -1;
+
+                if (bat->designenergyfull == 0) {
+                        strcpy(f->output.text_value, "not available");
+                        return 0;
+                }
+                percent = (100*bat->lastenergy)/bat->designenergyfull;
+                snprintf(f->output.text_value, PROCMETER_TEXT_LEN,
+                         "%u%%", percent);
+                f->output.graph_value = PROCMETER_GRAPH_FLOATING(percent)/f->output.graph_scale;
+        } else if (f->field == &fields[FIELD_OFS_CHARGE_TIMELEFT]) {
+                long seconds, minutes, hours, i;
+
+                for(i=0;i<BAT_OUTPUT_COUNT;i++)
+                   if(bat->fields[i].field)
+                      if(bat->fields[i].field==&fields[FIELD_OFS_STATUS] ||
+                         bat->fields[i].field==&fields[FIELD_OFS_CURRENT] ||
+                         bat->fields[i].field==&fields[FIELD_OFS_CHARGE] ||
+                         bat->fields[i].field==&fields[FIELD_OFS_CHARGE_FULL])
+                         if (update_field(timenow, &bat->fields[i]) != 0)
+                            return -1;
+
                 if (bat->state != battery_charging &&
                                 bat->state != battery_discharging) {
                         strcpy(f->output.text_value, "not available");
                         return 0;
                 }
-                if (update_field(timenow, bat->fields + OUTPUT_OFS_FIELDS
-                                        + FIELD_OFS_CURRENT) != 0)
-                        return -1;
                 if (bat->lastcurrent == 0) {
                         strcpy(f->output.text_value, "never");
                         return 0;
                 }
-                if (update_field(timenow, bat->fields + OUTPUT_OFS_FIELDS
-                                + FIELD_OFS_CHARGE) != 0)
-                        return -1;
                 if (bat->state == battery_discharging) {
                         seconds = (3600 * bat->lastcharge) / bat->lastcurrent;
                 } else {
-                        long long left;
-                        if (update_field(timenow, bat->fields + OUTPUT_OFS_FIELDS
-                                                + FIELD_OFS_FULL) != 0)
-                                return -1;
-                        left = bat->lastfull - bat->lastcharge;
-                        seconds = (3600 * left) / bat->lastcurrent;
+                        seconds = (3600 * (bat->lastchargefull - bat->lastcharge)) / bat->lastcurrent;
+                }
+                minutes = seconds / 60;
+                seconds = seconds % 60;
+                hours = minutes / 60;
+                minutes = minutes % 60;
+                snprintf(f->output.text_value, PROCMETER_TEXT_LEN,
+                                "%2lu:%02lu:%02lu", hours, minutes, seconds);
+        } else if (f->field == &fields[FIELD_OFS_ENERGY_TIMELEFT]) {
+                long seconds, minutes, hours, i;
+
+                for(i=0;i<BAT_OUTPUT_COUNT;i++)
+                   if(bat->fields[i].field)
+                      if(bat->fields[i].field==&fields[FIELD_OFS_STATUS] ||
+                         bat->fields[i].field==&fields[FIELD_OFS_POWER] ||
+                         bat->fields[i].field==&fields[FIELD_OFS_ENERGY] ||
+                         bat->fields[i].field==&fields[FIELD_OFS_ENERGY_FULL])
+                         if (update_field(timenow, &bat->fields[i]) != 0)
+                            return -1;
+
+                if (bat->state != battery_charging &&
+                                bat->state != battery_discharging) {
+                        strcpy(f->output.text_value, "not available");
+                        return 0;
+                }
+                if (bat->lastpower == 0) {
+                        strcpy(f->output.text_value, "never");
+                        return 0;
+                }
+                if (bat->state == battery_discharging) {
+                        seconds = (3600 * bat->lastenergy) / bat->lastpower;
+                } else {
+                        seconds = (3600 * (bat->lastenergyfull - bat->lastenergy)) / bat->lastpower;
                 }
                 minutes = seconds / 60;
                 seconds = seconds % 60;
