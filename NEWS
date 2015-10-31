@@ -1,3 +1,13 @@
+Version 3.6+svn of ProcMeter3
+-----------------------------
+
+Module bug fixes
+ The df module should now handle very big disks on 32-bit systems.
+ The battery module should work better if /sys/class/power_supply doesn't exist.
+ The battery module should work if ACPI records energy rather than charge.
+ The meminfo module handles very long /proc/meminfo (fixes Debian bug #747627).
+
+
 Version 3.6 of ProcMeter3 released : Sun Jan 22 2012
 ----------------------------------------------------
 

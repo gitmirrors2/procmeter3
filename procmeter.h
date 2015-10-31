@@ -1,5 +1,5 @@
 /***************************************
-  ProcMeter - A system monitoring program for Linux - Version 3.6.
+  ProcMeter - A system monitoring program for Linux - Version 3.6+svn.
 
   Global public header file.
   ******************/ /******************
@@ -19,7 +19,7 @@
 #include <stdio.h>
 
 
-#define PROCMETER_VERSION "3.6"
+#define PROCMETER_VERSION "3.6+svn"
 
 
 #define PROCMETER_MAJOR_VERSION 3
