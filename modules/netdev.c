@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/netdev.c,v 1.20 2008-05-05 18:45:35 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.6a.
 
   Network devices traffic source file.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2008 Andrew M. Bishop
+  This file Copyright 1998-2016 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -118,7 +116,7 @@ static char *proc_net_dev_format3="%llu %llu %*u %*u %*u %*u %*u %*u %llu %llu";
 
 /* The information about the network devices */
 static int ndevices=0;
-static unsigned long *current=NULL,*previous=NULL;
+static unsigned long long *current=NULL,*previous=NULL;
 static char **device=NULL;
 
 /* A function to add a new device */
@@ -234,8 +232,8 @@ ProcMeterOutput **Initialise(char *options)
       }
    }
 
- current =(unsigned long*)calloc(sizeof(long),ndevices);
- previous=(unsigned long*)calloc(sizeof(long),ndevices);
+ current =(unsigned long long*)calloc(sizeof(long long),ndevices);
+ previous=(unsigned long long*)calloc(sizeof(long long),ndevices);
 
  return(outputs);
 }
@@ -319,7 +317,7 @@ int Update(time_t now,ProcMeterOutput *output)
  if(now!=last)
    {
     FILE *f;
-    unsigned long *temp;
+    unsigned long long *temp;
 
     temp=current;
     current=previous;
