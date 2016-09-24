@@ -380,7 +380,25 @@ static bool fill_outputs(struct battery *bat, int dirfd) {
 
         for(i=0;i<BAT_OUTPUT_COUNT;i++)
           {
-           if(bat->fields[i].field && bat->fields[i].field==&fields[FIELD_OFS_CHARGE])
+           int charge_fields=0,energy_fields=0;
+
+           for(i=0;i<BAT_OUTPUT_COUNT;i++)
+              if(bat->fields[i].field)
+                {
+                 if(bat->fields[i].field==&fields[FIELD_OFS_STATUS] ||
+                    bat->fields[i].field==&fields[FIELD_OFS_CURRENT] ||
+                    bat->fields[i].field==&fields[FIELD_OFS_CHARGE] ||
+                    bat->fields[i].field==&fields[FIELD_OFS_CHARGE_FULL])
+                    charge_fields++;
+
+                 if(bat->fields[i].field==&fields[FIELD_OFS_STATUS] ||
+                    bat->fields[i].field==&fields[FIELD_OFS_POWER] ||
+                    bat->fields[i].field==&fields[FIELD_OFS_ENERGY] ||
+                    bat->fields[i].field==&fields[FIELD_OFS_ENERGY_FULL])
+                    energy_fields++;
+                }
+
+           if(charge_fields==4)
              {
               f = new_output(bat, "%s_percent", "The percentage of design charge in the battery.", PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH, 10);
               if (f == NULL)
@@ -397,7 +415,7 @@ static bool fill_outputs(struct battery *bat, int dirfd) {
               strcpy(f->output.text_value, "??:??:??");
              }
 
-           if(bat->fields[i].field && bat->fields[i].field==&fields[FIELD_OFS_ENERGY])
+           else if(energy_fields==4)
              {
               f = new_output(bat, "%s_percent", "The percentage of design energy in the battery.", PROCMETER_TEXT|PROCMETER_BAR|PROCMETER_GRAPH, 10);
               if (f == NULL)
@@ -750,7 +768,7 @@ static int update_field(time_t timenow, struct field *f) {
                         return 0;
                 }
                 if (bat->state == battery_discharging) {
-                        seconds = (3600 * bat->lastcharge) / bat->lastcurrent;
+                        seconds = (3600 * bat->lastcharge) / abs(bat->lastcurrent);
                 } else {
                         seconds = (3600 * (bat->lastchargefull - bat->lastcharge)) / bat->lastcurrent;
                 }
