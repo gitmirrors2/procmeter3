@@ -7,7 +7,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2008 Andrew M. Bishop
+  This file Copyright 1998-2008, 2016 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -112,14 +112,23 @@ ProcMeterOutput **Initialise(char *options)
        fprintf(stderr,"ProcMeter(%s): Could not read '/proc/cpuinfo'.\n",__FILE__);
     else
       {
-       int count;
+       int nspeeds=0;
 
        do
          {
+          int count;
+          float speed;
+
           if(sscanf(line,"processor : %d",&count)==1)
              ncpus++;
+
+          if(sscanf(line,"cpu MHz : %f",&speed)==1)
+             nspeeds++;
          }
          while(fgets_realloc(&line,&length,f));
+
+       if(nspeeds!=ncpus)
+          ncpus=0;
       }
 
     fclose(f);
