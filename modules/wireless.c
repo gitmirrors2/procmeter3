@@ -6,7 +6,7 @@
   Written by Joey Hess (with heavy borrowing from netdev.c)
 
   Original file Copyright 2001 Joey Hess
-  Parts of this file Copyright 2001-2011 Andrew M. Bishop
+  Parts of this file Copyright 2001-2011,2016 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -141,8 +141,10 @@ ProcMeterOutput **Initialise(char *options)
                 char *dev=line;
                 int link=0, level=0, noise=0;
 
-                for(;*dev==' ';dev++) ;
-                for(i=strlen(line);i>6 && line[i]!=':';i--); line[i++]=0;
+                for(;*dev==' ';dev++);
+                for(i=strlen(line);i>6 && line[i]!=':';i--);
+                line[i++]=0;
+
                 if(sscanf(&line[i],proc_net_wireless_format,&link,&level,&noise)==3)
                    add_device(dev);
                }
@@ -268,8 +270,10 @@ int Update(time_t now,ProcMeterOutput *output)
        int level=0, noise=0;
        char *dev=line;
 
-       for(;*dev==' ';dev++) ;
-       for(i=strlen(line);i>6 && line[i]!=':';i--); line[i++]=0;
+       for(;*dev==' ';dev++);
+       for(i=strlen(line);i>6 && line[i]!=':';i--);
+       line[i++]=0;
+
        sscanf(&line[i],proc_net_wireless_format,&link,&level,&noise);
 
        for(j=0;outputs[j];j++)

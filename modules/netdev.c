@@ -187,8 +187,10 @@ ProcMeterOutput **Initialise(char *options)
                 char *dev=line;
                 long long rxp=0,txp=0,rxb=0,txb=0;
 
-                for(;*dev==' ';dev++) ;
-                for(i=strlen(line);i>6 && line[i]!=':';i--); line[i++]=0;
+                for(;*dev==' ';dev++);
+                for(i=strlen(line);i>6 && line[i]!=':';i--);
+                line[i++]=0;
+
                 if(!strcmp(&line[i]," No statistics available.\n") ||
                    (proc_net_dev_format==proc_net_dev_format1 && sscanf(&line[i],proc_net_dev_format,&rxp,&txp)==2) ||
                    (proc_net_dev_format!=proc_net_dev_format1 && sscanf(&line[i],proc_net_dev_format,&rxb,&rxp,&txb,&txp)==4))
@@ -338,8 +340,10 @@ int Update(time_t now,ProcMeterOutput *output)
        long long rxp=0,txp=0,rxb=0,txb=0;
        char *dev=line;
 
-       for(;*dev==' ';dev++) ;
-       for(i=strlen(line);i>6 && line[i]!=':';i--); line[i++]=0;
+       for(;*dev==' ';dev++);
+       for(i=strlen(line);i>6 && line[i]!=':';i--);
+       line[i++]=0;
+
        if(proc_net_dev_format==proc_net_dev_format1)
           sscanf(&line[i],proc_net_dev_format,&rxp,&txp);
        else
