@@ -8,7 +8,7 @@
   ******************/ /******************
   Written by Matt Kemner, Andrew M. Bishop
 
-  This file Copyright 1999, 2010 Matt Kemner, Andrew M. Bishop
+  This file Copyright 1999, 2010, 2017 Matt Kemner, Andrew M. Bishop
   parts of it are Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
@@ -149,7 +149,7 @@ ProcMeterOutput **Initialise(char *options)
 
  if(d1)
    {
-    char dirname[64];
+    char dirname[3*NAME_MAX+3];
 
     while((ent1=readdir(d1)))
       {
@@ -203,7 +203,7 @@ void search_directory(const char *dirname)
       {
        while((ent2=readdir(d2)))
          {
-          char filename[80];
+          char filename[2*NAME_MAX+2];
 
           if(!strcmp(ent2->d_name,"."))
              continue;

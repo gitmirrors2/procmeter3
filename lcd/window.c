@@ -7,7 +7,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997-2010 Andrew M. Bishop
+  This file Copyright 1997-2010, 2017 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -506,7 +506,7 @@ void UpdateGraph(Output output,short value)
    {
     int new_grid_num=(bar_max+(PROCMETER_GRAPH_SCALE-1))/PROCMETER_GRAPH_SCALE;
     int maxval;
-    char maxstr[5];
+    char maxstr[6];
 
     if(new_grid_num<graph->grid_min)
        new_grid_num=graph->grid_min;
@@ -600,7 +600,7 @@ void UpdateBar(Output output,short value)
  if(new_grid_num!=bar->grid_num)
    {
     int maxval;
-    char maxstr[5];
+    char maxstr[6];
 
     bar->grid_num=new_grid_num;
 

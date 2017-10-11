@@ -7,7 +7,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998,2002 Andrew M. Bishop
+  This file Copyright 1998,2002,2017 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -116,8 +116,8 @@ ProcMeterOutput **Initialise(char *options)
    {
     char *p;
 
-    snprintf(hostname_output.text_value, PROCMETER_NAME_LEN+1, "%s", buf.nodename);
-    snprintf(kernelversion_output.text_value, PROCMETER_NAME_LEN+1, "%s", buf.release);
+    strncpy(hostname_output.text_value     , buf.nodename, PROCMETER_NAME_LEN ); hostname_output.text_value     [PROCMETER_NAME_LEN]=0;
+    strncpy(kernelversion_output.text_value, buf.release , PROCMETER_NAME_LEN ); kernelversion_output.text_value[PROCMETER_NAME_LEN]=0;
     
     p=hostname_output.text_value;
     while(*p && *p!='.')
