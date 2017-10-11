@@ -7,7 +7,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2008, 2016 Andrew M. Bishop
+  This file Copyright 1998-2008, 2016, 2017 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
 
 #include "procmeter.h"
 
@@ -57,12 +58,22 @@ ProcMeterOutput _smp_output=
 /*+ The outputs (with single or multiple CPUs). +*/
 ProcMeterOutput **outputs=NULL;
 
-/*+ The module. +*/
-ProcMeterModule module=
+/*+ The module if using /proc/cpuinfo. +*/
+ProcMeterModule _module_cpuinfo=
 {
  /* char name[];            */ "CPUInfo",
  /* char *description;      */ "CPU Information. [From /proc/cpuinfo]",
 };
+
+/*+ The module if using /sys/devices/system/cpu/cpufreq. +*/
+ProcMeterModule _module_cpufreq=
+{
+ /* char name[];            */ "CPUInfo",
+ /* char *description;      */ "CPU Information. [From /sys/devices/system/cpu/cpufreq]",
+};
+
+/*+ The module. +*/
+ProcMeterModule *module=NULL;
 
 
 /* The line buffer */
@@ -84,7 +95,18 @@ static int ncpus=0;
 
 ProcMeterModule *Load(void)
 {
- return(&module);
+ FILE *f;
+
+ f=fopen("/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq","r");
+ if(f)
+   {
+    module=&_module_cpufreq;
+    fclose(f);
+   }
+ else
+    module=&_module_cpufreq;
+
+ return(module);
 }
 
 
@@ -101,37 +123,80 @@ ProcMeterOutput **Initialise(char *options)
  FILE *f;
  int i;
 
- /* Verify the statistics from /proc/stat */
-
- f=fopen("/proc/cpuinfo","r");
- if(!f)
-    fprintf(stderr,"ProcMeter(%s): Could not open '/proc/cpuinfo'.\n",__FILE__);
- else
+ if(module==&_module_cpuinfo)
    {
-    if(!fgets_realloc(&line,&length,f)) /* cpu */
-       fprintf(stderr,"ProcMeter(%s): Could not read '/proc/cpuinfo'.\n",__FILE__);
+    /* Verify the statistics from /proc/cpuinfo */
+
+    f=fopen("/proc/cpuinfo","r");
+    if(!f)
+       fprintf(stderr,"ProcMeter(%s): Could not open '/proc/cpuinfo'.\n",__FILE__);
     else
       {
-       int nspeeds=0;
-
-       do
+       if(!fgets_realloc(&line,&length,f)) /* cpu */
+          fprintf(stderr,"ProcMeter(%s): Could not read '/proc/cpuinfo'.\n",__FILE__);
+       else
          {
-          int count;
-          float speed;
+          int nspeeds=0;
 
-          if(sscanf(line,"processor : %d",&count)==1)
-             ncpus++;
+          do
+            {
+             int count;
+             float speed;
 
-          if(sscanf(line,"cpu MHz : %f",&speed)==1)
-             nspeeds++;
+             if(sscanf(line,"processor : %d",&count)==1)
+                ncpus++;
+
+             if(sscanf(line,"cpu MHz : %f",&speed)==1)
+                nspeeds++;
+            }
+          while(fgets_realloc(&line,&length,f));
+
+          if(nspeeds!=ncpus)
+             ncpus=0;
          }
-         while(fgets_realloc(&line,&length,f));
 
-       if(nspeeds!=ncpus)
-          ncpus=0;
+       fclose(f);
+      }
+   }
+ else
+   {
+    struct dirent *ent;
+    DIR *dir;
+
+    /* Verify the statistics from /sys/devices/system/cpu/cpufreq/ */
+
+    dir=opendir("/sys/devices/system/cpu/cpufreq/");
+    if(!dir)
+      {
+       fprintf(stderr,"ProcMeter(%s): Could not open '/sys/devices/system/cpu/cpufreq/'.\n",__FILE__);
+       return(NULL);
       }
 
-    fclose(f);
+    while((ent = readdir(dir)) != NULL)
+      {
+       if(!strncmp(ent->d_name,"policy",6))
+         {
+          char filename[64+NAME_MAX];
+
+          sprintf(filename,"/sys/devices/system/cpu/cpufreq/%s/affected_cpus",ent->d_name);
+
+          f=fopen(filename,"r");
+          if(!f)
+             fprintf(stderr,"ProcMeter(%s): Could not open '%s'.\n",__FILE__,filename);
+          else
+            {
+             unsigned cpu;
+
+             while(fscanf(f,"%u",&cpu)==1)
+                if(cpu>=ncpus)
+                   ncpus=cpu+1;
+
+             fclose(f);
+            }
+         }
+      }
+
+    closedir(dir);
    }
 
  /* Create the outputs */
@@ -179,35 +244,91 @@ int Update(time_t now,ProcMeterOutput *output)
  static time_t last=0;
  int i;
 
- /* Get the statistics from /proc/cpuinfo */
-
  if(now!=last)
    {
-    FILE *f;
     float *temp;
 
     temp=current;
     current=previous;
     previous=temp;
 
-    f=fopen("/proc/cpuinfo","r");
-    if(!f)
-       return(-1);
-
-    i=0;
-
-    while(fgets_realloc(&line,&length,f))
+    if(module==&_module_cpuinfo)
       {
-       float speed;
+       FILE *f;
 
-       if(sscanf(line,"cpu MHz : %f",&speed)==1)
+       /* Get the statistics from /proc/cpuinfo */
+
+       f=fopen("/proc/cpuinfo","r");
+       if(!f)
+          return(-1);
+
+       i=0;
+
+       while(fgets_realloc(&line,&length,f))
          {
-          current[i]=speed;
-          i++;
-         }
-      }
+          float speed;
 
-    fclose(f);
+          if(sscanf(line,"cpu MHz : %f",&speed)==1)
+            {
+             current[i]=speed;
+             i++;
+            }
+         }
+
+       fclose(f);
+      }
+    else
+      {
+       struct dirent *ent;
+       DIR *dir;
+       FILE *f;
+
+       /* Get the statistics from /sys/devices/system/cpu/cpufreq/ */
+
+       dir=opendir("/sys/devices/system/cpu/cpufreq/");
+       if(!dir)
+         {
+          fprintf(stderr,"ProcMeter(%s): Could not open '/sys/devices/system/cpu/cpufreq/'.\n",__FILE__);
+          return(-1);
+         }
+
+       i=0;
+
+       while((ent = readdir(dir)) != NULL)
+         {
+          if(!strncmp(ent->d_name,"policy",6))
+            {
+             char filename[64+NAME_MAX];
+             float speed;
+
+             sprintf(filename,"/sys/devices/system/cpu/cpufreq/%s/scaling_cur_freq",ent->d_name);
+
+             f=fopen(filename,"r");
+             if(f)
+               {
+                fscanf(f,"%f",&speed);
+
+                fclose(f);
+               }
+
+             sprintf(filename,"/sys/devices/system/cpu/cpufreq/%s/affected_cpus",ent->d_name);
+
+             f=fopen(filename,"r");
+             if(f)
+               {
+                unsigned cpu;
+
+                while(fscanf(f,"%u",&cpu)==1)
+                   if(cpu<ncpus)
+                      current[cpu]=speed/1000;
+
+                fclose(f);
+               }
+            }
+         }
+
+       closedir(dir);
+      }
 
     last=now;
    }
