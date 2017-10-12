@@ -36,7 +36,7 @@
 #define CPUID_TMx86_PROCESSOR_INFO 0x80860001
 #define CPUID_TMx86_FEATURE_LONGRUN(x) ((x) & 0x02)
 
-static int cpuid_fd = 0;
+static int cpuid_fd = -1;
 
 static void read_cpuid(loff_t address, int *eax, int *ebx, int *ecx, int *edx) {
         uint32_t data[4];
@@ -218,6 +218,6 @@ void Unload(void)
        free(device[i]);
     free(device);
    }
- if (cpuid_fd)
+ if (cpuid_fd>=0)
    close(cpuid_fd);
 }
