@@ -5,7 +5,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1997-2012 Andrew M. Bishop
+  This file Copyright 1997-2012, 2017 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -18,6 +18,7 @@
 
 #include <sys/time.h>
 
+#define GDK_DISABLE_DEPRECATION_WARNINGS 1
 #include <gtk/gtk.h>
 
 #include "widgets/PMGeneric.h"
