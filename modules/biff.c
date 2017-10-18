@@ -226,8 +226,6 @@ int Update(time_t now,ProcMeterOutput *output)
              count=0;
              size=0;
 
-             printf("checking mail spool %ld %ld %ld %ld\n",mtime,atime,buf.st_mtime,buf.st_atime);
-
              dir=opendir(filedir);
 
              if(dir)
