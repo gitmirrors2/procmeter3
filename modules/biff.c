@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/biff.c,v 1.7 2008-05-05 18:45:17 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.6.
 
   Mail inbox monitor.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2008 Andrew M. Bishop
+  This file Copyright 1998-2008, 2017 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -20,6 +18,7 @@
 
 #include <unistd.h>
 #include <pwd.h>
+#include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -82,8 +81,9 @@ ProcMeterModule module=
 static char *line=NULL;
 static size_t length=0;
 
-/* The name of the file to monitor */
+/* The name of the file or directory to monitor */
 static char *filename=NULL;
+static char *filedir=NULL;
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -113,10 +113,13 @@ ProcMeterOutput **Initialise(char *options)
 
  if(options)
    {
-    filename=options;
-
-    if(stat(filename,&buf))
-       fprintf(stderr,"ProcMeter(%s): Cannot stat the file '%s', continuing anyway.\n",__FILE__,filename);
+    if(stat(options,&buf))
+      {fprintf(stderr,"ProcMeter(%s): Cannot stat the file/directory '%s', ignoring it.\n",__FILE__,options);return(null_outputs);}
+    else
+       if(S_ISDIR(buf.st_mode))
+          filedir=options;
+       else
+          filename=options;
    }
  else
    {
@@ -143,8 +146,8 @@ ProcMeterOutput **Initialise(char *options)
    }
 
  str=module.description;
- module.description=(char*)malloc(strlen(str)+strlen(filename)+1);
- sprintf(module.description,str,filename);
+ module.description=(char*)malloc(strlen(str)+strlen(filename?filename:filedir)+1);
+ sprintf(module.description,str,filename?filename:filedir);
 
  Update(1,NULL);
 
@@ -166,41 +169,95 @@ int Update(time_t now,ProcMeterOutput *output)
 {
  static time_t last=0,mtime=0,atime=0;
  static int count,size;
- struct utimbuf utimebuf;
 
  if(now!=last)
    {
+    struct utimbuf utimebuf;
     struct stat buf;
 
-    if(stat(filename,&buf))
+    if(filename)
       {
-       count=size=0;
-       mtime=atime=0;
-      }
-    else
-      {
-       if(mtime!=buf.st_mtime || atime!=buf.st_atime || size!=buf.st_size)
+       if(stat(filename,&buf))
          {
-          FILE *f=fopen(filename,"r");
-
-          count=0;
-
-          if(f)
+          count=size=0;
+          mtime=atime=0;
+         }
+       else
+         {
+          if(mtime!=buf.st_mtime || atime!=buf.st_atime || size!=buf.st_size)
             {
-             while(fgets_realloc(&line,&length,f))
-                if(!strncmp("From ",line,5))
-                   count++;
+             FILE *f=fopen(filename,"r");
 
-             fclose(f);
-            }
+             count=0;
 
-          mtime=buf.st_mtime;
-          atime=buf.st_atime;
-          size=buf.st_size;
+             if(f)
+               {
+                while(fgets_realloc(&line,&length,f))
+                   if(!strncmp("From ",line,5))
+                      count++;
+
+                fclose(f);
+               }
+
+             mtime=buf.st_mtime;
+             atime=buf.st_atime;
+             size=buf.st_size;
           
-          utimebuf.actime=atime;
-          utimebuf.modtime=mtime;
-          utime(filename,&utimebuf);
+             utimebuf.actime=atime;
+             utimebuf.modtime=mtime;
+             utime(filename,&utimebuf);
+            }
+         }
+      }
+    else if(filedir)
+      {
+       if(stat(filedir,&buf))
+         {
+          count=size=0;
+          mtime=atime=0;
+         }
+       else
+         {
+          if(mtime!=buf.st_mtime || atime!=buf.st_atime)
+            {
+             struct dirent *ent;
+             DIR *dir;
+
+             count=0;
+             size=0;
+
+             printf("checking mail spool %ld %ld %ld %ld\n",mtime,atime,buf.st_mtime,buf.st_atime);
+
+             dir=opendir(filedir);
+
+             if(dir)
+               {
+                while((ent = readdir(dir)) != NULL)
+                  {
+                   struct stat buf2;
+                   char name[2*NAME_MAX+2];
+
+                   strcpy(name,filedir);
+                   strcat(name,"/");
+                   strcat(name,ent->d_name);
+
+                   if(!stat(name,&buf2) && S_ISREG(buf2.st_mode))
+                     {
+                      count++;
+                      size+=buf2.st_size;
+                     }
+                  }
+
+                closedir(dir);
+               }
+
+             mtime=buf.st_mtime;
+             atime=buf.st_atime;
+          
+             utimebuf.actime=atime;
+             utimebuf.modtime=mtime;
+             utime(filename,&utimebuf);
+            }
          }
       }
 
@@ -230,7 +287,7 @@ int Update(time_t now,ProcMeterOutput *output)
 
 void Unload(void)
 {
- if(filename)
+ if(filename || filedir)
     free(module.description);
 
  if(line)

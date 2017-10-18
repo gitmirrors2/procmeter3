@@ -4,12 +4,12 @@
 .\"
 .\"  Written by Andrew M. Bishop
 .\"
-.\"  This file Copyright 1998-2012 Andrew M. Bishop
+.\"  This file Copyright 1998-2012, 2017 Andrew M. Bishop
 .\"  It may be distributed under the GNU Public License, version 2, or
 .\"  any higher version.  See section COPYING of the GNU Public license
 .\"  for conditions under which this file may be redistributed.
 .\"
-.TH PROCMETER3_MODULES 1 "January 22, 2012"
+.TH PROCMETER3_MODULES 1 "October 18, 2017"
 
 .SH NAME
 
@@ -54,7 +54,10 @@ inbox.  The
 .I options
 parameter in the
 .B .procmeterrc
-file can be used to specify an alternate filename to use for the inbox.
+file can be used to specify an alternate filename to use for the inbox
+if in mbox format (single file with e-mails concatenated) or the
+directory to use for new e-mail if in maildir format (one file per
+e-mail).
 .TP
 .BR CPUInfo
 Information about the CPUs in the system, currently only the CPU speed in MHz.
@@ -207,4 +210,4 @@ biff(1) free(1) uname(1)
 
 .SH AUTHOR
 
-Andrew M. Bishop (c) 2007-2012
+Andrew M. Bishop (c) 2007-2017

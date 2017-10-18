@@ -150,3 +150,15 @@ run = XTermWait(df)
 
 # Files to monitor
 #options=/var/adm/messages /var/log/syslog
+
+##
+## The resources for the 'Biff' module
+##
+
+[Biff]
+
+# For a Maildir mailbox (directory of new e-mail files)
+#options=/home/amb/Maildir/new
+
+# For an mbox mailbox (file of concatenated e-mails)
+#options=/home/amb/Mail/INBOX
