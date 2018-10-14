@@ -5,7 +5,7 @@
   ******************/ /******************
   Written by Joey Hess.
 
-  This file Copyright 2001-2011 Joey Hess
+  This file Copyright 2001-2011, 2018 Joey Hess
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -821,7 +821,7 @@ NOBATT:
 		if (! state)
 			sprintf(thermal_outputs[index + 1].text_value, "unknown");
 		else
-			sprintf(thermal_outputs[index + 1].text_value, "%s", state);
+			strncpy(thermal_outputs[index + 1].text_value, state, PROCMETER_NAME_LEN);
 	}
 	
 	return(0);
