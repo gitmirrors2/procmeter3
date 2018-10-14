@@ -3,7 +3,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996-2012 Andrew M. Bishop
+  This file Copyright 1996-2012, 2018 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -12,6 +12,7 @@
 #ifndef PMBAR_H
 #define PMBAR_H    /*+ To stop multiple inclusions. +*/
 
+#define GDK_DISABLE_DEPRECATION_WARNINGS 1
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
