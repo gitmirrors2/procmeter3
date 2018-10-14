@@ -1,11 +1,22 @@
 Version 3.6+svn of ProcMeter3
 -----------------------------
 
+Bug fixes
+ Fix compilation warnings reported by gcc-7 (string overflows).
+ Hide compilation warnings about deprecated GTK-3 API functions.
+ Fix compilation warnings about Linux kernel 'major' and 'minor' macros.
+
 Module bug fixes
  The df module should now handle very big disks on 32-bit systems.
  The battery module should work better if /sys/class/power_supply doesn't exist.
  The battery module should work if ACPI records energy rather than charge.
+ The battery module works correctly if discharge current is negative.
+ The battery module checks that remaining time using current or energy will work.
  The meminfo module handles very long /proc/meminfo (fixes Debian bug #747627).
+ The netdev module uses 64-bits to record network traffic.
+ The cpuinfo module doesn't add outputs if the CPUs don't report their speed.
+ The cpuinfo module now uses /sys/devices/system/cpu/cpufreq not /proc/cpuinfo.
+ The biff module now handles maildir mailboxes (must set options variable).
 
 
 Version 3.6 of ProcMeter3 released : Sun Jan 22 2012
