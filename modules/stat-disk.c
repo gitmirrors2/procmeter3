@@ -25,6 +25,7 @@
 #include <sys/stat.h>
 
 #include <linux/major.h>
+#include <sys/sysmacros.h>
 
 #include "procmeter.h"
 
