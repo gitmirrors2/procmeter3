@@ -38,7 +38,7 @@
 
 static int cpuid_fd = -1;
 
-static void read_cpuid(loff_t address, int *eax, int *ebx, int *ecx, int *edx) {
+static void read_cpuid(off_t address, int *eax, int *ebx, int *ecx, int *edx) {
         uint32_t data[4];
 
         if (pread(cpuid_fd, &data, 16, address) != 16) {
