@@ -5,7 +5,7 @@ CFLAGS=$2
 
 cat <<EOF > libsensors-test.c
 #include <sensors/sensors.h>
-#if (SENSORS_API_VERSION & 0xf00) != 0x400
+#if ( (SENSORS_API_VERSION & 0xf00) != 0x400 ) && ( (SENSORS_API_VERSION & 0xf00) != 0x500 )
 #error
 #endif
 EOF

@@ -1,13 +1,12 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/libsensors-fan.c,v 1.1 2010-02-20 13:33:24 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5c.
+  ProcMeter - A system monitoring program for Linux - Version 3.6a.
 
   lm_sensors module source file.
   ******************/ /******************
   Written by Mike T. Liang
 
-  This file Copyright 2009, 2010 Mike T. Liang
+  Original file Copyright 2009, 2010 Mike T. Liang
+  Parts of this file Copyright 2019 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -27,8 +26,8 @@ const char *FILE__=__FILE__;
 
 #include "procmeter.h"
 
-#if !defined(SENSORS_API_VERSION) || (SENSORS_API_VERSION & 0xf00) != 0x400
-#error "This module requires libsensors version 3"
+#if !defined(SENSORS_API_VERSION) || ( (SENSORS_API_VERSION & 0xf00) != 0x400 ) && ( (SENSORS_API_VERSION & 0xf00) != 0x500 )
+#error "This module requires libsensors version 4 or 5"
 #else
 
 /* The interface information.  */
