@@ -1,9 +1,9 @@
 /***************************************
-  ProcMeter Text Widget Source file (for ProcMeter 3.6).
+  ProcMeter Text Widget Source file (for ProcMeter 3.6a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996-2012 Andrew M. Bishop
+  This file Copyright 1996-2012,19 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -36,12 +36,12 @@ static ProcMeterGenericClass *parent_class=NULL;
 /*++++++++++++++++++++++++++++++++++++++
   Returns the type of a Widget.
 
-  guint gtk_procmetertext_get_type Returns a unique pointer to the Widget type.
+  GType gtk_procmetertext_get_type Returns a unique pointer to the Widget type.
   ++++++++++++++++++++++++++++++++++++++*/
 
-guint gtk_procmetertext_get_type(void)
+GType gtk_procmetertext_get_type(void)
 {
- static guint pmw_type = 0;
+ static GType pmw_type = 0;
 
  if(!pmw_type)
    {

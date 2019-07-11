@@ -1,11 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMGraph.c,v 1.5 2008-04-27 15:21:30 amb Exp $
-
-  ProcMeter Graph Widget Source file (for ProcMeter3 3.5b).
+  ProcMeter Graph Widget Source file (for ProcMeter3 3.6a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996-2008 Andrew M. Bishop
+  This file Copyright 1996-2008,2019 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -39,12 +37,12 @@ static ProcMeterGenericClass *parent_class=NULL;
 /*++++++++++++++++++++++++++++++++++++++
   Returns the type of a Widget.
 
-  guint gtk_procmetergraph_get_type Returns a unique pointer to the Widget type.
+  GtkType gtk_procmetergraph_get_type Returns a unique pointer to the Widget type.
   ++++++++++++++++++++++++++++++++++++++*/
 
-guint gtk_procmetergraph_get_type(void)
+GtkType gtk_procmetergraph_get_type(void)
 {
- static guint pmw_type = 0;
+ static GtkType pmw_type = 0;
 
  if(!pmw_type)
    {

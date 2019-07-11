@@ -1,11 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMText.h,v 1.1 2000-12-16 16:39:18 amb Exp $
-
-  ProcMeter Text Widget include file (for ProcMeter 3.3).
+  ProcMeter Text Widget include file (for ProcMeter 3.6a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,2000 Andrew M. Bishop
+  This file Copyright 1996,98,2000,2019 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -47,7 +45,7 @@ struct _ProcMeterTextClass
  void (*update)(ProcMeterText *pmw,gboolean all);
 };
 
-guint      gtk_procmetertext_get_type(void);
+GtkType    gtk_procmetertext_get_type(void);
 GtkWidget* gtk_procmetertext_new(void);
 
 

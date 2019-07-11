@@ -1,11 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMGraph.h,v 1.1 2000-12-16 16:39:02 amb Exp $
-
-  ProcMeter Graph Widget include file (for ProcMeter3 3.3).
+  ProcMeter Graph Widget include file (for ProcMeter3 3.6a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,99,2000 Andrew M. Bishop
+  This file Copyright 1996,98,99,2000,2019 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -60,7 +58,7 @@ struct _ProcMeterGraphClass
  void (*update)(ProcMeterGraph *pmw,gboolean all);
 };
 
-guint      gtk_procmetergraph_get_type(void);
+GtkType    gtk_procmetergraph_get_type(void);
 GtkWidget* gtk_procmetergraph_new(void);
 
 

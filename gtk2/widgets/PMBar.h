@@ -1,11 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk2/widgets/PMBar.h,v 1.1 2007-09-19 19:04:34 amb Exp $
-
-  ProcMeter Bar Widget include file (for ProcMeter3 3.3).
+  ProcMeter Bar Widget include file (for ProcMeter3 3.6a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,99,2000 Andrew M. Bishop
+  This file Copyright 1996,98,99,2000,2019 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -55,7 +53,7 @@ struct _ProcMeterBarClass
  void (*update)(ProcMeterBar *pmw,gboolean all);
 };
 
-guint      gtk_procmeterbar_get_type(void);
+GtkType    gtk_procmeterbar_get_type(void);
 GtkWidget* gtk_procmeterbar_new(void);
 
 

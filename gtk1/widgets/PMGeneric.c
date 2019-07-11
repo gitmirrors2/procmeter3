@@ -1,11 +1,9 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/gtk1/widgets/PMGeneric.c,v 1.3 2003-06-21 18:38:56 amb Exp $
-
-  ProcMeter Generic Widget Source file (for ProcMeter 3.4a).
+  ProcMeter Generic Widget Source file (for ProcMeter 3.6a).
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1996,98,2000,10,02,03 Andrew M. Bishop
+  This file Copyright 1996,98,2000,10,02,03,19 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -36,12 +34,12 @@ static GtkWidgetClass *parent_class=NULL;
 /*++++++++++++++++++++++++++++++++++++++
   Returns the type of a Widget.
 
-  guint procmetergeneric_get_type Returns a unique pointer to the Widget type.
+  GtkType procmetergeneric_get_type Returns a unique pointer to the Widget type.
   ++++++++++++++++++++++++++++++++++++++*/
 
-guint gtk_procmetergeneric_get_type(void)
+GtkType gtk_procmetergeneric_get_type(void)
 {
- static guint pmw_type=0;
+ static GtkType pmw_type=0;
 
  if(!pmw_type)
    {
