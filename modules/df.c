@@ -5,7 +5,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2012 Andrew M. Bishop
+  This file Copyright 1998-2012, 2019 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -75,8 +75,9 @@ static int ndisks=0;
 static char **disk=NULL;
 static int *mounted;
 
-/* A function to add a disk */
+/* Local functions to validate or add a disk */
 static void add_disk(char *dev,char *mnt);
+static int validate_device(char *dev, char *mnt);
 
 
 /*++++++++++++++++++++++++++++++++++++++
@@ -121,7 +122,7 @@ ProcMeterOutput **Initialise(char *options)
           char device[65],mount[65];
 
           if(sscanf(line,"%64s %64s",device,mount)==2)
-             if(strcmp(mount,"none") && *mount=='/' && (*device=='/' || strstr(device, ":/")))
+             if(validate_device(device,mount))
                 add_disk(device,mount);
          }
        while(fgets_realloc(&line,&length,f));
@@ -147,7 +148,7 @@ ProcMeterOutput **Initialise(char *options)
              continue;
 
           if(sscanf(line,"%64s %64s",device,mount)==2)
-             if(strcmp(mount,"none") && *mount=='/' && (*device=='/' || strstr(device, ":/")))
+             if(validate_device(device,mount))
                 add_disk(device,mount);
          }
        while(fgets_realloc(&line,&length,f));
@@ -188,6 +189,35 @@ ProcMeterOutput **Initialise(char *options)
    }
 
  return(outputs);
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+  Check that a new disk is a validone to use.
+
+  char *dev The name of the device.
+
+  char *mnt The mount point for the device.
+  ++++++++++++++++++++++++++++++++++++++*/
+
+static int validate_device(char *dev, char *mnt)
+{
+ if(!strcmp(mnt,"none"))        /* Ignore mountpoints of type "none" (swap device in /etc/fstab). */
+    return 0;
+
+ if(*mnt!='/')                  /* Ignore mountpoints that are not anchored at the root. */
+    return 0;
+
+ if(*dev=='/')                  /* Accept devices that are real filesystem objects. */
+    return 1;
+
+ if(strstr(dev, ":/"))          /* Accept devices that are NFS filesystems. */
+    return 1;
+
+ if(!strcmp(dev,"tmpfs"))       /* Accept devices that use tmpfs filesystem. */
+    return 1;
+
+ return 0;
 }
 
 
@@ -268,7 +298,7 @@ int Update(time_t now,ProcMeterOutput *output)
              char device[65],mount[65];
 
              if(sscanf(line,"%64s %64s",device,mount)==2)
-                if(strcmp(mount,"none") && *mount=='/' && (*device=='/' || strstr(device, ":/")))
+                if(validate_device(device,mount))
                    for(i=0;i<ndisks;i++)
                       if(!strcmp(disk[i],mount))
                          mounted[i]=1;
