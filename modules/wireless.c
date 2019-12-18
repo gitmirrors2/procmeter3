@@ -1,5 +1,5 @@
 /***************************************
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.6a.
 
   Wireless network devices info source file.
   ******************/ /******************

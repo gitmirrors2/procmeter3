@@ -1,13 +1,11 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/cpuinfo.c,v 1.4 2008-05-05 18:45:17 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5b.
+  ProcMeter - A system monitoring program for Linux - Version 3.6a.
 
   CPU information.
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2008, 2016 Andrew M. Bishop
+  This file Copyright 1998-2008, 2016, 2017 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.

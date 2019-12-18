@@ -1,5 +1,5 @@
 /***************************************
-  ProcMeter - A system monitoring program for Linux - Version 3.6.
+  ProcMeter - A system monitoring program for Linux - Version 3.6a.
 
   Mail inbox monitor.
   ******************/ /******************

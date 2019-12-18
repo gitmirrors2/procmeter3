@@ -1,7 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/uname.c,v 1.5 2002-12-07 19:40:25 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.4.
+  ProcMeter - A system monitoring program for Linux - Version 3.6a.
 
   Uname system information module source file.
   ******************/ /******************

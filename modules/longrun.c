@@ -1,7 +1,5 @@
 /***************************************
-  $Header: /home/amb/CVS/procmeter3/modules/longrun.c,v 1.10 2010-02-28 10:22:16 amb Exp $
-
-  ProcMeter - A system monitoring program for Linux - Version 3.5d.
+  ProcMeter - A system monitoring program for Linux - Version 3.6a.
 
   Transmeta longrun support.
   ******************/ /******************
