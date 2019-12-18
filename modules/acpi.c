@@ -1,11 +1,12 @@
 /***************************************
-  ProcMeter - A system monitoring program for Linux - Version 3.6.
+  ProcMeter - A system monitoring program for Linux - Version 3.6a.
 
   ACPI source file.
   ******************/ /******************
   Written by Joey Hess.
 
-  This file Copyright 2001-2011, 2018 Joey Hess
+  This file Copyright 2001-2011 Joey Hess
+  Updates Copyright 2018, 2019 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -106,7 +107,7 @@ inline char *get_acpi_file (const char *file) {
 	fd = open(file, O_RDONLY);
 	if (fd == -1) return NULL;
 	end = read(fd, buf, sizeof(buf));
-	buf[end-1] = '\0';
+	buf[end < 1023 ? end : 1023] = '\0';
 	close(fd);
 	return buf;
 }
@@ -297,7 +298,7 @@ int acpi_supported (void) {
 	}
 	num = atoi(version);
 	if (num < ACPI_VERSION) {
-		fprintf(stderr, "ProcMeter(%s): ACPI subsystem %s too is old, consider upgrading to %i.\n",__FILE__,
+		fprintf(stderr, "ProcMeter(%s): ACPI subsystem %s is too old, consider upgrading to %i.\n",__FILE__,
 				version, ACPI_VERSION);
 		return 0;
 	}
