@@ -5,7 +5,7 @@
   ******************/ /******************
   Written by Andrew M. Bishop
 
-  This file Copyright 1998-2011, 2018 Andrew M. Bishop
+  This file Copyright 1998-2011, 2018, 2023 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
   for conditions under which this file may be redistributed.
@@ -322,8 +322,7 @@ Module LoadModule(char* filename)
              string=newstr;
             }
 
-          strncpy(new->outputs[noutputs]->label,string,PROCMETER_NAME_LEN);
-          new->outputs[noutputs]->label[PROCMETER_NAME_LEN]=0;
+          snprintf(new->outputs[noutputs]->label,PROCMETER_NAME_LEN,string);
 
           noutputs++;
          }

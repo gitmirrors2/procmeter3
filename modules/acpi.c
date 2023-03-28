@@ -5,7 +5,7 @@
   ******************/ /******************
   Written by Joey Hess.
 
-  This file Copyright 2001-2011 Joey Hess
+  This file Copyright 2001-2011, 2023 Joey Hess
   Updates Copyright 2018, 2019 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
@@ -737,7 +737,7 @@ int Update(time_t now, ProcMeterOutput *output)
 
 			/* Status. */
 			status = scan_acpi_value(buf, acpi_labels[label_charging_state]);
-			sprintf(batt_outputs[index + 2].text_value, "%s", status);
+			snprintf(batt_outputs[index + 2].text_value, PROCMETER_TEXT_LEN, status);
 			
 			if (strcmp(status, "charging") == 0) {
 				/* Kill time left until empty. */
@@ -822,7 +822,7 @@ NOBATT:
 		if (! state)
 			sprintf(thermal_outputs[index + 1].text_value, "unknown");
 		else
-			strncpy(thermal_outputs[index + 1].text_value, state, PROCMETER_NAME_LEN);
+			snprintf(thermal_outputs[index + 1].text_value, PROCMETER_TEXT_LEN, state);
 	}
 	
 	return(0);
