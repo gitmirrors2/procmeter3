@@ -6,7 +6,7 @@
   ******************/ /******************
   Written by Matt Kemner, Andrew M. Bishop
 
-  This file Copyright 1999, 2010, 2017 Matt Kemner, Andrew M. Bishop
+  This file Copyright 1999, 2010, 2017, 2023 Matt Kemner, Andrew M. Bishop
   parts of it are Copyright 1998-2008 Andrew M. Bishop
   It may be distributed under the GNU Public License, version 2, or
   any higher version.  See section COPYING of the GNU Public license
@@ -63,8 +63,7 @@ ProcMeterOutput **outputs=NULL;
 ProcMeterModule module=
 {
  /* char name[];           */ "Sensors",
- /* char *description;     */ "Hardware status information, temperature, fan speed etc."
-                              " (Requires lm_sensors patch from http://www.netroedge.com/~lm78/ or version 2.6 kernel).",
+ /* char *description;     */ "Hardware status information, temperature, fan speed etc.",
 };
 
 /* The line buffer */
